@@ -23,83 +23,84 @@
     --------------------------------------------------------------------------------------------------------------------
     arrayExecuter
     --------------------------------------------------------------------------------------------------------------------
-    */  
+    */ 
 
-    var task_arr = [],
-        currTask = 0,
-        arrayExecuter = {
-            //Exectutes an array of functions
-            //If this is called and another array is currently executing, then
-            //the new set of functions will run before finishing the previous set
-            execute: function (arr) {
-                arr.reverse();
+    var ArrayExecuter = function () {
+        this.task_arr = [];
+    }
 
-                for (var i = 0; i < arr.length; i++) {
-                    if (arr[i]) {
-                        task_arr.unshift(arr[i]);
-                    }
+    ArrayExecuter.prototype = {
+        //Exectutes an array of functions
+        //If this is called and another array is currently executing, then
+        //the new set of functions will run before finishing the previous set
+        execute: function (arr) {
+            arr.reverse();
+
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i]) {
+                    this.task_arr.unshift(arr[i]);
                 }
-
-                this.runStep('');
-            },
-            tackOn: function (arr) {
-                for (var i=0; i<arr.length; i++) {
-                    task_arr.push(arr[i]);
-                }
-                
-                // trace('///// arrayExecuter_tackOn: length: '+task_arr.length+' /////');
-                
-                this.runStep('');
-            },
-            runFunctionInScope: function (arr) {
-                var obj = arr[0];
-                var function_name = arr[1];
-                var optionalVars = (arr.length >2)?arr[2]:null;
-                
-                if (arr.length >2) {  
-                    obj[function_name](arr[2]);
-                } else {
-                    obj[function_name]();
-                }
-            },
-            runStep: function (args) {
-
-                if (task_arr.length == 0)return;
-                
-                var step = task_arr.shift();
-                var funct = step.fn;
-
-                step.scope = step.scope || this;
-                step.vars = step.vars || [];
-                
-                if (typeof step.vars === "string") {
-                    step.vars = [step.vars];
-                } 
-
-                funct.apply(step.scope, step.vars);
-            },
-            stepComplete: function (args) {
-                var that = this;
-                // trace('///// arrayExecuter: stepComplete /////');
-
-                if (task_arr.length > 0) {      
-                    setTimeout(function(){
-                        that.runStep();
-                    }, 60);
-                }
-            },
-            stepComplete_instant: function (args) {
-                // trace('///// arrayExecuter: stepComplete_instant /////');
-
-                if (task_arr.length > 0) {
-                    this.runStep();
-                }
-            },
-            clearArrayExecuter: function () {
-                task_arr = [];
             }
+
+            this.runStep('');
+        },
+        tackOn: function (arr) {
+            for (var i=0; i<arr.length; i++) {
+                this.task_arr.push(arr[i]);
+            }
+            
+            // trace('///// arrayExecuter_tackOn: length: '+task_arr.length+' /////');
+            
+            this.runStep('');
+        },
+        runFunctionInScope: function (arr) {
+            var obj = arr[0];
+            var function_name = arr[1];
+            var optionalVars = (arr.length >2)?arr[2]:null;
+            
+            if (arr.length >2) {  
+                obj[function_name](arr[2]);
+            } else {
+                obj[function_name]();
+            }
+        },
+        runStep: function (args) {
+
+            if (this.task_arr.length == 0)return;
+            
+            var step = this.task_arr.shift();
+            var funct = step.fn;
+
+            step.scope = step.scope || this;
+            step.vars = step.vars || [];
+            
+            if (typeof step.vars === "string") {
+                step.vars = [step.vars];
+            } 
+
+            funct.apply(step.scope, step.vars);
+        },
+        stepComplete: function (args) {
+            var that = this;
+            // trace('///// arrayExecuter: stepComplete /////');
+
+            if (this.task_arr.length > 0) {      
+                setTimeout(function(){
+                    that.runStep();
+                }, 60);
+            }
+        },
+        stepComplete_instant: function (args) {
+            // trace('///// arrayExecuter: stepComplete_instant /////');
+
+            if (this.task_arr.length > 0) {
+                this.runStep();
+            }
+        },
+        clearArrayExecuter: function () {
+            this.task_arr = [];
         }
+    }
 
-
-    return arrayExecuter;
+    return ArrayExecuter;
 }));
