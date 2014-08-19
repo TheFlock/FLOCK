@@ -9,10 +9,10 @@
         // AMD. Register as an anonymous module.
         define([
             'jquery',
-            'gs/TweenLite.min',
-            'gs/TimelineLite.min',
-            'gs/easing/EasePack.min',
-            'gs/plugins/CSSPlugin.min',            
+            'greensock/TweenLite.min',
+            'greensock/TimelineLite.min',
+            'greensock/easing/EasePack.min',
+            'greensock/plugins/CSSPlugin.min',            
             'FLOCK/utils/ArrayExecuter'
                 ], function ($) {
             return (root.app.HUD_simple = factory($));

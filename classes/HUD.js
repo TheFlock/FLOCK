@@ -10,10 +10,10 @@
         define([
             'jquery',
             // 'pixi',
-            'gs/TweenLite.min',
-            'gs/TimelineLite.min',
-            'gs/easing/EasePack.min',
-            'gs/plugins/CSSPlugin.min',
+            'greensock/TweenLite.min',
+            'greensock/TimelineLite.min',
+            'greensock/easing/EasePack.min',
+            'greensock/plugins/CSSPlugin.min',
             'FLOCK/app/HUDLoader',
             'FLOCK/utils/ArrayExecuter'
                 ], function ($) {
