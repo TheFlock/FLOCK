@@ -3,15 +3,15 @@
 
 ;(function (root, factory) {
     // Browser globals
-    root.app = root.app || {};
+    root.classes = root.classes || {};
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define(['jquery'], function ($) {
-            return (root.app.MaskLoader = factory());
+            return (root.classes.MaskLoader = factory());
         });
     } else {
-        root.app.MaskLoader = factory();
+        root.classes.MaskLoader = factory();
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
 

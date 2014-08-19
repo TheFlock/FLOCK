@@ -3,15 +3,15 @@
 
 ;(function (root, factory) {
     // Browser globals
-    root.app = root.app || {};
+    root.classes = root.classes || {};
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define(['jquery', 'FLOCK/utils/DeviceDetect'], function () {
-            return (root.app.MainMenu = factory());
+            return (root.classes.MainMenu = factory());
         });
     } else {
-        root.app.MainMenu = factory();
+        root.classes.MainMenu = factory();
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
 

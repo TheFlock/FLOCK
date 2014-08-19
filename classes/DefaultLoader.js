@@ -3,15 +3,15 @@
 
 ;(function (root, factory) {
     // Browser globals
-    root.app = root.app || {};
+    root.classes = root.classes || {};
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define([], function () {
-            return (root.app.DefaultLoader = factory());
+            return (root.classes.DefaultLoader = factory());
         });
     } else {
-        root.app.DefaultLoader = factory();
+        root.classes.DefaultLoader = factory();
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
 

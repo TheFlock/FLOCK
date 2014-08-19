@@ -3,7 +3,7 @@
 
 ;(function (root, factory) {
     // Browser globals
-    root.app = root.app || {};
+    root.classes = root.classes || {};
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -15,10 +15,10 @@
             'greensock/plugins/CSSPlugin.min',            
             'FLOCK/utils/ArrayExecuter'
                 ], function ($) {
-            return (root.app.HUD_simple = factory($));
+            return (root.classes.HUD_simple = factory($));
         });
     } else {
-        root.app.HUD_simple = factory($);
+        root.classes.HUD_simple = factory($);
     }
 }(window.FLOCK = window.FLOCK || {}, function ($) {
 

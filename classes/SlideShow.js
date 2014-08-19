@@ -3,15 +3,15 @@
 
 ;(function (root, factory) {
     // Browser globals
-    root.app = root.app || {};
+    root.classes = root.classes || {};
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jquery', 'FLOCK/app/Paginator', 'FLOCK/app/Backplate', 'FLOCK/utils/VideoPlayerME'], function ($) {
-            return (root.app.SlideShow = factory($));
+        define(['jquery', 'FLOCK/classes/Paginator', 'FLOCK/classes/Backplate', 'FLOCK/utils/VideoPlayerME'], function ($) {
+            return (root.classes.SlideShow = factory($));
         });
     } else {
-        root.app.SlideShow = factory($);
+        root.classes.SlideShow = factory($);
     }
 }(window.FLOCK = window.FLOCK || {}, function ($) {
 

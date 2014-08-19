@@ -3,7 +3,7 @@
 
 ;(function (root, factory) {
     // Browser globals
-    root.app = root.app || {};
+    root.classes = root.classes || {};
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -14,13 +14,13 @@
             'greensock/TimelineLite.min',
             'greensock/easing/EasePack.min',
             'greensock/plugins/CSSPlugin.min',
-            'FLOCK/app/HUDLoader',
+            'FLOCK/classes/HUDLoader',
             'FLOCK/utils/ArrayExecuter'
                 ], function ($) {
-            return (root.app.HUD = factory($));
+            return (root.classes.HUD = factory($));
         });
     } else {
-        root.app.HUD = factory($);
+        root.classes.HUD = factory($);
     }
 }(window.FLOCK = window.FLOCK || {}, function ($) {
 
