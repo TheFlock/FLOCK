@@ -9,7 +9,7 @@
         // AMD. Register as an anonymous module.
         define([
                 'jquery', 
-                'gs/TweenLite.min', 
+                'greensock/TweenLite.min', 
                 'FLOCK/utils/ArrayExecuter', 
                 'FLOCK/utils/SectionLoader'
             ], function ($) {
