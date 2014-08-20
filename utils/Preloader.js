@@ -9,8 +9,7 @@
         // AMD. Register as an anonymous module.
         define([
                 'jquery', 
-                'greensock/TweenLite.min', 
-                'FLOCK/utils/ArrayExecuter', 
+                'greensock/TweenLite.min',
                 'FLOCK/utils/SectionLoader'
             ], function ($) {
             return (root.utils.Preloader = factory($));
@@ -20,8 +19,7 @@
     }
 }(window.FLOCK = window.FLOCK || {}, function ($) {
 
-    var arrayExecuter = new FLOCK.utils.ArrayExecuter(),
-        sectionLoader = FLOCK.utils.SectionLoader,
+    var sectionLoader = FLOCK.utils.SectionLoader,
         curr_loaderID = false, // current preloader
         loaderUIObjects = {}, // object to store preloaders by id
         perc = 0,
@@ -40,14 +38,16 @@
         }
     }
             
-    function addLoader(loader_obj) {
+    function addLoader(loader_obj, callback) {
 
         loaderUIObjects[loader_obj.id] = loader_obj;
 
         // if there is not already a UI attached, it will automatically be set to the current UI
         if(!curr_loaderID)curr_loaderID = loader_obj.id;
 
-        arrayExecuter.stepComplete();
+        if (callback) {
+            callback();
+        }
     }
             
     function bringIn() {
@@ -151,10 +151,12 @@
         }
     }
             
-    function isOut(e){
+    function isOut(callback){
         console.log('Preloader isOut');
-                
-        arrayExecuter.stepComplete();
+        
+        if (callback) {
+            callback();
+        }
     }
             
     function complete(e) {
