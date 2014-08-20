@@ -23,7 +23,8 @@
         curr_loaderID = false, // current preloader
         loaderUIObjects = {}, // object to store preloaders by id
         perc = 0,
-        tracker;
+        tracker,
+        complete_callback = false;
 
     var preloader = function() {
         sectionLoader.addLoaderUI(this);
@@ -154,8 +155,8 @@
     function isOut(callback){
         console.log('Preloader isOut');
         
-        if (callback) {
-            callback();
+        if (complete_callback) {
+            complete_callback();
         }
     }
             
@@ -163,7 +164,9 @@
         // console.log('preloader complete');
         // TweenLite.ticker.removeEventListener("tick", this.track);
 
-        if(!curr_loaderID)isOut(callback);
+        complete_callback = callback || false;
+
+        if(!curr_loaderID)isOut();
 
         this.finished = true;
     }
