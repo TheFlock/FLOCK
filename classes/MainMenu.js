@@ -53,7 +53,7 @@
         this.selectMenuItem(this.elements.selected.data('section'), false);
 
         this.resize();
-        document.getElementById('mainHeader').style.visibility = 'hidden';
+
     }
 
     function buildMenu (menuList) {
