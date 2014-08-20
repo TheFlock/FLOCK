@@ -20,7 +20,7 @@
     }
 }(window.FLOCK = window.FLOCK || {}, function ($) {
 
-    var arrayExecuter = FLOCK.utils.ArrayExecuter,
+    var arrayExecuter = new FLOCK.utils.ArrayExecuter(),
         sectionLoader = FLOCK.utils.SectionLoader,
         curr_loaderID = false, // current preloader
         loaderUIObjects = {}, // object to store preloaders by id

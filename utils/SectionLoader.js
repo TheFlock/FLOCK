@@ -13,7 +13,7 @@
     }
 }(window.FLOCK = window.FLOCK || {}, function ($) {
 
-    var arrayExecuter = FLOCK.utils.ArrayExecuter,
+    var arrayExecuter = new FLOCK.utils.ArrayExecuter(),
         DeviceDetect = FLOCK.utils.DeviceDetect,
         base_url = '';
 
