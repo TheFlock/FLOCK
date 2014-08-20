@@ -11,6 +11,8 @@
                 'jquery', 
                 'FLOCK/utils/DeviceDetect',
                 'greensock/TweenLite.min',
+                'greensock/easing/EasePack.min',
+                'greensock/plugins/CSSPlugin.min'
             ], function () {
             return (root.classes.Footer = factory());
         });

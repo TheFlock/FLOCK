@@ -12,6 +12,8 @@
                 'FLOCK/utils/DeviceDetect',
                 'greensock/TweenLite.min',
                 'greensock/TimelineLite.min',
+                'greensock/easing/EasePack.min',
+                'greensock/plugins/CSSPlugin.min'
             ], function () {
             return (root.classes.MainMenu = factory());
         });

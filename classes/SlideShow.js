@@ -7,7 +7,15 @@
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jquery', 'FLOCK/classes/Paginator', 'FLOCK/classes/Backplate', 'FLOCK/utils/VideoPlayerME'], function ($) {
+        define([
+                'jquery', 
+                'FLOCK/classes/Paginator', 
+                'FLOCK/classes/Backplate', 
+                'FLOCK/utils/VideoPlayerME',
+                'greensock/TweenLite.min',
+                'greensock/easing/EasePack.min',
+                'greensock/plugins/CSSPlugin.min'
+            ], function ($) {
             return (root.classes.SlideShow = factory($));
         });
     } else {

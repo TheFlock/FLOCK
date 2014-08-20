@@ -7,7 +7,11 @@
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jquery', 'FLOCK/classes/Paginator', 'FLOCK/utils/VideoPlayerME'], function ($) {
+        define([
+                'jquery', 
+                'FLOCK/classes/Paginator', 
+                'FLOCK/utils/VideoPlayerME'
+            ], function ($) {
             return (root.classes.Backplate = factory($));
         });
     } else {

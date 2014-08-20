@@ -7,7 +7,12 @@
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jquery'], function () {
+        define([
+                'jquery',
+                'greensock/TweenLite.min',
+                'greensock/easing/EasePack.min',
+                'greensock/plugins/CSSPlugin.min'
+            ], function () {
             return (root.classes.Paginator = factory());
         });
     } else {
