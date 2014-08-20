@@ -101,7 +101,6 @@
         }
 
         function_arr.push({scope: this, fn: this.loadFiles, vars: null});
-        function_arr.push({scope: arrayExecuter, fn: arrayExecuter.stepComplete_instant, vars: null});
 
         if (callback) {
             function_arr.push({fn: callback, vars: null});
