@@ -625,7 +625,7 @@
         sectionLoaderState.miscLoaded = 0;   
         
         if (sectionLoaderState.loader && !sectionLoaderState.loader.finished) {
-            sectionLoaderState.loader.complete();
+            sectionLoaderState.loader.complete(arrayExecuter.stepComplete_instant.bind(arrayExecuter));
         } else {
             arrayExecuter.stepComplete_instant();
         }

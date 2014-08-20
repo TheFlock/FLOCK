@@ -159,11 +159,11 @@
         }
     }
             
-    function complete(e) {
+    function complete(callback) {
         // console.log('preloader complete');
         // TweenLite.ticker.removeEventListener("tick", this.track);
 
-        if(!curr_loaderID)isOut();
+        if(!curr_loaderID)isOut(callback);
 
         this.finished = true;
     }
