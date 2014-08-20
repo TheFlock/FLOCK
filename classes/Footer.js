@@ -68,7 +68,7 @@
                 linkA.href = updatedLinkRows[r][e]["URL"];
                 linkA.innerHTML = updatedLinkRows[r][e]["LABEL"];
                 linkA.style.fontSize = updatedLinkRows[r][e]["font-size"];
-                $(linkA).on('click', FLOCK.functions.externalLink);
+                // $(linkA).on('click', FLOCK.functions.externalLink);
                 
                 if(String(updatedLinkRows[r][e]["MPAA_REQUIRED"]).toLowerCase() == "true"){
                     $(mpaaContainerObj).append($(linkLi).clone());
@@ -102,7 +102,7 @@
                         followUsA.target = "_blank";
                         followUsA.href = followUsObj.links[l]["URL"];
                         followUsElem.appendChild(followUsA);
-                        $(followUsA).on('click', FLOCK.functions.externalLink);
+                        // $(followUsA).on('click', FLOCK.functions.externalLink);
                     }
                 }
             }
