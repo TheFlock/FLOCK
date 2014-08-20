@@ -78,7 +78,8 @@
         //Load section content by passing in the ID of the section, or an array of IDs
 
         var function_arr =  [],
-            args = Array.prototype.slice.call(arguments);
+            args = Array.prototype.slice.call(arguments),
+            callback;
 
         if (args.length === 1 && args[0] === 'all') {
             args = [];
@@ -89,7 +90,11 @@
 
         if(args !== undefined && args !== null){
             for (var i = args.length - 1; i >= 0; i--) {
-                function_arr.push({scope: this, fn: this.initScrape, vars: args[i]});
+                if (typeof args[i] === 'function') {
+                    callback = args[i];
+                } else {
+                    function_arr.push({scope: this, fn: this.initScrape, vars: args[i]});
+                }
             };
         } else {
             // trace('this.loadSection: input not valid');
@@ -97,6 +102,10 @@
 
         function_arr.push({scope: this, fn: this.loadFiles, vars: null});
         function_arr.push({scope: arrayExecuter, fn: arrayExecuter.stepComplete_instant, vars: null});
+
+        if (callback) {
+            function_arr.push({fn: callback, vars: null});
+        }
 
         arrayExecuter.execute(function_arr);
     }
