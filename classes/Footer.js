@@ -213,7 +213,7 @@
             
             creditsButton.className = creditsButton.className.replace('active', '');
 
-            TweenLite.to(credits, 0.5, {bottom: -credits_height + 'px', autoAlpha: 0, ease:Power4.easeInOut, onUpdate: function () {
+            TweenLite.to(credits, 0.5, {bottom: -credits_height + 'px', ease:Power4.easeInOut, onUpdate: function () {
                 creditsButton.style.top = Math.min(0, (Math.abs(parseInt(credits.style.bottom)) - (credits_height - 30))) + 'px';
             }, onComplete: function () {
                 creditsButton.style.zIndex = 1;
@@ -225,7 +225,7 @@
             creditsButton.style.zIndex = 10;
             credits.style.zIndex = 9;
             
-            TweenLite.to(credits, 0.5, {bottom:'0px', autoAlpha: 1, ease:Power4.easeInOut, onUpdate: function () {
+            TweenLite.to(credits, 0.5, {bottom:'0px', ease:Power4.easeInOut, onUpdate: function () {
                 creditsButton.style.top = Math.min(0, (Math.abs(parseInt(credits.style.bottom)) - (credits_height - 30))) + 'px';
             }});
 
