@@ -7,7 +7,12 @@
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jquery', 'FLOCK/utils/DeviceDetect'], function () {
+        define([
+                'jquery', 
+                'FLOCK/utils/DeviceDetect',
+                'greensock/TweenLite.min',
+                'greensock/TimelineLite.min',
+            ], function () {
             return (root.classes.MainMenu = factory());
         });
     } else {
