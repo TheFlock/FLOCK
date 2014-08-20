@@ -44,7 +44,7 @@
         //build links in credit drawer
         var linkRows = data["footerLinks"] || [];
         var updatedLinkRows = [];
-        var linkContainerObj = document.getElementById("legal");
+        var linkContainerObj = document.getElementById("credits_drawer_links");
         var mpaaContainerObj = document.getElementById("mpaa_legal");
         var r, e;
         var addSpacerLi = true;
