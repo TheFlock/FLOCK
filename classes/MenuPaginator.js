@@ -13,10 +13,10 @@
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min'
             ], function () {
-            return (root.classes.Paginator = factory());
+            return (root.classes.MenuPaginator = factory());
         });
     } else {
-        root.classes.Paginator = factory();
+        root.classes.MenuPaginator = factory();
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
 
