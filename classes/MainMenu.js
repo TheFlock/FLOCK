@@ -138,7 +138,7 @@
             menuElem.appendChild(newMenuEntry);
         }
 
-        homePaginator = new FLOCK.classes.MenuPaginator({
+        var homePaginator = new FLOCK.classes.MenuPaginator({
             wrapper: menuElem.parentNode
         });
     }
