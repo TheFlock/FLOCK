@@ -110,40 +110,36 @@
     function buildHorizontalMenu (menuList) {
 
         var sectionID = "framework";
-        //build the menu from JSON
-        if(sectionLoader_localizationJSON.sections[sectionID] && sectionLoader_localizationJSON.sections[sectionID]["data"] && sectionLoader_localizationJSON.sections[sectionID]["data"]["menuItems"] && sectionLoader_localizationJSON.sections[sectionID]["data"]["menuItems"].length){                      
-            var homeMenuID = "homeMenuCenter";
-            var homeMenuElem = document.getElementById(homeMenuID);
-            var firstBtn = true;
+        var homeMenuID = "homeMenuCenter";
+        var homeMenuElem = document.getElementById(homeMenuID);
+        var firstBtn = true;
 
-            for(var i = 0; i < menuList.length; i++){
-                if(menuList[i]["VISIBLE"] == "false")continue;
-                if(!firstBtn){
-                    // var newDot = document.createElement('li');
-                    // newDot.className = "menu_dot";
-                    // homeMenuElem.appendChild(newDot);
-                } else {firstBtn = false;};
-                
-                var newMenuEntry = document.createElement('li');
-                newMenuEntry.id = menuList[i]["ID"];
-                var newMenuLink = document.createElement('a');
-                newMenuLink.innerHTML = menuList[i]["LABEL"];
-                newMenuLink.href = menuList[i]["HREF"];
-                newMenuLink.style.fontSize = menuList[i]["font-size"];
-                if(menuList[i]["TYPE"] == "external"){
-                    newMenuLink.target = "_blank";
-                } else if(menuList[i]["TYPE"] == "popup") {
-                    newMenuLink.rel = menuList[i]["HREF"]+","+menuList[i]["popupw"]+","+menuList[i]["popuph"];
-                    $(newMenuLink).click(menu_openPopUp);
-                }
-                
-                newMenuEntry.appendChild(newMenuLink);
-                homeMenuElem.appendChild(newMenuEntry);
-                
+        for(var i = 0; i < menuList.length; i++){
+            if(menuList[i]["VISIBLE"] == "false")continue;
+            if(!firstBtn){
+                // var newDot = document.createElement('li');
+                // newDot.className = "menu_dot";
+                // homeMenuElem.appendChild(newDot);
+            } else {firstBtn = false;};
+            
+            var newMenuEntry = document.createElement('li');
+            newMenuEntry.id = menuList[i]["ID"];
+            var newMenuLink = document.createElement('a');
+            newMenuLink.innerHTML = menuList[i]["LABEL"];
+            newMenuLink.href = menuList[i]["HREF"];
+            newMenuLink.style.fontSize = menuList[i]["font-size"];
+            if(menuList[i]["TYPE"] == "external"){
+                newMenuLink.target = "_blank";
+            } else if(menuList[i]["TYPE"] == "popup") {
+                newMenuLink.rel = menuList[i]["HREF"]+","+menuList[i]["popupw"]+","+menuList[i]["popuph"];
+                $(newMenuLink).click(menu_openPopUp);
             }
-
+            
+            newMenuEntry.appendChild(newMenuLink);
+            homeMenuElem.appendChild(newMenuEntry);
+            
         }
-        
+
         for(var i = 0; i < allMenus.length; m++){
             var menuObj = document.getElementById(allMenus[i]);
     //      menuObj.style.left = main_siteWidth+'px';
