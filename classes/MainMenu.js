@@ -57,7 +57,23 @@
 
     }
 
-    function buildMenu (menuList) {
+    function buildMenu (menuList, menuStyle) {
+        console.log('menuStyle', menuStyle);
+
+        switch (menuStyle) {
+            case 'vertical':
+                buildVerticalMenu(menuList);
+                break;
+            case 'horizontal':
+                buildHorizontalMenu(menuList);
+                break;
+            default:
+                buildVerticalMenu(menuList);
+        }
+
+    }
+
+    function buildVerticalMenu (menuList) {
 
         for (var i = 0; i < menuList.length; i++)
         {
@@ -89,7 +105,6 @@
             li.appendChild(btn);
             document.getElementById('menu').appendChild(li);
         }
-
     }
 
     function buildHorizontalMenu (menuList) {
