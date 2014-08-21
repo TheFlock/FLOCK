@@ -10,6 +10,7 @@
         define([
                 'jquery', 
                 'FLOCK/utils/DeviceDetect',
+                'FLOCK/classes/MenuPaginator',
                 'greensock/TweenLite.min',
                 'greensock/TimelineLite.min',
                 'greensock/easing/EasePack.min',
@@ -92,15 +93,16 @@
     }
 
     function buildHorizontalMenu (menuList) {
+
         var sectionID = "framework";
         //build the menu from JSON
         if(sectionLoader_localizationJSON.sections[sectionID] && sectionLoader_localizationJSON.sections[sectionID]["data"] && sectionLoader_localizationJSON.sections[sectionID]["data"]["menuItems"] && sectionLoader_localizationJSON.sections[sectionID]["data"]["menuItems"].length){                      
             var homeMenuID = "homeMenuCenter";
             var homeMenuElem = document.getElementById(homeMenuID);
-            var extraMenuObjs = sectionLoader_localizationJSON.sections[sectionID]["data"]["menuItems"];
-            var firstBtn = true;;
-            for(var m=0; m<extraMenuObjs.length; m++){
-                if(extraMenuObjs[m]["VISIBLE"] == "false")continue;
+            var firstBtn = true;
+
+            for(var i = 0; i < menuList.length; i++){
+                if(menuList[i]["VISIBLE"] == "false")continue;
                 if(!firstBtn){
                     // var newDot = document.createElement('li');
                     // newDot.className = "menu_dot";
@@ -108,15 +110,15 @@
                 } else {firstBtn = false;};
                 
                 var newMenuEntry = document.createElement('li');
-                newMenuEntry.id = extraMenuObjs[m]["ID"];
+                newMenuEntry.id = menuList[i]["ID"];
                 var newMenuLink = document.createElement('a');
-                newMenuLink.innerHTML = extraMenuObjs[m]["LABEL"];
-                newMenuLink.href = extraMenuObjs[m]["HREF"];
-                newMenuLink.style.fontSize = extraMenuObjs[m]["font-size"];
-                if(extraMenuObjs[m]["TYPE"] == "external"){
+                newMenuLink.innerHTML = menuList[i]["LABEL"];
+                newMenuLink.href = menuList[i]["HREF"];
+                newMenuLink.style.fontSize = menuList[i]["font-size"];
+                if(menuList[i]["TYPE"] == "external"){
                     newMenuLink.target = "_blank";
-                } else if(extraMenuObjs[m]["TYPE"] == "popup") {
-                    newMenuLink.rel = extraMenuObjs[m]["HREF"]+","+extraMenuObjs[m]["popupw"]+","+extraMenuObjs[m]["popuph"];
+                } else if(menuList[i]["TYPE"] == "popup") {
+                    newMenuLink.rel = menuList[i]["HREF"]+","+menuList[i]["popupw"]+","+menuList[i]["popuph"];
                     $(newMenuLink).click(menu_openPopUp);
                 }
                 
@@ -124,13 +126,14 @@
                 homeMenuElem.appendChild(newMenuEntry);
                 
             }
+
         }
         
-        for(var m=0; m<allMenus.length; m++){
-            var menuObj = document.getElementById(allMenus[m]);
+        for(var i = 0; i < allMenus.length; m++){
+            var menuObj = document.getElementById(allMenus[i]);
     //      menuObj.style.left = main_siteWidth+'px';
             menuObj.style.top = '-115px';
-            if (allMenus[m] === 'homeMenu') {
+            if (allMenus[i] === 'homeMenu') {
                 homePaginator = new Paginator({
                     wrapper: menuObj
                 });
