@@ -110,7 +110,7 @@
     function buildHorizontalMenu (menuList) {
 
         var sectionID = "framework";
-        var homeMenuID = "homeMenuCenter";
+        var homeMenuID = "menu";
         var homeMenuElem = document.getElementById(homeMenuID);
         var firstBtn = true;
 
@@ -137,7 +137,6 @@
             
             newMenuEntry.appendChild(newMenuLink);
             homeMenuElem.appendChild(newMenuEntry);
-            
         }
 
         for(var i = 0; i < allMenus.length; m++){
@@ -145,7 +144,7 @@
     //      menuObj.style.left = main_siteWidth+'px';
             menuObj.style.top = '-115px';
             if (allMenus[i] === 'homeMenu') {
-                homePaginator = new Paginator({
+                homePaginator = new FLOCK.classes.MenuPaginator({
                     wrapper: menuObj
                 });
             }
