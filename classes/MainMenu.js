@@ -109,9 +109,8 @@
 
     function buildHorizontalMenu (menuList) {
 
-        var sectionID = "framework";
-        var homeMenuID = "menu";
-        var homeMenuElem = document.getElementById(homeMenuID);
+        var menuID = "menu";
+        var menuElem = document.getElementById(menuID);
         var firstBtn = true;
 
         for(var i = 0; i < menuList.length; i++){
@@ -119,7 +118,7 @@
             if(!firstBtn){
                 // var newDot = document.createElement('li');
                 // newDot.className = "menu_dot";
-                // homeMenuElem.appendChild(newDot);
+                // menuElem.appendChild(newDot);
             } else {firstBtn = false;};
             
             var newMenuEntry = document.createElement('li');
@@ -136,19 +135,12 @@
             }
             
             newMenuEntry.appendChild(newMenuLink);
-            homeMenuElem.appendChild(newMenuEntry);
+            menuElem.appendChild(newMenuEntry);
         }
 
-        for(var i = 0; i < allMenus.length; m++){
-            var menuObj = document.getElementById(allMenus[i]);
-    //      menuObj.style.left = main_siteWidth+'px';
-            menuObj.style.top = '-115px';
-            if (allMenus[i] === 'homeMenu') {
-                homePaginator = new FLOCK.classes.MenuPaginator({
-                    wrapper: menuObj
-                });
-            }
-        }
+        homePaginator = new FLOCK.classes.MenuPaginator({
+            wrapper: menuElem.parentNode
+        });
     }
 
     function selectMenuItem (section_name, animate) {
