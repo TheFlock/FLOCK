@@ -91,6 +91,53 @@
 
     }
 
+    function buildHorizontalMenu (menuList) {
+        var sectionID = "framework";
+        //build the menu from JSON
+        if(sectionLoader_localizationJSON.sections[sectionID] && sectionLoader_localizationJSON.sections[sectionID]["data"] && sectionLoader_localizationJSON.sections[sectionID]["data"]["menuItems"] && sectionLoader_localizationJSON.sections[sectionID]["data"]["menuItems"].length){                      
+            var homeMenuID = "homeMenuCenter";
+            var homeMenuElem = document.getElementById(homeMenuID);
+            var extraMenuObjs = sectionLoader_localizationJSON.sections[sectionID]["data"]["menuItems"];
+            var firstBtn = true;;
+            for(var m=0; m<extraMenuObjs.length; m++){
+                if(extraMenuObjs[m]["VISIBLE"] == "false")continue;
+                if(!firstBtn){
+                    // var newDot = document.createElement('li');
+                    // newDot.className = "menu_dot";
+                    // homeMenuElem.appendChild(newDot);
+                } else {firstBtn = false;};
+                
+                var newMenuEntry = document.createElement('li');
+                newMenuEntry.id = extraMenuObjs[m]["ID"];
+                var newMenuLink = document.createElement('a');
+                newMenuLink.innerHTML = extraMenuObjs[m]["LABEL"];
+                newMenuLink.href = extraMenuObjs[m]["HREF"];
+                newMenuLink.style.fontSize = extraMenuObjs[m]["font-size"];
+                if(extraMenuObjs[m]["TYPE"] == "external"){
+                    newMenuLink.target = "_blank";
+                } else if(extraMenuObjs[m]["TYPE"] == "popup") {
+                    newMenuLink.rel = extraMenuObjs[m]["HREF"]+","+extraMenuObjs[m]["popupw"]+","+extraMenuObjs[m]["popuph"];
+                    $(newMenuLink).click(menu_openPopUp);
+                }
+                
+                newMenuEntry.appendChild(newMenuLink);
+                homeMenuElem.appendChild(newMenuEntry);
+                
+            }
+        }
+        
+        for(var m=0; m<allMenus.length; m++){
+            var menuObj = document.getElementById(allMenus[m]);
+    //      menuObj.style.left = main_siteWidth+'px';
+            menuObj.style.top = '-115px';
+            if (allMenus[m] === 'homeMenu') {
+                homePaginator = new Paginator({
+                    wrapper: menuObj
+                });
+            }
+        }
+    }
+
     function selectMenuItem (section_name, animate) {
 
         var selected = $(this.elements.el).find('a[data-section="' + section_name + '"]');
