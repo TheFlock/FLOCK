@@ -159,31 +159,6 @@
         if (this.elements === undefined) {
             return;
         }
-
-        var selected_offset = this.elements.selected[0].parentNode.offsetTop + this.elements.el.offsetTop,
-            selected_height = this.elements.selected[0].parentNode.offsetHeight,
-            menu_height = this.elements.el.offsetHeight,
-            wrapper_height = menu_height + 120,
-            window_height = FLOCK.settings.window_dimensions.height;
-
-        this.elements.wrapper.style.height = wrapper_height + 'px';
-        //this.elements.wrapper.style.top = ((window_height / 2) - (wrapper_height / 2) - 20) + 'px';
-
-        var hashtag = document.getElementById('hashtag'),
-            centeredtop = (window_height / 2) - (wrapper_height / 2) - 20,
-            menutop = centeredtop;
-        if (hashtag) {
-            if (hashtag.offsetTop > 0) {
-                menutop = Math.max(0, Math.min(hashtag.offsetTop - wrapper_height - 20, centeredtop));
-            }
-        }
-
-        this.elements.header.style.top = menutop + 'px';
-
-        // pass the amount of space between the bottom of the menu and the bottom of the screen to resize title treatment
-        // FLOCK.app.TitleTreatment.resize(window_height / 2 - menu_height / 2);
-
-        return $('#menu').width();
     }
 
     MainMenu.prototype._over = over;
