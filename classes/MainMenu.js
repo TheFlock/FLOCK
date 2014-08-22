@@ -149,7 +149,7 @@
             menuElem.appendChild(newMenuEntry);
         }
 
-        var homePaginator = new FLOCK.classes.MenuPaginator({
+        this.menuPaginator = new FLOCK.classes.MenuPaginator({
             wrapper: menuElem.parentNode
         });
     }
@@ -219,6 +219,10 @@
     }
 
     function resize () {
+        if (this.menuPaginator) {
+            this.menuPaginator.resize(FLOCK.settings.window_dimensions.width, FLOCK.settings.window_dimensions.height);
+        }
+
         if (this.elements === undefined) {
             return;
         }
