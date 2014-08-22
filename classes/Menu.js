@@ -216,9 +216,6 @@
         }
     }
 
-    Menu.prototype._over = over;
-    Menu.prototype._out = out;
-
     Menu.prototype.init = init;
     Menu.prototype.hide = hide;
     Menu.prototype.show = show;
