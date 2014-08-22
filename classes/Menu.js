@@ -50,19 +50,8 @@
 
         this.isHidden = false;
 
-        // this.elements = {
-        //     el: document.getElementById('menu'),
-        //     header: document.getElementById('mainHeader')
-        // };
-
         this.elements.listItems = this.elements.el.getElementsByTagName('li');
-
-        this.elements.wrapper = this.elements.el.parentNode;
         this.elements.selected = $('#menu a[data-section="' + current_section + '"]').addClass('selected')
-
-        // $(el).find('a').hover(this._over.bind(this), this._out.bind(this));
-        $(this.elements.el).on('mouseenter', 'li', this._over.bind(this));
-        $(this.elements.el).on('mouseleave', this._out.bind(this));
 
         this.selectMenuItem(this.elements.selected.data('section'), false);
 
@@ -177,19 +166,6 @@
         this.elements.selected = selected;
         this.elements.selected[0].className = 'selected';
 
-    }
-
-    function over (e) {
-
-        var item_offset = e.currentTarget.offsetTop + this.elements.el.offsetTop,
-            item_height = $(e.currentTarget).height();
-    }
-
-    function out (e) {
-        console.log('OUT');
-        
-        var selected_offset = this.elements.selected[0].parentNode.offsetTop + this.elements.el.offsetTop,
-            selected_height = this.elements.selected[0].parentNode.offsetHeight;
     }
 
     function hide () {
