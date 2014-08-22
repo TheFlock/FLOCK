@@ -115,11 +115,8 @@
 
         menuElem.className = 'centeredMenu';
 
-        var paginatorEl = document.createElement('div');
+        var paginatorEl = document.getElementById('mainNav');
         paginatorEl.className = 'paginatorWrapper';
-        paginatorEl.appendChild(menuElem);
-
-        header.appendChild(paginatorEl);
 
         var firstBtn = true;
 
