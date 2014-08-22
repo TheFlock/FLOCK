@@ -34,7 +34,8 @@
 
         this.elements = {
             el: document.getElementById(data.menuID),
-            wrapper: document.getElementById(data.wrapperID)
+            wrapper: document.getElementById(data.wrapperID),
+            paginatorEl: document.getElementById(data.paginatorElID)
         }
 
         this.menuList = data.menuList;
@@ -128,8 +129,7 @@
 
         menuElem.className = 'centeredMenu';
 
-        var paginatorEl = document.getElementById('mainNav');
-        paginatorEl.className = 'paginatorWrapper';
+        this.elements.paginatorEl.className = 'paginatorWrapper';
 
         var firstBtn = true;
 
@@ -170,7 +170,7 @@
         animate = true;
 
         if (isMobile) {
-            $('#mainNav').removeClass('open');
+            // $('#mainNav').removeClass('open');
         }
 
         this.elements.selected[0].className = '';
