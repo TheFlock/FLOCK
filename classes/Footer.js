@@ -287,7 +287,7 @@
     }
 
     function hide () {
-        TweenLite.to(this.elements.el, 0.25, {bottom: '-30px', ease:Power2.easeInOut, onComplete: function () {
+        TweenLite.to(this.elements.el, 0.25, {bottom: -FLOCK.settings.footer_height + 'px', ease:Power2.easeInOut, onComplete: function () {
             // that.elements.el.style.display = 'none';
         }});
     }
