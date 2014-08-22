@@ -125,12 +125,13 @@
             newMenuEntry.id = menuList[i]["ID"];
             var newMenuLink = document.createElement('a');
             newMenuLink.innerHTML = menuList[i]["LABEL"];
-            newMenuLink.href = menuList[i]["HREF"];
+            newMenuLink.setAttribute('data-section', menuList[i].link);
+            newMenuLink.setAttribute('href', menuList[i].link);
             newMenuLink.style.fontSize = menuList[i]["font-size"];
             if(menuList[i]["TYPE"] == "external"){
                 newMenuLink.target = "_blank";
             } else if(menuList[i]["TYPE"] == "popup") {
-                newMenuLink.rel = menuList[i]["HREF"]+","+menuList[i]["popupw"]+","+menuList[i]["popuph"];
+                newMenuLink.rel = menuList[i].link+","+menuList[i]["popupw"]+","+menuList[i]["popuph"];
                 $(newMenuLink).click(menu_openPopUp);
             }
             
