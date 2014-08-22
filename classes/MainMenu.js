@@ -111,6 +111,14 @@
 
         var menuID = "menu";
         var menuElem = document.getElementById(menuID);
+        menuElem.className = 'centeredMenu';
+
+        var paginatorEl = document.createElement('div');
+        paginatorEl.className = 'paginatorWrapper';
+        paginatorEl.appendChild(menuElem);
+
+        this.elements.header.appendChild(paginatorEl);
+
         var firstBtn = true;
 
         for(var i = 0; i < menuList.length; i++){
