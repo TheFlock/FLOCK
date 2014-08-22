@@ -148,7 +148,7 @@
         }
 
         this.menuPaginator = new FLOCK.classes.MenuPaginator({
-            wrapper: menuElem.parentNode
+            wrapper: header
         });
     }
 
