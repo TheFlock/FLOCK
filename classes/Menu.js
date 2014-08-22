@@ -122,12 +122,12 @@
 
     function buildHorizontalMenu (menuList) {
 
-        var menuID = "menu";
-        var menuElem = document.getElementById(menuID);
-        var header = document.getElementById('mainHeader');
-        header.className = 'horizontal';
+        // var menuID = "menu";
+        //var menuElem = document.getElementById(menuID);
+        // var header = document.getElementById('mainHeader');
+        this.elements.wrapper.className = 'horizontal';
 
-        menuElem.className = 'centeredMenu';
+        this.elements.el.className = 'centeredMenu';
 
         this.elements.paginatorEl.className = 'paginatorWrapper';
 
@@ -155,11 +155,11 @@
             }
             
             newMenuEntry.appendChild(newMenuLink);
-            menuElem.appendChild(newMenuEntry);
+            this.elements.el.appendChild(newMenuEntry);
         }
 
         this.menuPaginator = new FLOCK.classes.MenuPaginator({
-            wrapper: header
+            wrapper: this.elements.wrapper
         });
     }
 
