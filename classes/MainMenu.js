@@ -62,13 +62,13 @@
 
         switch (menuStyle) {
             case 'vertical':
-                buildVerticalMenu(menuList).bind(this);
+                buildVerticalMenu(menuList);
                 break;
             case 'horizontal':
-                buildHorizontalMenu(menuList).bind(this);
+                buildHorizontalMenu(menuList);
                 break;
             default:
-                buildVerticalMenu(menuList).bind(this);
+                buildVerticalMenu(menuList);
         }
 
     }
@@ -111,13 +111,15 @@
 
         var menuID = "menu";
         var menuElem = document.getElementById(menuID);
+        var header = document.getElementById('mainHeader');
+
         menuElem.className = 'centeredMenu';
 
         var paginatorEl = document.createElement('div');
         paginatorEl.className = 'paginatorWrapper';
         paginatorEl.appendChild(menuElem);
 
-        this.elements.header.appendChild(paginatorEl);
+        header.appendChild(paginatorEl);
 
         var firstBtn = true;
 
