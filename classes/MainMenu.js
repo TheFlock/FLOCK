@@ -62,13 +62,13 @@
 
         switch (menuStyle) {
             case 'vertical':
-                buildVerticalMenu(menuList);
+                buildVerticalMenu(menuList).bind(this);
                 break;
             case 'horizontal':
-                buildHorizontalMenu(menuList);
+                buildHorizontalMenu(menuList).bind(this);
                 break;
             default:
-                buildVerticalMenu(menuList);
+                buildVerticalMenu(menuList).bind(this);
         }
 
     }
