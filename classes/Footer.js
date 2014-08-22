@@ -185,7 +185,6 @@
             return;
         }
 
-        mpaaRequirementsElement.css('width', (40 + mpaaRequirementsElement.find('img').width() + mpaaRequirementsElement.find('#mpaa_legal').outerWidth(true)));
         FLOCK.settings.mpaaShown = true;
         TweenLite.to(mpaaRequirementsElement, 1, {css:{bottom: 0}, ease:Power4.easeInOut});
         // TweenLite.to($("#bottomRight"), 1, {css:{bottom: -200}, ease:Power4.easeInOut});
