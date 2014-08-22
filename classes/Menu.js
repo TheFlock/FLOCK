@@ -114,7 +114,7 @@
         // var menuID = "menu";
         //var menuElem = document.getElementById(menuID);
         // var header = document.getElementById('mainHeader');
-        this.elements.wrapper.className = 'horizontal';
+        this.elements.wrapper.className = 'horizontal' + this.elements.wrapper.className;
 
         this.elements.el.className = 'centeredMenu';
 
