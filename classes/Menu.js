@@ -202,7 +202,7 @@
 
         switch (this.menuStyle) {
             case 'horizontal':
-                TweenLite.to(this.elements.header, 0.5, {y: -this.elements.header.offsetHeight + 'px', ease: Power4.easeInOut});
+                TweenLite.to(this.elements.wrapper, 0.5, {y: -this.elements.wrapper.offsetHeight + 'px', ease: Power4.easeInOut});
                 break;
             case 'vertical':
                 break;
@@ -222,7 +222,7 @@
 
         switch (this.menuStyle) {
             case 'horizontal':
-                TweenLite.to(this.elements.header, 0.5, {y: '0px', ease: Power4.easeInOut});
+                TweenLite.to(this.elements.wrapper, 0.5, {y: '0px', ease: Power4.easeInOut});
                 break;
             case 'vertical':
                 break;
