@@ -184,6 +184,7 @@
     }
 
     function hide () {
+
         if (this.isHidden === true) {
             return;
         }
@@ -201,10 +202,13 @@
     }
 
     function show (show) {
+
         if (this.isHidden === false) {
             return;
         }
 
+        this.isHidden = false;
+        
         document.getElementById('mainHeader').style.visibility = 'visible';
 
         switch (this.menuStyle) {
