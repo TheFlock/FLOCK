@@ -31,11 +31,13 @@
     var MainMenu = function () {
         console.log('main menu');
         that = this;
+
+        this.menuStyle = 'vertical';
     }
 
     function init (current_section) {
 
-        this.isHidden = true;
+        this.isHidden = false;
 
         this.elements = {
             el: document.getElementById('menu'),
@@ -62,7 +64,6 @@
 
         switch (menuStyle) {
             case 'vertical':
-                this.menuStyle = 'vertical';
                 buildVerticalMenu.call(this, menuList);
                 break;
             case 'horizontal':
