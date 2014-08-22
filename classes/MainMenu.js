@@ -124,7 +124,7 @@
             var newMenuEntry = document.createElement('li');
             newMenuEntry.id = menuList[i]["ID"];
             var newMenuLink = document.createElement('a');
-            newMenuLink.innerHTML = menuList[i]["LABEL"];
+            newMenuLink.innerHTML = menuList[i].label;
             newMenuLink.setAttribute('data-section', menuList[i].link);
             newMenuLink.setAttribute('href', menuList[i].link);
             newMenuLink.style.fontSize = menuList[i]["font-size"];
