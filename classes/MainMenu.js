@@ -62,9 +62,11 @@
 
         switch (menuStyle) {
             case 'vertical':
+                this.menuStyle = 'vertical';
                 buildVerticalMenu.call(this, menuList);
                 break;
             case 'horizontal':
+                this.menuStyle = 'horizontal';
                 buildHorizontalMenu.call(this, menuList);
                 break;
             default:
@@ -180,39 +182,38 @@
             selected_height = this.elements.selected[0].parentNode.offsetHeight;
     }
 
-    function hide (hide) {
+    function hide () {
         if (this.isHidden === true) {
             return;
         }
 
-        if (hide === 'all') {
-            this.hideAll = true;
-        } else {
-            this.hideAll = false;
-        }
-
         this.isHidden = true;
-        this.tl.play();
+
+        switch (this.menuStyle) {
+            case 'horizontal':
+                TweenLite.to(this.elements.header, 0.5, {y: -this.elements.header.offsetHeight + 'px', ease: Power4.easeInOut});
+                break;
+            case 'vertical':
+                break;
+            default:
+        }
     }
 
     function show (show) {
         if (this.isHidden === false) {
-            if (show === 'bars') {
-                this.hide();
-            }
             return;
         }
 
         document.getElementById('mainHeader').style.visibility = 'visible';
 
-        if (show === 'bars') {
-            this.showAll = false;
-        } else {
-            this.showAll = true;
-            this.isHidden = false;
+        switch (this.menuStyle) {
+            case 'horizontal':
+                TweenLite.to(this.elements.header, 0.5, {y: '0px', ease: Power4.easeInOut});
+                break;
+            case 'vertical':
+                break;
+            default:
         }
-
-        this.tl.reverse();
     }
 
     function resize () {
