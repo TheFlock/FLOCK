@@ -28,21 +28,31 @@
     var isMobile = FLOCK.utils.DeviceDetect.isMobile;
     var that;
 
-    var Menu = function () {
+    var Menu = function (data) {
         console.log('main menu');
         that = this;
 
-        this.menuStyle = 'vertical';
+        this.elements = {
+            el: document.getElementById(data.menuID),
+            wrapper: document.getElementById(data.wrapperID)
+        }
+
+        this.menuList = data.menuList;
+        this.menuStyle = data.menuStyle;
+
+        if (data.menuList) {
+            this.buildMenu();
+        }
     }
 
     function init (current_section) {
 
         this.isHidden = false;
 
-        this.elements = {
-            el: document.getElementById('menu'),
-            header: document.getElementById('mainHeader')
-        };
+        // this.elements = {
+        //     el: document.getElementById('menu'),
+        //     header: document.getElementById('mainHeader')
+        // };
 
         this.elements.listItems = this.elements.el.getElementsByTagName('li');
 
@@ -59,19 +69,18 @@
 
     }
 
-    function buildMenu (menuList, menuStyle) {
-        console.log('menuStyle', menuStyle);
+    function buildMenu () {
 
-        switch (menuStyle) {
+        switch (this.menuStyle) {
             case 'vertical':
-                buildVerticalMenu.call(this, menuList);
+                buildVerticalMenu.call(this, this.menuList);
                 break;
             case 'horizontal':
                 this.menuStyle = 'horizontal';
-                buildHorizontalMenu.call(this, menuList);
+                buildHorizontalMenu.call(this, this.menuList);
                 break;
             default:
-                buildVerticalMenu.call(this, menuList);
+                buildVerticalMenu.call(this, this.menuList);
         }
 
     }
@@ -106,7 +115,7 @@
 
             var li = document.createElement('li');
             li.appendChild(btn);
-            document.getElementById('menu').appendChild(li);
+            this.elements.el.appendChild(li);
         }
     }
 
