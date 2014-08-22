@@ -16,10 +16,10 @@
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min'
             ], function () {
-            return (root.classes.MainMenu = factory());
+            return (root.classes.Menu = factory());
         });
     } else {
-        root.classes.MainMenu = factory();
+        root.classes.Menu = factory();
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
 
@@ -28,7 +28,7 @@
     var isMobile = FLOCK.utils.DeviceDetect.isMobile;
     var that;
 
-    var MainMenu = function () {
+    var Menu = function () {
         console.log('main menu');
         that = this;
 
@@ -208,7 +208,7 @@
         }
 
         this.isHidden = false;
-        
+
         document.getElementById('mainHeader').style.visibility = 'visible';
 
         switch (this.menuStyle) {
@@ -231,15 +231,15 @@
         }
     }
 
-    MainMenu.prototype._over = over;
-    MainMenu.prototype._out = out;
+    Menu.prototype._over = over;
+    Menu.prototype._out = out;
 
-    MainMenu.prototype.init = init;
-    MainMenu.prototype.hide = hide;
-    MainMenu.prototype.show = show;
-    MainMenu.prototype.buildMenu = buildMenu;
-    MainMenu.prototype.resize = resize;
-    MainMenu.prototype.selectMenuItem = selectMenuItem;
+    Menu.prototype.init = init;
+    Menu.prototype.hide = hide;
+    Menu.prototype.show = show;
+    Menu.prototype.buildMenu = buildMenu;
+    Menu.prototype.resize = resize;
+    Menu.prototype.selectMenuItem = selectMenuItem;
 
-    return new MainMenu();
+    return Menu;
 }));
