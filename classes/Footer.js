@@ -244,7 +244,7 @@
         var shareShelf = $('#shareShelf'),
             sharelabel = document.getElementById('sharelabel'),
             shareShelfContents = $('#shareShelfContents'),
-            shelf_height = shareShelf.height();
+            shelf_height = shareShelf.outerHeight();
 
         if (shareShelf[0].className.match('active') !== null || e === 'close') {
             shareShelf[0].className = shareShelf[0].className.replace('active', '');
