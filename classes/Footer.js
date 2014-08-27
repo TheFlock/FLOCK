@@ -263,8 +263,8 @@
             sharelabel.style.zIndex = 11;
             document.getElementById('share').style.zIndex = 9;
 
-            TweenLite.to(shareShelf, 0.5, {top:-(shelf_height) + 'px', ease:Power4.easeInOut});
-            TweenLite.to(sharelabel, 0.5, {top:-(shelf_height) + 'px', ease:Power4.easeInOut});
+            TweenLite.to(shareShelf, 0.5, {top:-(shelf_height - FLOCK.settings.footer_height) + 'px', ease:Power4.easeInOut});
+            TweenLite.to(sharelabel, 0.5, {top:-(shelf_height - FLOCK.settings.footer_height) + 'px', ease:Power4.easeInOut});
 
             if (document.getElementById('credits-button').className.match('active')) {
                 that._toggleCredits();
