@@ -249,7 +249,7 @@
         if (shareShelf[0].className.match('active') !== null || e === 'close') {
             shareShelf[0].className = shareShelf[0].className.replace('active', '');
             sharelabel.className = sharelabel.className.replace('active', '');
-            TweenLite.to(shareShelf, 0.5, {top:'30px', ease:Power4.easeInOut});
+            TweenLite.to(shareShelf, 0.5, {top: FLOCK.settings.footer_height + 'px', ease:Power4.easeInOut});
             TweenLite.to(sharelabel, 0.5, {top:'0px', ease:Power4.easeInOut, onComplete: function () {
                 shareShelf[0].style.zIndex = 0;
                 sharelabel.style.zIndex = 1;
