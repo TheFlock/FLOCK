@@ -9,8 +9,7 @@
         // AMD. Register as an anonymous module.
         define([
                 'jquery', 
-                'FLOCK/classes/Paginator', 
-                'FLOCK/utils/VideoPlayerME'
+                'FLOCK/classes/Paginator'
             ], function ($) {
             return (root.classes.Backplate = factory($));
         });

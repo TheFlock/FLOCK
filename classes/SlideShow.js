@@ -10,8 +10,8 @@
         define([
                 'jquery', 
                 'FLOCK/classes/Paginator', 
-                'FLOCK/classes/Backplate', 
-                'FLOCK/utils/VideoPlayerME',
+                'FLOCK/classes/Backplate',
+                'FLOCK/classes/VideoBackplate',
                 'greensock/TweenLite.min',
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min'
@@ -28,94 +28,13 @@
         isMobile,
         useFallbackImage,
         slide_ids = {};
-    
-    var VideoBackplate = function (div) {
-        var that = this,
-            default_ratio = 9 / 16,
-            playerVars = {
-                autoplay: 0,
-                tracking: true,
-                title: '',
-                loop: true,
-                controls: false,
-                videoSrc: div.getAttribute('data-path')
-            },
-            ratio = div.getAttribute('data-ratio');
-
-        this.elements = {
-            wrapper: div
-        };
-
-        this.el = this.elements.wrapper;
-
-        this.player_obj = new FLOCK.utils.VideoPlayerME(div, playerVars);
-        
-        this.ratio = ratio || default_ratio;
-        // this.resize(FLOCK.settings.window_dimensions.width, FLOCK.settings.window_dimensions.height);
-
-        this.player_obj.onLoadedMetadata = function () {
-            var vid_width = that.player_obj.player.videoWidth,
-                vid_height = that.player_obj.player.videoHeight;
-
-            // if for some reason videoWidth and videoHeight are undefined, set default ratio
-            if (vid_width && vid_height && vid_width > 0 && vid_height > 0) {
-                that.ratio = vid_height / vid_width;
-                console.log('that.ratio');
-            }
-
-            console.log(that.ratio);
-
-            // console.log('on loaded metadata ' + that.ratio);
-
-            // that.resize(FLOCK.settings.window_dimensions.width, FLOCK.settings.window_dimensions.height);
-        }
-    }
-
-    VideoBackplate.prototype.play = function () {
-        console.log('PLAY IT');
-        this.player_obj.player.play();
-    }
-
-    VideoBackplate.prototype.stop = function () {
-        console.log('STOP IT');
-        this.player_obj.player.pause();
-    }
-
-    VideoBackplate.prototype.reset = function () {
-
-        try {
-            this.player_obj.player.currentTime = 0;
-        }
-        catch (e) {
-           console.log(e);
-        }
-        
-        this.stop();
-    }
-
-    VideoBackplate.prototype.resize = function (w, h) {
-        var vid_width = w > 480 ? h / this.ratio : w,
-            vid_height = w > 480 ? h : w * this.ratio;
-
-        this.elements.wrapper.style.width = vid_width + 'px';
-        this.elements.wrapper.style.height = vid_height + 'px';
-        this.elements.wrapper.style.left = ((w / 2) - (vid_width / 2)) + 'px';
-    }
-
-    var Slide = function () {
-
-    }
-
-    Slide.prototype.resize = function () {
-
-    }
 
     var SlideShow = function (data) {
 
         var el = data.el || data,
             close_fn = data.close_fn || false,
             paginator_container = data.paginator_container || el,
-            slideElements = el.getElementsByClassName('slide');
+            slides = data.slides;
 
         this.paginator = data.paginator;
         this.axis = data.axis || 'x'; // direction to animate
@@ -144,6 +63,26 @@
             mode: data.mode || 'cover'
         }
 
+        this.buildSlideshow(slides);
+    }
+
+    function buildSlideshow (slides) {
+
+        var slide = '<div class="slide"><div class="backplate_wrapper"><img class="backplate" data-thumb="{{backplate.thumb}}" data-mode="{{backplate.mode}}" data-anchor="{{backplate.anchor}}" src="' + FLOCK.settings.base_url + '{{backplate.img}}"></div></div>',
+            slides_html = '';
+
+        for (var i = 0; i < slides.length; i++) {
+            if (slides[i].visible === 'false') {
+                continue;
+            }
+            slides_html += slide.replace('{{backplate.anchor}}', slides[i].anchor)
+                                .replace('{{backplate.mode}}', slides[i].mode)
+                                .replace('{{backplate.img}}', slides[i].img)
+                                .replace('{{backplate.thumb}}', slides[i].thumb);
+        };
+        this.elements.slideshow_wrapper.innerHTML = slides_html;
+
+        var slideElements = this.elements.slideshow_wrapper.getElementsByClassName('slide');
         for (var i = 0; i < slideElements.length; i++) {
             var loaded = i === 0 ? true : false; // TODO: this won't apply in all cases, need to determine if a backplate has been preloaded rather than just assuming the first one always is
 
@@ -188,7 +127,7 @@
         };
 
         if (this.paginator !== false) {
-            this.paginator = new FLOCK.app.Paginator({
+            this.paginator = new FLOCK.classes.Paginator({
                 thumbs: thumbs
             });
 
@@ -283,7 +222,7 @@
 
         slide_obj.el = slide_element;
 
-        slide_obj.backplate = new FLOCK.app.Backplate(slide_element.getElementsByClassName('backplate_wrapper')[0], loaded, this.elements.resizeContainer, this.settings.mode);
+        slide_obj.backplate = new FLOCK.classes.Backplate(slide_element.getElementsByClassName('backplate_wrapper')[0], loaded, this.elements.resizeContainer, this.settings.mode);
         
         if (slide_obj.backplate.elements.wrapper.className.match('quote')) {
             slide_obj.isQuote = true;
@@ -304,7 +243,7 @@
                 slide_obj.video_wrapper.className = 'backplate_wrapper';
                 slide_obj.video_wrapper.appendChild(slide_obj.backplate);
             } else {
-                slide_obj.video_player = new VideoBackplate(slide_obj.video_wrapper);
+                slide_obj.video_player = new FLOCK.classes.VideoBackplate(slide_obj.video_wrapper);
             }
         }
 
@@ -313,10 +252,6 @@
         }
 
         this.slides.push(slide_obj);
-
-        // for (var i = this.slides.length - 1; i >= 0; i--) {
-        //     slide_ids[this.slides[i].backplate.elements.backplate.src] = i;
-        // };
 
     }
 
