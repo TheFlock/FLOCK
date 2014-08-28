@@ -31,11 +31,9 @@
 
     var SlideShow = function (data) {
 
-        var el = data.el || data,
-            close_fn = data.close_fn || false,
-            paginator_container = data.paginator_container || el,
-            slides = data.slides;
+        var el = data.el || data;
 
+        this.close_fn = data.close_fn || false;
         this.paginator = data.paginator;
         this.axis = data.axis || 'x'; // direction to animate
         this.duration = data.duration || 0.75; // speed of animation
@@ -54,7 +52,8 @@
             wrapper: el,
             prev: document.createElement('a'),
             next: document.createElement('a'),
-            resizeContainer: data.resizeContainer || false
+            resizeContainer: data.resizeContainer || false,
+            paginator_container: data.paginator_container || el
         };
 
         this.settings = {
@@ -63,7 +62,7 @@
             mode: data.mode || 'cover'
         }
 
-        this.buildSlideshow(slides);
+        this.buildSlideshow(data.slides);
     }
 
     function buildSlideshow (slides) {
@@ -80,9 +79,9 @@
                                 .replace('{{backplate.img}}', slides[i].img)
                                 .replace('{{backplate.thumb}}', slides[i].thumb);
         };
-        this.elements.slideshow_wrapper.innerHTML = slides_html;
+        this.elements.wrapper.innerHTML = slides_html;
 
-        var slideElements = this.elements.slideshow_wrapper.getElementsByClassName('slide');
+        var slideElements = this.elements.wrapper.getElementsByClassName('slide');
         for (var i = 0; i < slideElements.length; i++) {
             var loaded = i === 0 ? true : false; // TODO: this won't apply in all cases, need to determine if a backplate has been preloaded rather than just assuming the first one always is
 
@@ -137,7 +136,7 @@
         }
         
 
-        if (close_fn) {
+        if (this.close_fn) {
             this.close = close_fn;
 
             this.elements.close_btn = document.createElement('a');
@@ -154,7 +153,7 @@
         }
 
         if (this.paginator) {
-            paginator_container.appendChild(this.paginator.elements.el);
+            this.elements.paginator_container.appendChild(this.paginator.elements.el);
             this.paginator.update(this.state.current_index + 1, this.slides.length);
         }
 
@@ -741,6 +740,7 @@
     SlideShow.prototype._updateState = updateState;
     
     // SlideShow.prototype._resizeBackplate = resizeBackplate;
+    SlideShow.prototype.buildSlideshow = buildSlideshow;
     SlideShow.prototype.addSlide = addSlide;
     SlideShow.prototype.reset = reset;
     SlideShow.prototype.keyHandler = keyHandler;
