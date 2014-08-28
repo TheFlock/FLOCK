@@ -64,7 +64,7 @@
     }
 
     // inherit from base class Section
-    FLOCK.utils.inherit(FLOCK.classes.VideoBackplate, FLOCK.classes.Backplate);
+    FLOCK.utils.inherit(VideoBackplate, FLOCK.classes.Backplate);
 
     VideoBackplate.prototype.play = function () {
         console.log('PLAY IT');
