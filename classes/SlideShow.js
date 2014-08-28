@@ -56,9 +56,12 @@
             paginator_container: data.paginator_container || el
         };
 
+        var header_height = data.fullBleed || data.ignoreHeader ? 0 : FLOCK.settings.header_height,
+            footer_height = data.fullBleed || data.ignoreFooter ? 0 : FLOCK.settings.footer_height;
+
         this.settings = {
-            header_height: FLOCK.settings.header_height,
-            footer_height: FLOCK.settings.footer_height,
+            header_height: header_height,
+            footer_height: footer_height,
             mode: data.mode || 'cover'
         }
 
@@ -503,7 +506,7 @@
                 h = this.elements.resizeContainer.offsetHeight;
             } else {
                 w = FLOCK.settings.window_dimensions.width;
-                h = FLOCK.settings.window_dimensions.height - (FLOCK.settings.header_height + FLOCK.settings.footer_height);
+                h = FLOCK.settings.window_dimensions.height - (this.settings.header_height + this.settings.footer_height);
             }
         }
 
@@ -515,30 +518,13 @@
 
         if (backplate) {
             backplate.resize(w, h);
-            // this._resizeBackplate(backplate, w, h);
         } else if (video_player) {
-            // this._resizeBackplate(video_player, w, h);
         }
-
-        // for (var i = this.slides.length - 1; i >= 0; i--) {
-
-        //     curr_slide = this.slides[i];
-        //     backplate = curr_slide.backplate;
-        //     video_player = curr_slide.video_player;
-
-        //     if (backplate) {
-        //         backplate.resize(w, h);
-        //         // this._resizeBackplate(backplate, w, h);
-        //     } else if (video_player) {
-        //         // this._resizeBackplate(video_player, w, h);
-        //     }
-        // };
 
         if (this.paginator) {
             this.paginator.resize(w,h);
         }
 
-        console.log('RESIZE SLIDESHOW ' + FLOCK.settings.menu_width, FLOCK.settings.features_width);
     }
 
     function updateState () {
@@ -579,6 +565,7 @@
     }
 
     function keyHandler (e) {
+        console.log(e.keyCode);
         switch (e.keyCode) {
         case 37: // left arrow
             this.previous();

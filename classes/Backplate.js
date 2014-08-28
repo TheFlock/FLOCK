@@ -26,10 +26,16 @@
             resizeContainer: resizeContainer || false
         };
 
+        var backplateMode = this.elements.backplate.getAttribute('data-mode');
+
+        if (!backplateMode) {
+            backplateMode = mode || 'cover';
+        }
+
         this.settings = {
             anchor: this.elements.backplate.getAttribute('data-anchor'),
             ratio: this._getRatio(),
-            mode: mode || 'cover'
+            mode: backplateMode
         }
 
         this.elements.wrapper.className += ' loading';
