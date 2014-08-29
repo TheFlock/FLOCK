@@ -20,13 +20,13 @@
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
 
-    var breakpoints = [
-        1250,
-        1500,
-        1750,
-        2000,
-        2250
-    ]
+    // var breakpoints = [
+    //     1250,
+    //     1500,
+    //     1750,
+    //     2000,
+    //     2250
+    // ];
 
     var Paginator = function (data) {
 
@@ -48,6 +48,13 @@
             next: document.createElement('a'),
             count: document.createElement('span')
         };
+
+        this.settings = {
+            paginator_max_width: 0.9, // max width of paginator as percentage of its container
+            thumb_max_width: 200, // thumb max width in pixels
+            thumb_min_width: 100, // thumb min width in pixels
+            prev_next_button_width: 80 // amount of space taken up by prev/next buttons in pixels
+        }
 
         this.elements.count.className = 'count';
         this.elements.el.className = 'paginator';
@@ -274,7 +281,7 @@
             this.elements.thumb_list.style.width = total_width + 'px';
             this.elements.thumb_list.style.left = '0px';
             
-            this.elements.el.style.width = $(this.elements.thumb_wrapper).outerWidth(true) + 'px';
+            // this.elements.el.style.width = $(this.elements.thumb_wrapper).outerWidth(true) + 'px';
         } else {
             this.elements.next.className = 'next_page';
             this.elements.prev.className = 'prev_page';
@@ -282,7 +289,7 @@
             this.elements.thumb_wrapper.style.width = wrapper_width + 'px';
             this.elements.thumb_list.style.width = total_width + 'px';
 
-            this.elements.el.style.width = $(this.elements.thumb_wrapper).outerWidth(true) + 'px';
+            // this.elements.el.style.width = $(this.elements.thumb_wrapper).outerWidth(true) + 'px';
 
             if (this.elements.thumb_list.offsetLeft >= 0) {
                 this.elements.prev.className = 'prev_page disabled';
@@ -325,17 +332,24 @@
 
     // set number of visible thumbs
     function resize (w,h) {
+        var available_space = (this.settings.paginator_max_width * w) - (2 * this.settings.prev_next_button_width),
+            num_visible_thumbs = Math.floor(available_space / this.settings.thumb_max_width),
+            num_pages = Math.ceil(this.thumbs.length / num_visible_thumbs);
 
-        for (var i = 0; i < breakpoints.length; i++) {
+        this.elements.thumb_wrapper.style.width = available_space + 'px';
+        this.elements.thumb_list.style.width = (available_space * num_pages) + 'px';
+        this.elements.thumb_list.className = 'num_thumbs_' + num_visible_thumbs * num_pages;
 
-            this.numThumbs = Math.min(this.elements.thumbs.length, 3 + i);
+        // for (var i = 0; i < breakpoints.length; i++) {
 
-            if (w <= breakpoints[i]) {
-                break;
-            }
-        };
+        //     this.numThumbs = Math.min(this.elements.thumbs.length, 3 + i);
 
-        this._resizeThumbHolder();
+        //     if (w <= breakpoints[i]) {
+        //         break;
+        //     }
+        // };
+
+       // this._resizeThumbHolder();
 
     }
 

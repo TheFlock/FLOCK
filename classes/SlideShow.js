@@ -565,7 +565,6 @@
     }
 
     function keyHandler (e) {
-        console.log(e.keyCode);
         switch (e.keyCode) {
         case 37: // left arrow
             this.previous();
