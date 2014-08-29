@@ -20,14 +20,6 @@
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
 
-    // var breakpoints = [
-    //     1250,
-    //     1500,
-    //     1750,
-    //     2000,
-    //     2250
-    // ];
-
     var Paginator = function (data) {
 
         var that = this;
@@ -37,7 +29,6 @@
         this.rotate = data.rotate || false;
         this.rotation_delay = data.rotation_delay || 3000;
 
-        this.currThumbs = 4; // 4 thumbs will be visible by default
         if (this.maxThumbs) {
             this.currThumbs = Math.min(this.maxThumbs, this.currThumbs);
         }
@@ -52,8 +43,9 @@
         this.settings = {
             paginator_max_width: 0.9, // max width of paginator as percentage of its container
             thumb_max_width: 200, // thumb max width in pixels
-            thumb_min_width: 100, // thumb min width in pixels
-            prev_next_button_width: 80 // amount of space taken up by prev/next buttons in pixels
+            thumb_min_width: 150, // thumb min width in pixels
+            prev_next_button_width: 80, // amount of space taken up by prev/next buttons in pixels
+            thumb_ratio: 0.7 // ratio of the thumbnail height/width
         }
 
         this.elements.count.className = 'count';
@@ -181,7 +173,7 @@
     }
 
     function prevThumbs () {
-        var lpos = this.elements.thumb_list.offsetLeft + this.thumbWidth * this.currThumbs,
+        var lpos = Math.min(0, this.elements.thumb_list.offsetLeft + this.elements.thumb_wrapper.offsetWidth),
             that = this;
 
         this.elements.next.className = 'next_page';
@@ -208,9 +200,8 @@
     }
 
     function nextThumbs (click) {
-        console.log('next thumbs');
 
-        var lpos = this.elements.thumb_list.offsetLeft - this.thumbWidth * this.currThumbs,
+        var lpos = Math.max(this.elements.thumb_wrapper.offsetWidth - this.thumbWidth * this.thumbs.length, this.elements.thumb_list.offsetLeft - this.elements.thumb_wrapper.offsetWidth),
             that = this;
 
         this.elements.prev.className = 'prev_page';
@@ -219,8 +210,8 @@
             this.elements.next.className = 'next_page';
             this.elements.prev.className = 'prev_page disabled';
             lpos = 0;
-        } else if (lpos <= this.elements.thumb_wrapper.offsetWidth - this.elements.thumb_list.offsetWidth) {
-            lpos = this.elements.thumb_wrapper.offsetWidth - this.elements.thumb_list.offsetWidth;
+        } else if (lpos <= this.elements.thumb_wrapper.offsetWidth - this.thumbWidth * this.thumbs.length) {
+            // lpos = this.elements.thumb_wrapper.offsetWidth - this.elements.thumb_list.offsetWidth;
             this.elements.next.className = 'next_page disabled';
         } else {
             this.elements.next.className = 'next_page';
@@ -254,49 +245,25 @@
     }
 
     function resizeThumbHolder () {
-        this.currThumbs = this.numThumbs;
-        if (this.maxThumbs) {
-            this.currThumbs = Math.min(this.maxThumbs, this.currThumbs);
-        }
 
-        var total_width = 0,
-            wrapper_width;
-
-        this.thumbWidth = $(this.elements.thumbs[this.elements.thumbs.length - 1].parentNode).outerWidth(true); // thumb width plus thumb margin
-        this.thumbMargin = this.thumbWidth - $(this.elements.thumbs[this.elements.thumbs.length - 1].parentNode).outerWidth();
-
-        for (var i = 0; i < this.elements.thumbs.length; i++) {
-            total_width += this.thumbWidth;
-        };
-
-        total_width -= this.thumbMargin;
-        wrapper_width = this.thumbWidth * this.currThumbs - this.thumbMargin;
+        var list_width = Math.round(this.thumbWidth * this.thumbs.length),
+            wrapper_width = this.elements.thumb_wrapper.offsetWidth;
 
         // if all of the thumbs fit in the thumb_wrapper
-        if (wrapper_width >= total_width) {
+        if (wrapper_width >= list_width) {
             this.elements.next.className = 'next_page disabled';
             this.elements.prev.className = 'prev_page disabled';
-
-            this.elements.thumb_wrapper.style.width = total_width + 'px';
-            this.elements.thumb_list.style.width = total_width + 'px';
             this.elements.thumb_list.style.left = '0px';
-            
-            // this.elements.el.style.width = $(this.elements.thumb_wrapper).outerWidth(true) + 'px';
         } else {
             this.elements.next.className = 'next_page';
             this.elements.prev.className = 'prev_page';
-
-            this.elements.thumb_wrapper.style.width = wrapper_width + 'px';
-            this.elements.thumb_list.style.width = total_width + 'px';
-
-            // this.elements.el.style.width = $(this.elements.thumb_wrapper).outerWidth(true) + 'px';
 
             if (this.elements.thumb_list.offsetLeft >= 0) {
                 this.elements.prev.className = 'prev_page disabled';
             }
 
-            if (this.elements.thumb_list.offsetLeft + total_width <= wrapper_width) {
-                this.elements.thumb_list.style.left = (wrapper_width - total_width) + 'px';
+            if (this.elements.thumb_list.offsetLeft <= wrapper_width - list_width) {
+                this.elements.thumb_list.style.left = (wrapper_width - list_width) + 'px';
                 this.elements.next.className = 'next_page disabled';
             } else {
 
@@ -309,6 +276,7 @@
 
                     this.elements.thumb_list.style.left = (this.elements.thumb_list.offsetLeft + remainder) + 'px';
                 }
+
             }
 
         }
@@ -332,25 +300,30 @@
 
     // set number of visible thumbs
     function resize (w,h) {
-        var available_space = (this.settings.paginator_max_width * w) - (2 * this.settings.prev_next_button_width),
-            num_visible_thumbs = Math.floor(available_space / this.settings.thumb_max_width),
+
+        var available_space = Math.min(this.settings.thumb_min_width * this.thumbs.length, (this.settings.paginator_max_width * w) - (2 * this.settings.prev_next_button_width)),
+            num_visible_thumbs = Math.min(this.thumbs.length, Math.floor(available_space / this.settings.thumb_min_width)),
             num_pages = Math.ceil(this.thumbs.length / num_visible_thumbs);
 
+        
         this.elements.thumb_wrapper.style.width = available_space + 'px';
         this.elements.thumb_list.style.width = (available_space * num_pages) + 'px';
         this.elements.thumb_list.className = 'num_thumbs_' + num_visible_thumbs * num_pages;
+        this.elements.el.style.marginLeft = -(this.elements.el.offsetWidth / 2) + 'px';
+        
+        if (this.elements.el.offsetWidth === 0) {
+            var el = this.elements.el;
 
-        // for (var i = 0; i < breakpoints.length; i++) {
+            window.setTimeout(function () {
+                el.style.marginLeft = -(el.offsetWidth / 2) + 'px';
+            }, 100);    
+        }
+        
+        this.thumbWidth = 1 / num_visible_thumbs * available_space;
 
-        //     this.numThumbs = Math.min(this.elements.thumbs.length, 3 + i);
+        this.elements.thumb_wrapper.style.height = this.elements.thumb_list.style.height = (this.thumbWidth * this.settings.thumb_ratio) + 'px';
 
-        //     if (w <= breakpoints[i]) {
-        //         break;
-        //     }
-        // };
-
-       // this._resizeThumbHolder();
-
+        this._resizeThumbHolder();
     }
 
     Paginator.prototype._resizeThumbHolder = resizeThumbHolder;
