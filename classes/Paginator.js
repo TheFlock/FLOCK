@@ -46,8 +46,7 @@
             el: document.createElement('div'),
             prev: document.createElement('a'),
             next: document.createElement('a'),
-            count: document.createElement('span'),
-            bg: document.createElement('div')
+            count: document.createElement('span')
         };
 
         this.elements.count.className = 'count';
@@ -58,9 +57,7 @@
         this.elements.next.innerHTML = 'Next';
         this.elements.next.href = '#';
         this.elements.next.className = 'next_page';
-        this.elements.bg.className = 'background_shape';
 
-        this.elements.el.appendChild(this.elements.bg);
         this.elements.el.appendChild(this.elements.prev);
         this.elements.el.appendChild(this.elements.count);
         this.elements.el.appendChild(this.elements.next);
@@ -278,7 +275,6 @@
             this.elements.thumb_list.style.left = '0px';
             
             this.elements.el.style.width = $(this.elements.thumb_wrapper).outerWidth(true) + 'px';
-            this.elements.bg.style.width = this.elements.el.style.width;
         } else {
             this.elements.next.className = 'next_page';
             this.elements.prev.className = 'prev_page';
@@ -287,7 +283,6 @@
             this.elements.thumb_list.style.width = total_width + 'px';
 
             this.elements.el.style.width = $(this.elements.thumb_wrapper).outerWidth(true) + 'px';
-            this.elements.bg.style.width = this.elements.el.style.width;
 
             if (this.elements.thumb_list.offsetLeft >= 0) {
                 this.elements.prev.className = 'prev_page disabled';
