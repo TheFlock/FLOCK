@@ -85,7 +85,7 @@
             // trace('///// arrayExecuter: stepComplete /////');
 
             if (this.task_arr.length > 0) {
-                window.requestAnimationFrame(runStep.bind(this));      
+                window.requestAnimationFrame(this.runStep.bind(this));      
                 // setTimeout(function(){
                 //     ();
                 // }, 60);
