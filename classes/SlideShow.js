@@ -335,8 +335,8 @@
 
             if (cantransform3d) {
                 if (this.axis === 'y') {
-                    tl.to(curr.el, this.duration, {y: '0px', z:1, ease: Power2.easeInOut}, 0)
-                      .to(prev.el, this.duration, {y: prev_y + 'px', z:1, ease: Power2.easeInOut, onComplete: function () {
+                    tl.to(curr.el, this.duration, {y: '0px', ease: Power2.easeInOut}, 0)
+                      .to(prev.el, this.duration, {y: prev_y + 'px', ease: Power2.easeInOut, onComplete: function () {
                         
                         if(prev !== undefined && prev.style !== undefined){
                             prev.el.style.display = 'none';
@@ -351,8 +351,8 @@
                         that.onTransitionComplete();
                     }}, 0);
                 } else {
-                    tl.to(curr.el, this.duration, {x: '0px', z:1, ease: Power2.easeInOut}, 0)
-                      .to(prev.el, this.duration, {x: prev_x + 'px', z:1, ease: Power2.easeInOut, onComplete: function () {
+                    tl.to(curr.el, this.duration, {x: '0px', ease: Power2.easeInOut}, 0)
+                      .to(prev.el, this.duration, {x: prev_x + 'px', ease: Power2.easeInOut, onComplete: function () {
                         prev.el.style.display = 'none';
                         prev.backplate.elements.wrapper.style.display = 'none';
                         prev.backplate.onScreen = false;

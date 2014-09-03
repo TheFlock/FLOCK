@@ -81,14 +81,16 @@
             funct.apply(step.scope, step.vars);
         },
         stepComplete: function (args) {
-            var that = this;
+            // var that = this;
             // trace('///// arrayExecuter: stepComplete /////');
 
-            if (this.task_arr.length > 0) {      
-                setTimeout(function(){
-                    that.runStep();
-                }, 60);
+            if (this.task_arr.length > 0) {
+                window.requestAnimationFrame(runStep.bind(this));      
+                // setTimeout(function(){
+                //     ();
+                // }, 60);
             }
+
         },
         stepComplete_instant: function (args) {
             // trace('///// arrayExecuter: stepComplete_instant /////');
