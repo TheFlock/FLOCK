@@ -40,6 +40,9 @@
         this.rotate = data.rotate || false;
         this.rotation_delay = data.rotation_delay || 3000; // switch slide every 3 seconds
 
+        this.dragPosition = {};
+        this.dragOffset = {};
+
         isMobile = FLOCK.settings.isMobile;
         useFallbackImage = isMobile || FLOCK.settings.isIOS;
 
@@ -65,7 +68,185 @@
             mode: data.mode || 'cover'
         }
 
+        this.animationState = {};
+
         this.buildSlideshow(data.slides);
+    }
+
+    function addEventHandlers () {
+        var _wrapper = $(this.elements.wrapper),
+            _window = $(window);
+
+        _wrapper.on('mousedown', mouseDown.bind(this));
+        _wrapper.on('mousemove', mouseMove.bind(this));
+        _window.on('mouseup', mouseUp.bind(this));
+
+        _wrapper.on('touchstart', touchStart.bind(this));
+        _wrapper.on('touchmove', touchMove.bind(this));
+        _wrapper.on('touchend', touchEnd.bind(this));
+    }
+
+    function startDrag (pageX, pageY) {
+        if (this.dragging || this.state.animating) {
+            return false;
+        }
+
+        this.dragging = true;
+
+        // currently dragOffset is the same as the mouse position on the screen
+        // will need to fix this for slideshows that are not full-browser
+        this.dragOffset.x = this.dragPosition.x = pageX;
+        this.dragOffset.y = this.dragPosition.y = pageY;
+
+        this._updateState();
+
+        var leftSlide = this.slides[this.state.previous_index],
+            rightSlide = this.slides[this.state.next_index];
+
+        /*
+        * Call drag once to get slides into position before setting display
+        * to block to avoid flash of slides that are supposed to be offscreen
+        */
+        this.drag(pageX, pageY);
+
+        leftSlide.el.style.display = 'block';
+        leftSlide.backplate.elements.wrapper.style.display = 'block';
+
+        rightSlide.el.style.display = 'block';
+        rightSlide.backplate.elements.wrapper.style.display = 'block';
+
+    }
+
+    function drag (pageX, pageY) {
+        if (!this.dragging) {
+            return false;
+        }
+
+        this.dragPosition.x = pageX;
+        this.dragPosition.y = pageY;
+
+        var targetLeft = (this.dragPosition.x - this.dragOffset.x),
+            leftSlide = this.slides[this.state.previous_index],
+            currSlide = this.slides[this.state.current_index],
+            rightSlide = this.slides[this.state.next_index];
+
+        this.dragPosition.velocity = this.dragPosition.x - this.dragPosition.lastX;
+        this.dragPosition.lastX = this.dragPosition.x;
+
+        positionSlides([
+            {
+                slide: currSlide,
+                targetLeft: targetLeft
+            },
+            {
+                slide: leftSlide,
+                targetLeft: targetLeft - currSlide.el.offsetWidth
+            },
+            {
+                slide: rightSlide,
+                targetLeft: targetLeft + currSlide.el.offsetWidth
+            }
+        ]);
+
+    }
+
+    function positionSlides (slides) {
+        for (var i = slides.length - 1; i >= 0; i--) {
+            if (cantransform3d) {
+                slides[i].slide.el.style[transformPrefixed] = 'translate3d(' + slides[i].targetLeft + 'px,0px,1px)';
+            } else {
+                slides[i].slide.el.style.left = slides[i].targetLeft + 'px';
+            }
+        };
+    }
+
+    function stopDrag (pageX, pageY) {
+        if (!this.dragging) {
+            return false;
+        }
+
+        this.dragPosition.x = pageX;
+        this.dragPosition.y = pageY;
+
+        this.dragging = false;
+
+        var change = this.dragPosition.x - this.dragOffset.x,
+            velocity = this.dragPosition.velocity,
+            direction;
+
+        this.animationState = {
+            currX: this.dragPosition.x,
+            currVelocity: this.dragPosition.velocity === 0 ? change / Math.abs(change) : this.dragPosition.velocity
+        }
+
+        if (change > 20) {
+            if (this.dragPosition.velocity < -5) {
+                direction = 'next';
+            } else {
+                direction = 'previous';
+            }
+        } else if (change < -20) {
+            if (this.dragPosition.velocity > 5) {
+                direction = 'previous';
+            } else {
+                direction = 'next';
+            }
+        } else {
+            this.animationState.currSlide = this.slides[this.state.current_index];
+            this.animationState.lastSlide = change > 0 ? this.slides[this.state.previous_index] : this.slides[this.state.next_index];
+            this.animationState.lastSlideX = change > 0 ? this.dragPosition.x - this.dragOffset.x + this.animationState.currSlide.el.offsetWidth : this.dragPosition.x - this.dragOffset.x + this.animationState.currSlide.el.offsetWidth;
+            this.animationState.currSlideX = this.dragPosition.x - this.dragOffset.x;
+            window.requestAnimationFrame(animate.bind(this));
+            return;
+        }
+
+        if (direction === 'next') {
+            this.animationState.currSlide = this.slides[this.state.next_index];
+            this.animationState.lastSlide = this.slides[this.state.current_index];
+            this.animationState.lastSlideX = this.dragPosition.x - this.dragOffset.x;
+            this.animationState.currSlideX = this.dragPosition.x - this.dragOffset.x + this.animationState.currSlide.el.offsetWidth;
+            this.next();
+        } else if (direction === 'previous') {
+            this.animationState.lastSlide = this.slides[this.state.current_index];
+            this.animationState.currSlide = this.slides[this.state.previous_index];
+            this.animationState.lastSlideX = this.dragPosition.x - this.dragOffset.x;
+            this.animationState.currSlideX = this.dragPosition.x - this.dragOffset.x - this.animationState.currSlide.el.offsetWidth;
+            this.previous();
+        }
+    }
+
+    function mouseDown (e) {
+        this.startDrag(e.pageX, e.pageY);
+        return false;
+    }
+
+    function mouseMove (e) {
+        this.drag(e.pageX, e.pageY);
+        return false;
+    }
+
+    function mouseUp (e) {
+        this.stopDrag(e.pageX, e.pageY);
+        return false;
+    }
+
+    function touchStart (e) {
+        var touch = e.originalEvent.touches[0];
+        this.startDrag(touch.pageX, touch.pageY);
+        return false;
+    }
+
+    function touchMove (e) {
+        var touch = e.originalEvent.touches[0];
+        this.drag(touch.pageX, touch.pageY);
+        return false;
+    }
+
+    function touchEnd (e) {
+        console.log(e);
+        var touch = e.originalEvent.changedTouches[0];
+        this.stopDrag(touch.pageX, touch.pageY);
+        return false;
     }
 
     function buildSlideshow (slides) {
@@ -107,12 +288,6 @@
             direction: 'left',
             animating: false
         };
-
-        if (Modernizr.touch) {
-            // $(this.elements.wrapper).on('touchstart', touchStart.bind(this));
-            // $(this.elements.wrapper).on('touchmove', touchMove.bind(this));
-            // $(this.elements.wrapper).on('touchend', touchEnd.bind(this));
-        }
 
         // previous and next index keep track of the slides to the left and right of current slide for touch
         this.state.previous_index = this.state.last_index;
@@ -165,13 +340,17 @@
             this.slides[this.state.current_index].el.style.display = 'block';
             this.slides[this.state.current_index].backplate.elements.wrapper.style.display = 'block';
 
-            if (cantransform3d) {
-                this.slides[this.state.current_index].el.style[transformPrefixed] = 'translate3d(0px,0px,1px)';
-                this.slides[this.state.last_index].el.style[transformPrefixed] = 'translate3d(' + (-this.slides[this.state.last_index].el.offsetWidth) + 'px, 0px, 1px)';
-            } else {
-                this.slides[this.state.current_index].el.style.left = '0px';
-                this.slides[this.state.last_index].el.style.left = -this.slides[this.state.last_index].el.offsetWidth;
-            }
+            positionSlides([
+                {
+                    slide: this.slides[this.state.current_index],
+                    targetLeft: 0
+                },
+                {
+                    slide: this.slides[this.state.last_index],
+                    targetLeft: -this.slides[this.state.last_index].el.offsetWidth
+                }
+            ]);
+
         }
 
         if (this.rotate) {
@@ -181,6 +360,7 @@
             this.timer = window.setInterval(this.next.bind(this), this.rotation_delay);
         }
 
+        this.addEventHandlers();
         this.resize();
     }
 
@@ -258,147 +438,14 @@
     }
 
     function go (instant) {
-
-        if (this.state.last_index === this.state.current_index && this.slides.length !== 1) {
-            return;
-        }
-
-        var that = this,
-            prev = this.slides[this.state.last_index],
-            curr = this.slides[this.state.current_index],
-            prev_x = this.state.direction === 'left' ? -prev.el.offsetWidth : prev.el.offsetWidth,
-            prev_y = this.state.direction === 'left' ? -prev.el.offsetHeight : prev.el.offsetHeight,
-            tl = new TimelineLite();
-
-        curr.backplate.onScreen = true;
-        curr.el.style.display = 'block';
-        curr.backplate.elements.wrapper.style.display = 'block';
-
-        this.resize();
-
-        if (cantransform3d) {
-            if (prev.el.style[transformPrefixed] === 'translate3d(0px, 0px, 1px)') {
-                if (this.axis === 'y') {
-                    TweenLite.to(curr.el, 0, {y: (-prev_y) + 'px', z:1});
-                } else {
-                    TweenLite.to(curr.el, 0, {x: (-prev_x) + 'px', z:1});
-                }
-                //curr.style[transformPrefixed] = 'translate3d(' + (-prev_x) + 'px,0px,1px)';
-            }
-        } else {
-            if (this.axis === 'y') {
-                if (prev.el.style.top === '0px') {
-                    curr.el.style.top = -prev_y + 'px';
-                }
-            } else {
-                if (prev.el.style.left === '0px') {
-                    curr.el.style.left = -prev_x + 'px';
-                }
-            }
-            
-        }
-
-        // this.resize(getWindowDimensions().w, getWindowDimensions().h);
-        if (this.paginator) {
-            this.paginator.update(this.state.current_index + 1, this.slides.length);
-        }
-
-        if (this.slides[this.state.last_index].video_player) {
-            this.slides[this.state.last_index].video_player.stop();
-        }
-        
-        console.log("instant: "+instant);
+        this.state.animating = true;
 
         if (instant) {
-            
-            if (this.axis === 'y') {
-                tl.to(curr.el, 0, {y: '0px', z:1}, 0)
-                  .to(prev.el, 0, {y: prev_y + 'px', z:1}, 0);
-            } else {
-                tl.to(curr.el, 0, {x: '0px', z:1}, 0)
-                  .to(prev.el, 0, {x: prev_x + 'px', z:1}, 0);
-            }
-
-            if(prev !== undefined && prev.style !== undefined){
-                prev.style.display = 'none';
-                prev.backplate.elements.wrapper.style.display = 'none';
-                prev.backplate.onScreen = false;
-            }
-
-            that.state.animating = false;
-            if (that.slides[that.state.current_index].video_player) {
-                that.slides[that.state.current_index].video_player.play();
-            }
-
-        } else {
-            this.state.animating = true;
-
-            if (cantransform3d) {
-                if (this.axis === 'y') {
-                    tl.to(curr.el, this.duration, {y: '0px', ease: Power2.easeInOut}, 0)
-                      .to(prev.el, this.duration, {y: prev_y + 'px', ease: Power2.easeInOut, onComplete: function () {
-                        
-                        if(prev !== undefined && prev.style !== undefined){
-                            prev.el.style.display = 'none';
-                            prev.backplate.elements.wrapper.style.display = 'none';
-                            prev.backplate.onScreen = false;
-                        }
-                        
-                        that.state.animating = false;
-                        if (that.slides[that.state.current_index].video_player) {
-                            that.slides[that.state.current_index].video_player.play();
-                        }
-                        that.onTransitionComplete();
-                    }}, 0);
-                } else {
-                    tl.to(curr.el, this.duration, {x: '0px', ease: Power2.easeInOut}, 0)
-                      .to(prev.el, this.duration, {x: prev_x + 'px', ease: Power2.easeInOut, onComplete: function () {
-                        prev.el.style.display = 'none';
-                        prev.backplate.elements.wrapper.style.display = 'none';
-                        prev.backplate.onScreen = false;
-                        that.state.animating = false;
-                        if (that.slides[that.state.current_index].video_player) {
-                            that.slides[that.state.current_index].video_player.play();
-                        }
-                        that.onTransitionComplete();
-                    }}, 0);
-                }
-            } else {
-                if (this.axis === 'y') {
-                    console.log('axis is y');
-                    console.log('this.duration: '+this.duration);
-                    tl.to(curr.el, this.duration, {top: '0px', ease: Power2.easeInOut}, 0)
-                      .to(prev.el, this.duration, {top: prev_y + 'px', ease: Power2.easeInOut, onComplete: function () {
-                        
-                        if(prev !== undefined && prev.style !== undefined){
-                            prev.el.style.display = 'none';
-                            prev.backplate.elements.wrapper.style.display = 'none';
-                            prev.backplate.onScreen = false;
-                        }
-                        
-                        that.state.animating = false;
-                        if (that.slides[that.state.current_index].video_player) {
-                            that.slides[that.state.current_index].video_player.play();
-                        }
-                        that.onTransitionComplete();
-                    }}, 0);
-                } else {
-                    tl.to(curr.el, this.duration, {left: '0px', ease: Power2.easeInOut}, 0)
-                      .to(prev.el, this.duration, {left: prev_x + 'px', ease: Power2.easeInOut, onComplete: function () {
-                        prev.el.style.display = 'none';
-                        prev.backplate.elements.wrapper.style.display = 'none';
-                        prev.backplate.onScreen = false;
-                        that.state.animating = false;
-                        if (that.slides[that.state.current_index].video_player) {
-                            that.slides[that.state.current_index].video_player.play();
-                        }
-                        that.onTransitionComplete();
-                    }}, 0);
-                }
-            }
-            
+            this.animationState.currSlideX = 0;
+            this.animationState.lastSlideX = this.animationState.currSlide.el.offsetWidth;
         }
 
+        window.requestAnimationFrame(animate.bind(this));
     }
 
     function next () {
@@ -423,7 +470,6 @@
 
         this._updateState();
 
-        // this.state.current_index = this.state.current_index + 1 < this.slides.length ? this.state.current_index + 1 : 0;
         this.state.direction = 'left';
         this._go();
     }
@@ -450,20 +496,75 @@
 
         this._updateState();
 
-        // this.state.current_index = this.state.current_index - 1 >= 0 ? this.state.current_index - 1 : this.slides.length - 1;
         this.state.direction = 'right';
         this._go();
+    }
+
+    function animate () {
+
+        var direction = this.animationState.currVelocity > 0 ? 1 : -1,
+            change = Math.min(Math.abs(this.animationState.currVelocity), Math.abs(this.animationState.currSlideX) / 5) * direction;
+
+        this.animationState.lastSlideX += change;
+        this.animationState.currSlideX += change;
+
+        this.animationState.currVelocity *= 1.25;
+
+        positionSlides([
+            {
+                slide: this.animationState.lastSlide,
+                targetLeft: this.animationState.lastSlideX
+            },
+            {
+                slide: this.animationState.currSlide,
+                targetLeft: this.animationState.currSlideX
+            }
+        ]);
+
+        if (direction === -1 && this.animationState.currSlideX > 1 || direction === 1 && this.animationState.currSlideX < -1) {
+            window.requestAnimationFrame(animate.bind(this));
+        } else {
+            if (this.animationState.currSlideX === 0) {
+                this.animationState.lastSlide.el.style.display = 'none';
+                this.state.animating = false;
+            } else {
+                this.animationState.currSlideX = 0;
+                this.animationState.currVelocity = 0;
+                window.requestAnimationFrame(animate.bind(this));
+            }
+        }
+        
     }
 
     function goToIndex (i) {
         if (this.state.animating) {
             return;
         }
-        
+
         this.state.direction = i > this.state.current_index ? 'left' : 'right';
+
+        if (this.state.direction === 'left') {
+            this.animationState.currVelocity = -1;
+            this.animationState.lastSlide = this.slides[this.state.current_index];
+            this.animationState.lastSlideX = 0;
+            this.animationState.currSlide = this.slides[i];
+            this.animationState.currSlideX = this.animationState.lastSlide.el.offsetWidth;
+        } else if (this.state.direction === 'right') {
+            this.animationState.currVelocity = 1;
+            this.animationState.lastSlide = this.slides[this.state.current_index];
+            this.animationState.lastSlideX = 0;
+            this.animationState.currSlide = this.slides[i];
+            this.animationState.currSlideX = -this.animationState.lastSlide.el.offsetWidth;
+        }
+
+        //console.log(this.animationState.currSlideX);
+        this.animationState.currSlide.el.style.display = 'block';
+        this.animationState.currSlide.backplate.elements.wrapper.style.display = 'block';
+
         this.state.last_index = this.state.current_index;
         this.state.current_index = i;
         this._updateState();
+
         this._go();
     }
 
@@ -481,10 +582,6 @@
         this._updateState();
 
         this._go(instant);
-    }
-
-    function resizeVideo (w, h) {
-        
     }
 
     function resize (width, height) {
@@ -577,136 +674,6 @@
         }
     }
 
-    function touchStart (e) {
-
-        if (this.state.animating) {
-            this.mobileVars = false;
-            return;
-        }
-
-        var touches = e.originalEvent.touches,
-            offsetHeight = this.slides[this.state.current_index].el.offsetHeight,
-            offsetWidth = this.slides[this.state.current_index].el.offsetWidth;
-
-        this.mobileVars = {
-            swipeStart: e.timeStamp,
-            lastTime: e.timeStamp,
-            startLeft: 0,
-            endY: undefined,
-            startY: touches[0].pageY,
-            initialY: touches[0].pageY,
-            endX: undefined,
-            startX: touches[0].pageX,
-            initialX: touches[0].pageX
-        };
-
-        TweenLite.to(this.slides[this.state.previous_index].el, 0, {x: (-offsetWidth) + 'px', z: 1});
-        TweenLite.to(this.slides[this.state.next_index].el, 0, {x: (-offsetWidth) + 'px', z: 1});
-        // this.slides[this.state.previous_index].el.style[transformPrefixed] = 'translate3d(' + (-offsetWidth) + 'px, 0px, 1px)';//  = -offsetWidth + 'px';
-        // this.slides[this.state.next_index].el.style[transformPrefixed] = 'translate3d(' + offsetWidth + 'px, 0px, 1px)';//   = offsetWidth + 'px';
-
-        this.slides[this.state.previous_index].el.style.display = 'block';
-        this.slides[this.state.next_index].el.style.display = 'block';
-
-        if (this.slides[this.state.previous_index].backplate) {
-            this._resizeBackplate(this.slides[this.state.previous_index].backplate);
-        } else {
-            var vid_width = this.slides[this.state.previous_index].video_player.player_obj.player.videoWidth,
-                vid_height = this.slides[this.state.previous_index].video_player.player_obj.player.videoHeight;
-            console.log('touchStart 1: '+vid_width, vid_height);
-        }
-        
-        if (this.slides[this.state.next_index].backplate) {
-            this._resizeBackplate(this.slides[this.state.next_index].backplate);
-        } else {
-            var vid_width = this.slides[this.state.next_index].video_player.player_obj.player.videoWidth,
-                vid_height = this.slides[this.state.next_index].video_player.player_obj.player.videoHeight;
-            console.log('touchStart 2: '+vid_width, vid_height);
-        }
-    }
-
-    function touchMove (e) {
-        if (!isMobile) {
-            e.preventDefault();
-        }
-
-        if (this.mobileVars === false) {
-            return;
-        }
-
-        var touches = e.originalEvent.touches,
-            offsetWidth = this.slides[this.state.current_index].el.offsetWidth,
-            lastMoveDuration = e.timeStamp - this.mobileVars.lastTime;
-
-        this.mobileVars.lastTime = e.timeStamp;
-
-        this.mobileVars.endY = touches[0].pageY;
-        this.mobileVars.endX = touches[0].pageX;
-
-        this.mobileVars.lastX = this.mobileVars.currentPageX;
-        this.mobileVars.lastY = this.mobileVars.currentPageY;
-        this.mobileVars.currentPageY = this.mobileVars.endY;
-        this.mobileVars.currentPageX = this.mobileVars.endX;
-
-        this.mobileVars.changeY = this.mobileVars.currentPageY - this.mobileVars.initialY;
-        this.mobileVars.changeX = this.mobileVars.currentPageX - this.mobileVars.initialX;
-
-
-        if (this.mobileVars.direction === undefined) {
-            this.mobileVars.direction = Math.abs(this.mobileVars.changeX) > Math.abs(this.mobileVars.changeY) ? 'horiz' : 'vert';
-        }
-
-        if (this.mobileVars.direction === 'horiz') {
-
-            var target_left = (this.mobileVars.startLeft + (this.mobileVars.changeX / 3));
-
-            TweenLite.to(this.slides[this.state.current_index].el, 0, {x: target_left + 'px', z: 1});
-            TweenLite.to(this.slides[this.state.previous_index].el, 0, {x: (target_left - offsetWidth) + 'px', z: 1});
-            TweenLite.to(this.slides[this.state.next_index].el, 0, {x: (target_left + offsetWidth) + 'px', z: 1});
-            
-            // this.slides[this.state.current_index].el.style[transformPrefixed] = 'translate3d(' + target_left + 'px, 0px, 1px)';// target_left + 'px';
-            // this.slides[this.state.previous_index].el.style[transformPrefixed] = 'translate3d(' + (target_left - offsetWidth) + 'px, 0px, 1px)';// (target_left - offsetWidth) + 'px';
-            // this.slides[this.state.next_index].el.style[transformPrefixed] = 'translate3d(' + (target_left + offsetWidth) + 'px, 0px, 1px)';// (target_left + offsetWidth) + 'px';
-
-            // this.elements.wrapper.css('left', this.mobileVars.startLeft + (this.mobileVars.changeX / 4)); // divide changeX by 4 to get a more subtle effect
-        } else {
-            // this.elements.window.scrollTop(this.mobileVars.startScroll - this.mobileVars.changeY);
-        }
-    }
-
-    function touchEnd (e) {
-
-        if (this.mobileVars === false) {
-            return;
-        }
-
-        var touches = e.originalEvent.touches,
-            changeX = this.mobileVars.changeX,
-            lastChangeX = this.mobileVars.currentPageX - this.mobileVars.lastX; // Math.abs(this.mobileVars.changeX + (this.mobileVars.currentPageX - this.mobileVars.lastX));
-
-        if (changeX === undefined || Math.abs(changeX) < 60) {
-            return;
-        }
-
-        // if you swipe, but change your mind, don't change index
-        if (Math.abs(changeX + lastChangeX) < Math.abs(changeX)) {
-            console.log('don\'t change');
-            this._go();
-            return;
-        }
-
-        if (Math.abs(this.mobileVars.changeX) > 100) {
-            if (this.mobileVars.changeX > 0) {
-                this.previous();
-            } else {
-                this.next();
-            }
-        } else {
-            this._go();
-        }
-
-    }
-
     function enter () {
         if (this.rotate) {
             if (this.timer) {
@@ -724,8 +691,7 @@
 
     SlideShow.prototype._go = go;
     SlideShow.prototype._updateState = updateState;
-    
-    // SlideShow.prototype._resizeBackplate = resizeBackplate;
+
     SlideShow.prototype.buildSlideshow = buildSlideshow;
     SlideShow.prototype.addSlide = addSlide;
     SlideShow.prototype.reset = reset;
@@ -740,10 +706,16 @@
     SlideShow.prototype.enter = enter;
     SlideShow.prototype.exit = exit;
 
-    // touch events
-    SlideShow.prototype.touchStartHandler = touchStart;
-    SlideShow.prototype.touchMoveHandler = touchMove;
-    SlideShow.prototype.touchEndHandler = touchEnd;
+    SlideShow.prototype.addEventHandlers = addEventHandlers;
+    SlideShow.prototype.mouseDown = mouseDown;
+    SlideShow.prototype.mouseMove = mouseMove;
+    SlideShow.prototype.mouseUp = mouseUp;
+    SlideShow.prototype.touchStart = touchStart;
+    SlideShow.prototype.touchMove = touchMove;
+    SlideShow.prototype.touchEnd = touchEnd;
+    SlideShow.prototype.startDrag = startDrag;
+    SlideShow.prototype.drag = drag;
+    SlideShow.prototype.stopDrag = stopDrag;
 
     return SlideShow;
 }));
