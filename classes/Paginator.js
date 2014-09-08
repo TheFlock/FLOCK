@@ -323,7 +323,7 @@
         
         this.thumbWidth = 1 / num_visible_thumbs * available_space;
 
-        this.elements.thumb_wrapper.style.height = this.elements.thumb_list.style.height = (this.thumbWidth * this.settings.thumb_ratio) + 'px';
+        this.elements.thumb_wrapper.style.height = this.elements.thumb_list.style.height = (this.thumbWidth * this.settings.thumb_ratio + 4) + 'px';
 
         this._resizeThumbHolder();
     }
