@@ -115,6 +115,8 @@
         rightSlide.el.style.display = 'block';
         rightSlide.backplate.elements.wrapper.style.display = 'block';
 
+        // leftSlide.backplate.resize(w, h);
+        // rightSlide.backplate.resize(w, h);
     }
 
     function drag (pageX, pageY) {
@@ -176,22 +178,29 @@
 
         this.animationState = {
             currX: this.dragPosition.x,
-            currVelocity: this.dragPosition.velocity === 0 ? change / Math.abs(change) : this.dragPosition.velocity
+            currVelocity: Math.abs(this.dragPosition.velocity) < 5 ? change / Math.abs(change) : this.dragPosition.velocity
         }
 
         if (change > 20) {
+            // last drag velocity can override the overall change in position
             if (this.dragPosition.velocity < -5) {
+                this.animationState.otherSlide = this.slides[this.state.previous_index];
+                this.animationState.otherSlideX = -this.slides[this.state.current_index].el.offsetWidth;
                 direction = 'next';
             } else {
                 direction = 'previous';
             }
         } else if (change < -20) {
+            // last drag velocity can override the overall change in position
             if (this.dragPosition.velocity > 5) {
+                this.animationState.otherSlide = this.slides[this.state.next_index];
+                this.animationState.otherSlideX = this.slides[this.state.current_index].el.offsetWidth;
                 direction = 'previous';
             } else {
                 direction = 'next';
             }
         } else {
+            this.animationState.currVelocity = change > 0 ? -1 : 1;
             this.animationState.currSlide = this.slides[this.state.current_index];
             this.animationState.lastSlide = change > 0 ? this.slides[this.state.previous_index] : this.slides[this.state.next_index];
             this.animationState.lastSlideX = change > 0 ? this.dragPosition.x - this.dragOffset.x + this.animationState.currSlide.el.offsetWidth : this.dragPosition.x - this.dragOffset.x + this.animationState.currSlide.el.offsetWidth;
@@ -201,16 +210,8 @@
         }
 
         if (direction === 'next') {
-            this.animationState.currSlide = this.slides[this.state.next_index];
-            this.animationState.lastSlide = this.slides[this.state.current_index];
-            this.animationState.lastSlideX = this.dragPosition.x - this.dragOffset.x;
-            this.animationState.currSlideX = this.dragPosition.x - this.dragOffset.x + this.animationState.currSlide.el.offsetWidth;
             this.next();
         } else if (direction === 'previous') {
-            this.animationState.lastSlide = this.slides[this.state.current_index];
-            this.animationState.currSlide = this.slides[this.state.previous_index];
-            this.animationState.lastSlideX = this.dragPosition.x - this.dragOffset.x;
-            this.animationState.currSlideX = this.dragPosition.x - this.dragOffset.x - this.animationState.currSlide.el.offsetWidth;
             this.previous();
         }
     }
@@ -465,6 +466,11 @@
             }
         }
 
+        this.animationState.currSlide = this.slides[this.state.next_index];
+        this.animationState.lastSlide = this.slides[this.state.current_index];
+        this.animationState.lastSlideX = this.dragPosition.x - this.dragOffset.x;
+        this.animationState.currSlideX = this.dragPosition.x - this.dragOffset.x + this.animationState.currSlide.el.offsetWidth;
+
         this.state.last_index = this.state.current_index;
 
         if (this.state.current_index + 1 < this.slides.length) {
@@ -491,6 +497,11 @@
             }
         }
 
+        this.animationState.lastSlide = this.slides[this.state.current_index];
+        this.animationState.currSlide = this.slides[this.state.previous_index];
+        this.animationState.lastSlideX = this.dragPosition.x - this.dragOffset.x;
+        this.animationState.currSlideX = this.dragPosition.x - this.dragOffset.x - this.animationState.currSlide.el.offsetWidth;
+
         this.state.last_index = this.state.current_index;
 
         if (this.state.current_index - 1 >= 0) {
@@ -508,29 +519,37 @@
     function animate () {
 
         var direction = this.animationState.currVelocity > 0 ? 1 : -1,
-            change = Math.min(Math.abs(this.animationState.currVelocity), Math.abs(this.animationState.currSlideX) / 5) * direction;
+            change = Math.min(Math.abs(this.animationState.currVelocity), Math.abs(this.animationState.currSlideX) / 5) * direction,
+            slides = [
+                {
+                    slide: this.animationState.lastSlide,
+                    targetLeft: this.animationState.lastSlideX
+                },
+                {
+                    slide: this.animationState.currSlide,
+                    targetLeft: this.animationState.currSlideX
+                }
+            ];
 
         this.animationState.lastSlideX += change;
         this.animationState.currSlideX += change;
 
         this.animationState.currVelocity *= 1.25;
 
-        positionSlides([
-            {
-                slide: this.animationState.lastSlide,
-                targetLeft: this.animationState.lastSlideX
-            },
-            {
-                slide: this.animationState.currSlide,
-                targetLeft: this.animationState.currSlideX
-            }
-        ]);
+        if (this.animationState.otherSlide) {
+            slides.push({
+                            slide: this.animationState.otherSlide,
+                            targetLeft: this.animationState.otherSlideX
+                        });
+        }
+        positionSlides(slides);
 
         if (direction === -1 && this.animationState.currSlideX > 1 || direction === 1 && this.animationState.currSlideX < -1) {
             window.requestAnimationFrame(animate.bind(this));
         } else {
             if (this.animationState.currSlideX === 0) {
                 this.animationState.lastSlide.el.style.display = 'none';
+                this.animationState.otherSlide = null;
                 this.state.animating = false;
             } else {
                 this.animationState.currSlideX = 0;
@@ -639,6 +658,13 @@
         if (this.state.next_index > this.slides.length - 1) {
             this.state.next_index = 0;
         }
+
+        var w = FLOCK.settings.window_dimensions.width,
+            h = FLOCK.settings.window_dimensions.height;
+
+        this.slides[this.state.current_index].backplate.resize(w, h);
+        this.slides[this.state.previous_index].backplate.resize(w, h);
+        this.slides[this.state.next_index].backplate.resize(w, h);
     }
 
     function reset (go) {
@@ -669,9 +695,25 @@
     function keyHandler (e) {
         switch (e.keyCode) {
         case 37: // left arrow
+            if (this.state.animating) {
+                return;
+            }
+            this.dragPosition.x = 0;
+            this.dragOffset.x = 0;
+            this.animationState.currVelocity = 1;
+            this.slides[this.state.previous_index].el.style.display = 'block';
+            this.slides[this.state.previous_index].backplate.elements.wrapper.style.display = 'block';
             this.previous();
             break;
         case 39: // right arrow
+            if (this.state.animating) {
+                return;
+            }
+            this.dragPosition.x = 0;
+            this.dragOffset.x = 0;
+            this.animationState.currVelocity = -1;
+            this.slides[this.state.next_index].el.style.display = 'block';
+            this.slides[this.state.next_index].backplate.elements.wrapper.style.display = 'block';
             this.next();
             break;
         default:
