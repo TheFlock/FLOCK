@@ -247,7 +247,6 @@
     }
 
     function touchEnd (e) {
-        console.log(e);
         var touch = e.originalEvent.changedTouches[0];
         this.stopDrag(touch.pageX, touch.pageY);
         return false;
@@ -448,6 +447,8 @@
             this.animationState.currSlideX = 0;
             this.animationState.lastSlideX = this.animationState.currSlide.el.offsetWidth;
         }
+
+        this.paginator.update(this.state.current_index + 1, this.slides.length);
 
         window.requestAnimationFrame(animate.bind(this));
     }

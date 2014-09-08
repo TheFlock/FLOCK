@@ -65,51 +65,53 @@
             this._buildThumbs();
         }
 
-        $(this.elements.el).on('click', 'a', function (e) {
+        $(this.elements.el).on('click', 'a', clickHandler.bind(this));
 
-            if (this.getAttribute('data-type') === 'external') {
-                return;
-            } else if (this.getAttribute('data-type') === 'overlay') {
-                FLOCK.functions.showOverlay(this.getAttribute('href'));
-                return false;
-            } else if (this.getAttribute('data-type') === 'internal') {
-                FLOCK.functions.internalLink(this.getAttribute('href'));
-            }
+    }
 
-            if (this.className.match(/(selected|disabled)/)) {
-                return false;
-            } else if (this.className.match('thumb')) {
-                if (that.goToIndex) {
-                    that.goToIndex(parseInt(this.getAttribute('href')));
-                }
-            } else {
-                switch (this.className) {
-                    case 'prev':
-                        if (that.prev) {
-                            that.prev();
-                        }
-                        break;
-                    case 'next':
-                        if (that.next) {
-                            that.next();
-                        }
-                        break;
-                    case 'prev_page':
-                        that._prevThumbs();
-                        break;
-                    case 'next_page':
-                        that._nextThumbs('click');
-                        break;
-                    default:
-                        return;
-                }
-            }
+    function clickHandler (e) {
+        var clicked = e.currentTarget;
 
-            // e.preventDefault();
+        if (clicked.getAttribute('data-type') === 'external') {
+            return;
+        } else if (clicked.getAttribute('data-type') === 'overlay') {
+            FLOCK.functions.showOverlay(clicked.getAttribute('href'));
             return false;
+        } else if (clicked.getAttribute('data-type') === 'internal') {
+            FLOCK.functions.internalLink(clicked.getAttribute('href'));
+        }
 
-        });
+        if (clicked.className.match(/(selected|disabled)/)) {
+            return false;
+        } else if (clicked.className.match('thumb')) {
+            if (this.goToIndex) {
+                this.goToIndex(parseInt(clicked.getAttribute('href')));
+            }
+        } else {
+            switch (clicked.className) {
+                case 'prev':
+                    if (this.prev) {
+                        this.prev();
+                    }
+                    break;
+                case 'next':
+                    if (this.next) {
+                        this.next();
+                    }
+                    break;
+                case 'prev_page':
+                    this._prevThumbs();
+                    break;
+                case 'next_page':
+                    this._nextThumbs('click');
+                    break;
+                default:
+                    return;
+            }
+        }
 
+        // e.preventDefault();
+        return false;
     }
 
     function buildThumbs () {
