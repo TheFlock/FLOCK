@@ -216,6 +216,9 @@
     }
 
     function mouseDown (e) {
+        if (!this.dragging) {
+            this.elements.wrapper.className = this.elements.wrapper.className + ' dragging';
+        }
         this.startDrag(e.pageX, e.pageY);
         return false;
     }
@@ -226,6 +229,7 @@
     }
 
     function mouseUp (e) {
+        this.elements.wrapper.className = this.elements.wrapper.className.replace(/dragging|\s/g, '');
         this.stopDrag(e.pageX, e.pageY);
         return false;
     }
