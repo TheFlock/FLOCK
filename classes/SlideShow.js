@@ -59,6 +59,12 @@
             paginator_container: data.paginator_container || el
         };
 
+        this.elements.prev.href = '#';
+        this.elements.next.href = '#';
+
+        this.elements.prev.className = 'prev';
+        this.elements.next.className = 'next';
+
         var header_height = data.fullBleed || data.ignoreHeader ? 0 : FLOCK.settings.header_height,
             footer_height = data.fullBleed || data.ignoreFooter ? 0 : FLOCK.settings.footer_height;
 
@@ -77,6 +83,8 @@
         var _wrapper = $(this.elements.wrapper),
             _window = $(window);
 
+        _wrapper.on('click', 'a', clickHandler.bind(this));
+
         _wrapper.on('mousedown', mouseDown.bind(this));
         _wrapper.on('mousemove', mouseMove.bind(this));
         _window.on('mouseup', mouseUp.bind(this));
@@ -92,13 +100,12 @@
         }
 
         this.dragging = true;
+        this.moved = false;
 
         // currently dragOffset is the same as the mouse position on the screen
         // will need to fix this for slideshows that are not full-browser
         this.dragOffset.x = this.dragPosition.x = pageX;
         this.dragOffset.y = this.dragPosition.y = pageY;
-
-        this._updateState();
 
         var leftSlide = this.slides[this.state.previous_index],
             rightSlide = this.slides[this.state.next_index];
@@ -124,6 +131,10 @@
             return false;
         }
 
+        if (this.dragPosition.lastX) {
+            this.moved = true;
+        }
+
         this.dragPosition.x = pageX;
         this.dragPosition.y = pageY;
 
@@ -134,6 +145,8 @@
 
         this.dragPosition.velocity = this.dragPosition.x - this.dragPosition.lastX;
         this.dragPosition.lastX = this.dragPosition.x;
+
+
 
         positionSlides([
             {
@@ -164,6 +177,13 @@
 
     function stopDrag (pageX, pageY) {
         if (!this.dragging) {
+            return false;
+        }
+
+        this.dragPosition.lastX = null;
+
+        if (!this.moved) {
+            this.dragging = false;
             return false;
         }
 
@@ -268,6 +288,8 @@
                                 .replace('{{backplate.thumb}}', slides[i].thumb);
         };
         this.elements.wrapper.innerHTML = slides_html;
+        this.elements.wrapper.appendChild(this.elements.prev);
+        this.elements.wrapper.appendChild(this.elements.next);
 
         var slideElements = this.elements.wrapper.getElementsByClassName('slide');
         for (var i = 0; i < slideElements.length; i++) {
@@ -690,6 +712,39 @@
 
     function onTransitionComplete () {
         console.log('onTransitionComplete');
+    }
+
+    function clickHandler (e) {
+        var clicked = e.currentTarget;
+
+        switch (clicked.className) {
+        case 'prev': // left arrow
+            if (this.state.animating) {
+                return;
+            }
+            this.dragPosition.x = 0;
+            this.dragOffset.x = 0;
+            this.animationState.currVelocity = 1;
+            this.slides[this.state.previous_index].el.style.display = 'block';
+            this.slides[this.state.previous_index].backplate.elements.wrapper.style.display = 'block';
+            this.previous();
+            return false;
+            break;
+        case 'next': // right arrow
+            if (this.state.animating) {
+                return;
+            }
+            this.dragPosition.x = 0;
+            this.dragOffset.x = 0;
+            this.animationState.currVelocity = -1;
+            this.slides[this.state.next_index].el.style.display = 'block';
+            this.slides[this.state.next_index].backplate.elements.wrapper.style.display = 'block';
+            this.next();
+            return false;
+            break;
+        default:
+            // nothin'
+        }
     }
 
     function keyHandler (e) {
