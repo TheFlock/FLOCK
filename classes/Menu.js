@@ -133,6 +133,10 @@
             var newMenuEntry = document.createElement('li');
             var newMenuLink = document.createElement('a');
             newMenuLink.innerHTML = menuList[i].label;
+            newMenuLink.setAttribute('data-type', menuList[i].type);
+            if (menuList[i].type === 'external') {
+                newMenuLink.setAttribute('target', '_blank');
+            }
             newMenuLink.setAttribute('data-section', menuList[i].link);
             newMenuLink.setAttribute('href', menuList[i].link);
             newMenuLink.style.fontSize = menuList[i]["font-size"];
