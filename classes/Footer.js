@@ -8,7 +8,7 @@
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define([
-                'jquery', 
+                'jquery',
                 'FLOCK/utils/DeviceDetect',
                 'greensock/TweenLite.min',
                 'greensock/easing/EasePack.min',
@@ -69,17 +69,17 @@
                 linkContainerObj.appendChild(linkLi);
                 var linkA  = document.createElement("a");
                 linkLi.appendChild(linkA);
-                
+
                 linkA.target = "_blank";
                 linkA.href = updatedLinkRows[r][e]["URL"];
                 linkA.innerHTML = updatedLinkRows[r][e]["LABEL"];
                 linkA.style.fontSize = updatedLinkRows[r][e]["font-size"];
                 // $(linkA).on('click', FLOCK.functions.externalLink);
-                
+
                 if(String(updatedLinkRows[r][e]["MPAA_REQUIRED"]).toLowerCase() == "true"){
                     $(mpaaContainerObj).append($(linkLi).clone());
                 }
-                
+
                 if(addSpacerLi && e+1 < updatedLinkRows[r].length){
                     var spacerLi = document.createElement("li");
                     spacerLi.innerHTML = spacerContents;
@@ -92,7 +92,7 @@
                 linkContainerObj.appendChild(dividerLi);
             }
         }
-        
+
         //addIcons to Follow Us Menu
         var followUsObj = data["footerFollowUs"];
 
@@ -113,9 +113,9 @@
                 }
             }
         }
- 
+
         //addIcons to Follow Us Menu
-        var shareObj = data["footerShare"]; 
+        var shareObj = data["footerShare"];
 
         if (shareObj) {
             if(String(shareObj["VISIBLE"]).toLowerCase() == "false"){
@@ -143,7 +143,7 @@
                         "HTML_ID": "share-facebook",
                     }
                 ];
-                
+
                 for(var b=0; b<shareBtns.length; b++){
                     var currBtn = shareBtns[b];
                     var btnDisp = (shareObj["show_buttons"][currBtn["JSON_ID"]].toLowerCase() == "true")?"inherit":"none";
@@ -154,7 +154,7 @@
 
         //Share on facebook
         $('#share-facebook').on('click', function(e) {
-            
+
             window.open('http://www.facebook.com/share.php?u='+encodeURIComponent($(this).attr('href')), '_blank');
             // $('#sound_button').removeClass('sound-on');
             // FLOCK.functions.pauseSound();
@@ -162,14 +162,14 @@
             e.preventDefault();
             //return false;
         });
-            
+
         //shareShelf
         $('#sharelabel').on('click', this._toggleShare);
-        
+
         //Credits button
         $('#credits-button').on('click', this._toggleCredits);
         // $('#creditsbox-close').on('click', toggleCredits);
-        
+
         // $('#shareShelf').css('width', 'auto');
         $('#shareShelfContents').css('width', 'auto');
 
@@ -193,7 +193,7 @@
         window.setTimeout(function () {
             that.hideMPAARequirements();
         }, 6000);
-        
+
         // TweenLite.to($("#bottomRight"), 1, {css:{bottom: 0}, ease:Power4.easeInOut, delay: 6});
     }
 
@@ -209,7 +209,7 @@
             credits_height = $(credits).outerHeight();
 
         if (creditsButton.className.match('active') !== null || e === 'close') {
-            
+
             creditsButton.className = creditsButton.className.replace('active', '');
 
             TweenLite.to(credits, 0.5, {bottom: -credits_height + 'px', ease:Power4.easeInOut, onUpdate: function () {
@@ -223,7 +223,7 @@
             creditsButton.className = creditsButton.className + ' active';
             creditsButton.style.zIndex = 10;
             credits.style.zIndex = 9;
-            
+
             TweenLite.to(credits, 0.5, {bottom:'0px', ease:Power4.easeInOut, onUpdate: function () {
                 creditsButton.style.top = Math.min(0, (Math.abs(parseInt(credits.style.bottom)) - (credits_height - 30))) + 'px';
             }});
@@ -311,5 +311,5 @@
     Footer.prototype.showMPAARequirements = showMPAARequirements;
     Footer.prototype.hideMPAARequirements = hideMPAARequirements;
 
-    return new Footer();
+    return Footer;
 }));
