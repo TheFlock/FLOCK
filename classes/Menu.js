@@ -159,6 +159,9 @@
     function selectMenuItem (section_name, animate) {
 
         var selected = $(this.elements.el).find('a[data-section="' + section_name + '"]');
+        if (selected.length === 0) {
+            return;
+        }
 
         animate = true;
 
