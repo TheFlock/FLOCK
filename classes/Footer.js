@@ -162,7 +162,7 @@
             e.preventDefault();
             //return false;
         });
-
+        
         //shareShelf
         $('#sharelabel').on('click', this._toggleShare);
 
