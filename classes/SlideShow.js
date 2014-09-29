@@ -571,6 +571,7 @@
         } else {
             if (this.animationState.currSlideX === 0) {
                 this.animationState.lastSlide.el.style.display = 'none';
+
                 this.animationState.otherSlide = null;
                 this.state.animating = false;
             } else {
