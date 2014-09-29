@@ -45,6 +45,7 @@
 
         function enter (direction, callback) {
             this.elements.sectionWrapper.style.display = 'block';
+            this.resize(FLOCK.settings.window_dimensions.width, FLOCK.settings.window_dimensions.height);
             if (callback) {
                 callback({
                     section_wrapper: this.elements.sectionWrapper
@@ -67,6 +68,9 @@
         }
 
         function resize (w, h) {
+            if (this.backplate) {
+                this.backplate.resize(w, h);
+            }
         }
 
         function keyHandler (e) {

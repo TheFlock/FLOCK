@@ -38,14 +38,16 @@
             mode: backplateMode
         }
 
-        this.elements.wrapper.className += ' loading';
-        this.elements.wrapper.style.display = 'none';
-
         // set loaded to true by default because most backplates will be preloaded with the section
         this.loaded = loaded === undefined ? true : loaded;
         this.onScreen = true;
 
-        $(this.elements.backplate).addClass('loading').on('load', this._onImageLoaded.bind(this));
+        if (!this.loaded) {
+            this.elements.wrapper.className += ' loading';
+            this.elements.wrapper.style.display = 'none';
+
+            $(this.elements.backplate).addClass('loading').on('load', this._onImageLoaded.bind(this));
+        }
 
     }
 
