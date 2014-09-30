@@ -430,7 +430,7 @@
 
         slide_obj.el = slide_element;
 
-        slide_obj.backplate = new FLOCK.classes.Backplate(slide_element.getElementsByClassName('backplate_wrapper')[0], loaded, this.elements.resizeContainer, this.settings.mode);
+        slide_obj.backplate = new FLOCK.classes.Backplate(slide_element.getElementsByClassName('backplate_wrapper')[0], loaded, this.elements.wrapper, this.settings.mode);
         
         if (slide_obj.backplate.elements.wrapper.className.match('quote')) {
             slide_obj.isQuote = true;
@@ -661,7 +661,7 @@
         }
 
         if (backplate) {
-            backplate.resize(w, h);
+            backplate.resize();
         } else if (video_player) {
         }
 
@@ -685,9 +685,9 @@
         var w = FLOCK.settings.window_dimensions.width,
             h = FLOCK.settings.window_dimensions.height;
 
-        this.slides[this.state.current_index].backplate.resize(w, h);
-        this.slides[this.state.previous_index].backplate.resize(w, h);
-        this.slides[this.state.next_index].backplate.resize(w, h);
+        this.slides[this.state.current_index].backplate.resize();
+        this.slides[this.state.previous_index].backplate.resize();
+        this.slides[this.state.next_index].backplate.resize();
     }
 
     function reset (go) {
