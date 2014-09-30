@@ -69,7 +69,7 @@
 
         function resize (w, h) {
             if (this.backplate) {
-                this.backplate.resize(w, h);
+                this.backplate.resize();
             }
         }
 

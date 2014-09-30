@@ -96,6 +96,7 @@
 
         backplate_wrapper.style.width = w + 'px';
         backplate_wrapper.style.height = h + 'px';
+        backplate_wrapper.style.top = FLOCK.settings.header_height + 'px';
 
         if (isNaN(current_ratio) || current_ratio === 0) {
             return;
