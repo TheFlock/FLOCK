@@ -9,7 +9,7 @@ FLOCK.utils.inherit = (function () {
     return function (child, parent) {
         proxy.prototype = parent.prototype;
         child.prototype = new proxy();
-        child._super = parent.prototype;
+        child.prototype._super = parent;
         child.prototype.constructor = child;
     }
 }());

@@ -14,7 +14,7 @@
             return (root.classes.Section = factory());
         });
     } else {
-        
+
         root.classes.Section = factory();
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
@@ -26,6 +26,7 @@
         function Section() {
             console.log('hey there ' + myName);
             this.initialized = false;
+            this.verbose = true;
         }
 
         function init (callback) {
@@ -43,27 +44,7 @@
             // }
         }
 
-        function enter (direction, callback) {
-            this.elements.sectionWrapper.style.display = 'block';
-            if (callback) {
-                callback({
-                    section_wrapper: this.elements.sectionWrapper
-                });
-            }
-        }
-
         function isIn () {
-        }
-
-        function exit (direction, callback) {
-            var that = this;
-            if (callback) {
-                callback({
-                    section_wrapper: this.elements.sectionWrapper
-                }, function () {
-                    that.elements.sectionWrapper.style.display = 'none';
-                });
-            }
         }
 
         function resize (w, h) {
@@ -87,8 +68,6 @@
         Section.prototype._isIn = isIn;
 
         Section.prototype.init = init;
-        Section.prototype.enter = enter;
-        Section.prototype.exit = exit;
         Section.prototype.resize = resize;
         Section.prototype.keyHandler = keyHandler;
 

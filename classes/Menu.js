@@ -8,7 +8,7 @@
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define([
-                'jquery', 
+                'jquery',
                 'FLOCK/utils/DeviceDetect',
                 'FLOCK/classes/MenuPaginator',
                 'greensock/TweenLite.min',
@@ -29,7 +29,9 @@
     var that;
 
     var Menu = function (data) {
-        console.log('main menu');
+        this.menuID = data.menuID || '';
+        this.verbose = false;
+        
         that = this;
 
         this.elements = {
@@ -47,6 +49,7 @@
     }
 
     function init (current_section) {
+        if(this.verbose)console.log('Main Menu | '+this.menuID+' | init');
 
         this.isHidden = false;
 
@@ -60,6 +63,7 @@
     }
 
     function buildMenu () {
+        if(this.verbose)console.log('Main Menu | '+this.menuID+' | buildMenu');
 
         switch (this.menuStyle) {
             case 'vertical':
@@ -94,7 +98,7 @@
             btn.setAttribute('href', menuItem.link);
             btn.style.position = 'relative';
             btn.style.fontSize = menuItem["font-size"];
-            
+
             btn.innerHTML = menuItem.label;
             for (var j = 0; j < FLOCK.app.dataSrc.sections.main.html.length; j++) {
                 if (FLOCK.app.dataSrc.sections.main.html[j].ID === menuItem.label) {
@@ -129,7 +133,7 @@
                 // newDot.className = "menu_dot";
                 // menuElem.appendChild(newDot);
             } else {firstBtn = false;};
-            
+
             var newMenuEntry = document.createElement('li');
             var newMenuLink = document.createElement('a');
             newMenuLink.innerHTML = menuList[i].label;
@@ -146,7 +150,7 @@
                 newMenuLink.rel = menuList[i].link+","+menuList[i]["popupw"]+","+menuList[i]["popuph"];
                 $(newMenuLink).click(menu_openPopUp);
             }
-            
+
             newMenuEntry.appendChild(newMenuLink);
             this.elements.el.appendChild(newMenuEntry);
         }
@@ -157,6 +161,7 @@
     }
 
     function selectMenuItem (section_name, animate) {
+        if(this.verbose)console.log('Main Menu | '+this.menuID+' | selectMenuItem: '+section_name);
 
         var selected = $(this.elements.el).find('a[data-section="' + section_name + '"]');
 
@@ -173,6 +178,7 @@
     }
 
     function hide () {
+        if(this.verbose)console.log('Main Menu | '+this.menuID+' | hide');
 
         if (this.isHidden === true) {
             return;
@@ -191,6 +197,7 @@
     }
 
     function show (show) {
+        if(this.verbose)console.log('Main Menu | '+this.menuID+' | show');
 
         if (this.isHidden === false) {
             return;

@@ -23,6 +23,55 @@
 
     /*
     --------------------------------------------------------------------------------------------------------------------
+    Load / Parse JSON
+    --------------------------------------------------------------------------------------------------------------------
+    */
+
+    function loadJSON(url, completeFn){
+
+        $.ajax({
+            dataType: "text",
+            url: url,
+            success: function(data){
+
+                //this strips out line returns so that multiline strings in the JSON will parse correctly
+                data = data.replace(/(\r\n|\n|\r)/gm,"");
+                data = data.replace(/\t/g, '');
+                FLOCK.app.dataSrc = this.localizationJSON = $.parseJSON(String(data));
+
+                this.setupSections.call(this);
+
+                if(completeFn)completeFn();
+            }.bind(this)
+        });
+
+    }
+
+    function setupSections() {
+
+        var section_name,
+            section_obj;
+
+        for (section_name in FLOCK.app.dataSrc.sections)
+        {
+
+            if (FLOCK.app.dataSrc.sections.hasOwnProperty(section_name)) {
+
+                section_obj = FLOCK.app.dataSrc.sections[section_name];
+
+                if (section_obj.visible === 'false') {
+                    continue;
+                }
+
+                section_obj.data.base = FLOCK.settings.base_url || '';
+                this.addSection(section_name, section_obj);
+            }
+        }
+
+    }
+
+    /*
+    --------------------------------------------------------------------------------------------------------------------
     Section Loader
     --------------------------------------------------------------------------------------------------------------------
     */
@@ -61,17 +110,23 @@
             jsPath = files.jsPath || false,
             addFiles = files.addFiles || [];
 
-        while (numSections--) {
-            if(sectionLoaderState.sections[numSections].id === id){
-                // trace('sectionLoader_addSection: section id already exists');
-                return;
-            }
-        }
+        if(sectionExists(id))return;
 
         sectionLoaderState.sections.push({id: id, images: images, data:data.data, templatePath: templatePath, partials:partials ,htmlPath: htmlPath, htmlData: null, cssPath: cssPath, cssData: null, jsPath: jsPath, jsAttached: true, jsData: null, addFiles:addFiles, loaded: false});
         if (id === 'work') {
             // console.log(sectionLoaderState.sections);
         }
+    }
+
+    function sectionExists(id){
+        var numSections = sectionLoaderState.sections.length;
+        while (numSections--) {
+            if(sectionLoaderState.sections[numSections].id === id){
+                // trace('sectionLoader_addSection: section id already exists');
+                return true;
+            }
+        }
+        return false;
     }
 
     function loadSection () {
@@ -93,7 +148,11 @@
                 if (typeof args[i] === 'function') {
                     callback = args[i];
                 } else {
-                    function_arr.push({scope: this, fn: this.initScrape, vars: args[i]});
+                    if(sectionExists(args[i])){
+                        function_arr.push({scope: this, fn: this.initScrape, vars: args[i]});
+                    } else {
+                        console.log("SECTION LOADER ERROR! section: "+args[i]+" does not exist")
+                    }
                 }
             };
         } else {
@@ -110,13 +169,13 @@
     }
 
     function initScrape () {
-        
+
         var args = Array.prototype.slice.call(arguments),
             id = args.pop(),
             numAddFiles,
             numImages,
             sectionOBJ = this.returnSectionOBJ(id);
-                        
+
         //confirm sectionOBJ was found
         if(sectionOBJ === undefined){
             // trace('this.loadSection: section id '+id+' not found');
@@ -153,14 +212,14 @@
                     sectionLoaderState.videosToLoad.push(fileURL);
                 } else {
                     // console.log('ajax load: '+fileURL);
-                    sectionLoaderState.miscToLoad.push(fileURL);         
+                    sectionLoaderState.miscToLoad.push(fileURL);
                 }
             }
         }
 
         //add any iamges from the json
         numImages = sectionOBJ.images.length;
-        
+
         while (numImages--){
             if(!this.isDuplicate(sectionOBJ.images[numImages])){
                 var fileURL = sectionOBJ.images[numImages];
@@ -176,7 +235,7 @@
         }
 
         var function_arr =  [];
-        
+
         if (sectionOBJ.htmlPath) {
             function_arr.push({scope: this, fn: this.loadHTML,  vars: [sectionOBJ]});
         }
@@ -210,7 +269,7 @@
 
     function htmlLoaded (sectionOBJ, data) {
         // console.log('sectionLoader_htmlLoaded: ');
-        
+
         sectionOBJ.htmlData = data;
 
         var sectionID = sectionOBJ.id;
@@ -223,8 +282,8 @@
             var newStr;
             var currSpanStyle;
             var currObj;
-            
-            //handle the shared 'html' category 
+
+            //handle the shared 'html' category
             if(sectionLoader.localizationJSON.sections['shared'] && sectionLoader.localizationJSON.sections['shared']["html"]){
                 htmlObjs = sectionLoader.localizationJSON.sections['shared']["html"];
                 numHtmlObjs = htmlObjs.length;
@@ -302,11 +361,11 @@
             var cssObjs = sectionLoader.localizationJSON.sections[sectionID].css;
             var numCssObjs = cssObjs.length;
             while(numCssObjs--){
-                    
+
                 while(String(sectionOBJ.cssData).indexOf(String(cssObjs[numCssObjs].ID)) > 0){
                     sectionOBJ.cssData = sectionOBJ.cssData.replace(String(cssObjs[numCssObjs].ID), String(cssObjs[numCssObjs].VAL));
                 }
-                
+
             }
         }
 
@@ -340,7 +399,7 @@
     function jsLoaded (sectionOBJ, data){
         // trace('sectionLoader_loadJS: success');
         sectionOBJ.jsAttached = true;
-        
+
         arrayExecuter.stepComplete();
     }
 
@@ -371,7 +430,7 @@
             } else {
                 sectionOBJ.partials[template.template_name] = data;
             }
-            
+
             Mustache.compile(data);
 
             arrayExecuter.stepComplete_instant();
@@ -406,7 +465,7 @@
         }
 
         sectionLoaderState.videoLoadingStatus = {currURL: '', buffered:0, seekable:0, totalLoad: 0, currentCount:0};
-        
+
         while (numVids--) {
             fileURL = sectionLoaderState.videosToLoad[numVids];
             newVid = document.createElement('video');
@@ -419,9 +478,9 @@
                 siteVideo_Player.autobuffer = 'true';
     //          siteVideo_Player.controls = true;
                 siteVideo_Player.autoplay = false;
-                            
+
                 sectionLoaderState.videosLoading.push(fileURL);
-                
+
                 if (numVids === 0) {
                     this.addNextVid_centralPlayer();
                 }
@@ -429,23 +488,23 @@
                 $(newVid).attr('preload', 'auto');
                 $(newVid).attr('autobuffer', 'true');
                 $(newVid).attr('controls', 'controls');
-                
+
                 newVid.preload = 'auto';
                 newVid.autobuffer = true;
                 newVid.controls = true;
                 newVid.autoplay = false;
-                
+
                 newVid.src = fileURL;
-                        
+
                 sectionLoaderState.videosLoading.push(newVid);
 
                 if (numVids === 0) {
                     setTimeout(this.checkVidStatus.bind(that), 100);
                 }
             }
-            
+
         }
-        
+
         console.log(sectionLoaderState.miscToLoad);
         while(numMisc--){
             var fileURL = sectionLoaderState.miscToLoad[numMisc];
@@ -453,7 +512,7 @@
             var fileIndex = 0+numMisc;
             $.get(fileURL, function(){
                 sectionLoader.miscFileLoaded();
-            });            
+            });
         }
     }
 
@@ -484,14 +543,14 @@
 
     function checkVidStatus_centralPlayer () {
         var videoToCheck = siteVideo_Player;
-                    
+
         //make sure it's loading the right file
         var currURL = sectionLoaderState.videosLoading[0];
         if(String(siteVideo_Player.src).indexOf(currURL) < 0){
             this.addNextVid_centralPlayer();
             return;
         }
-        
+
         var vidFinished = false;
         var buffered = 0;
         if(videoToCheck.buffered.length){
@@ -500,7 +559,7 @@
                 vidFinished = true;
             }
         }
-        
+
         var seekable = 0;
         if(!vidFinished && videoToCheck.seekable.length){
             seekable = videoToCheck.seekable.end(0);
@@ -519,18 +578,18 @@
         } else {
             sectionLoaderState.videoLoadingStatus.currentCount = 0;
         }
-        
+
         sectionLoaderState.videoLoadingStatus.currURL = currURL;
         sectionLoaderState.videoLoadingStatus.totalLoad = totalLoad;
         sectionLoaderState.videoLoadingStatus.seekable = seekable;
         sectionLoaderState.videoLoadingStatus.buffered = buffered;
-        
+
         if(vidFinished){
             sectionLoaderState.videoLoadingStatus.currentCount = 0;
             sectionLoaderState.videosLoaded++;
             trace('sectionLoader video Loaded: '+siteVideo_Player.src+' : '+sectionLoaderState.videosLoaded+' of '+sectionLoaderState.videosToLoad.length);
             sectionLoaderState.videosLoading.splice(0, 1);
-            
+
             if(sectionLoaderState.videosLoading.length){
                 //there are more videos: load the next video
                 this.addNextVid_centralPlayer();
@@ -561,16 +620,16 @@
         if (sectionLoaderState.videosLoading.length) {
             setTimeout(function(){sectionLoader.checkVidStatus();}, 100);
         }
-        
+
         sectionLoader.checkComplete();
     }
 
     function miscFileLoaded(fileId){
         sectionLoaderState.miscLoaded++;
-        
+
         sectionLoader.checkComplete();
     }
-    
+
     function getPerc () {
         var perc = (sectionLoaderState.imagesLoaded + sectionLoaderState.videosLoaded + sectionLoaderState.miscLoaded)/(sectionLoaderState.imagesToLoad.length + sectionLoaderState.videosToLoad.length + sectionLoaderState.miscToLoad.length);
         return perc;
@@ -589,19 +648,19 @@
 
     function complete () {
         // console.log('sectionLoader_complete: ');
-        
+
         var numSectionsLoaded = sectionLoaderState.currentlyLoadingIDs.length;
         while (numSectionsLoaded--) {
             var sectionID = sectionLoaderState.currentlyLoadingIDs[numSectionsLoaded];
             var sectionOBJ = this.returnSectionOBJ(sectionID);
             sectionOBJ.loaded = true;
-            
+
             //attachCSS
             if (sectionOBJ.cssPath) {
                 // trace('attachCSS: '+sectionOBJ.cssPath);
 
                 if (sectionLoader.localizationJSON && sectionLoader.localizationJSON.sections && sectionLoader.localizationJSON.sections[sectionID] && sectionLoader.localizationJSON.sections[sectionID].css) {
-                    //write modified CSS directly into HTML header 
+                    //write modified CSS directly into HTML header
                     $('<style type="text/css">' + sectionOBJ.cssData + '</style>').appendTo('head');
                 } else {
                     //attached link to original CSS file
@@ -613,16 +672,16 @@
                 }
             }
         }
-        
+
         sectionLoaderState.currentlyLoadingIDs = [];
         sectionLoaderState.imagesToLoad = [];
         sectionLoaderState.imagesLoaded = 0;
         sectionLoaderState.videosToLoad = [];
         sectionLoaderState.videosLoaded = 0;
         sectionLoaderState.videosLoading = [];
-        sectionLoaderState.miscToLoad = [];  
-        sectionLoaderState.miscLoaded = 0;   
-        
+        sectionLoaderState.miscToLoad = [];
+        sectionLoaderState.miscLoaded = 0;
+
         if (sectionLoaderState.loader && !sectionLoaderState.loader.finished) {
             sectionLoaderState.loader.complete(arrayExecuter.stepComplete_instant.bind(arrayExecuter));
         } else {
@@ -644,9 +703,12 @@
     }
 
     var sectionLoader = {
+        loadJSON: loadJSON,
+        setupSections: setupSections,
         localizationJSON: {},
         addLoaderUI: addLoaderUI,
         addSection: addSection,
+        sectionExists: sectionExists,
         addFiles: addFiles,
         loadSection: loadSection,
         initScrape: initScrape,
