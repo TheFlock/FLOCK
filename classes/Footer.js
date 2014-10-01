@@ -162,12 +162,12 @@
             e.preventDefault();
             //return false;
         });
-
+        
         //shareShelf
         $('#sharelabel').on('click', this._toggleShare);
 
         //Credits button
-        $('#credits-button').on('click', this._toggleCredits);
+        $('#credits-button').on('click', this.toggleCredits);
         // $('#creditsbox-close').on('click', toggleCredits);
 
         // $('#shareShelf').css('width', 'auto');
@@ -267,7 +267,7 @@
             TweenLite.to(sharelabel, 0.5, {top:-(shelf_height - FLOCK.settings.footer_height) + 'px', ease:Power4.easeInOut});
 
             if (document.getElementById('credits-button').className.match('active')) {
-                that._toggleCredits();
+                that.toggleCredits();
             }
         }
 
@@ -282,8 +282,8 @@
     }
 
     function closeMenus () {
-        this._toggleShare('close');
-        this._toggleCredits('close');
+        this.toggleShare('close');
+        this.toggleCredits('close');
     }
 
     function hide () {
@@ -298,8 +298,8 @@
     }
 
 
-    Footer.prototype._toggleShare = toggleShare;
-    Footer.prototype._toggleCredits = toggleCredits;
+    Footer.prototype.toggleShare = toggleShare;
+    Footer.prototype.toggleCredits = toggleCredits;
 
     Footer.prototype.closeMenus = closeMenus;
     Footer.prototype.init = init;

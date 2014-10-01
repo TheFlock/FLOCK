@@ -62,8 +62,8 @@
         this.elements.prev.href = '#';
         this.elements.next.href = '#';
 
-        this.elements.prev.className = 'prev';
-        this.elements.next.className = 'next';
+        this.elements.prev.className = 'prev_slide';
+        this.elements.next.className = 'next_slide';
 
         var header_height = data.fullBleed || data.ignoreHeader ? 0 : FLOCK.settings.header_height,
             footer_height = data.fullBleed || data.ignoreFooter ? 0 : FLOCK.settings.footer_height;
@@ -81,9 +81,10 @@
 
     function addEventHandlers () {
         var _wrapper = $(this.elements.wrapper),
+            _paginator_container = $(this.elements.paginator_container),
             _window = $(window);
 
-        _wrapper.on('click', 'a', clickHandler.bind(this));
+        _paginator_container.on('click', 'a', clickHandler.bind(this));
 
         _wrapper.on('mousedown', mouseDown.bind(this));
         _wrapper.on('mousemove', mouseMove.bind(this));
@@ -288,8 +289,8 @@
                                 .replace('{{backplate.thumb}}', slides[i].thumb);
         };
         this.elements.wrapper.innerHTML = slides_html;
-        this.elements.wrapper.appendChild(this.elements.prev);
-        this.elements.wrapper.appendChild(this.elements.next);
+        this.elements.paginator_container.appendChild(this.elements.prev);
+        this.elements.paginator_container.appendChild(this.elements.next);
 
         var slideElements = this.elements.wrapper.getElementsByClassName('slide');
         for (var i = 0; i < slideElements.length; i++) {
@@ -430,7 +431,7 @@
 
         slide_obj.el = slide_element;
 
-        slide_obj.backplate = new FLOCK.classes.Backplate(slide_element.getElementsByClassName('backplate_wrapper')[0], loaded, this.elements.resizeContainer, this.settings.mode);
+        slide_obj.backplate = new FLOCK.classes.Backplate(slide_element.getElementsByClassName('backplate_wrapper')[0], loaded, this.elements.wrapper, this.settings.mode);
         
         if (slide_obj.backplate.elements.wrapper.className.match('quote')) {
             slide_obj.isQuote = true;
@@ -571,6 +572,7 @@
         } else {
             if (this.animationState.currSlideX === 0) {
                 this.animationState.lastSlide.el.style.display = 'none';
+
                 this.animationState.otherSlide = null;
                 this.state.animating = false;
             } else {
@@ -660,7 +662,7 @@
         }
 
         if (backplate) {
-            backplate.resize(w, h);
+            backplate.resize();
         } else if (video_player) {
         }
 
@@ -684,9 +686,9 @@
         var w = FLOCK.settings.window_dimensions.width,
             h = FLOCK.settings.window_dimensions.height;
 
-        this.slides[this.state.current_index].backplate.resize(w, h);
-        this.slides[this.state.previous_index].backplate.resize(w, h);
-        this.slides[this.state.next_index].backplate.resize(w, h);
+        this.slides[this.state.current_index].backplate.resize();
+        this.slides[this.state.previous_index].backplate.resize();
+        this.slides[this.state.next_index].backplate.resize();
     }
 
     function reset (go) {
@@ -718,7 +720,7 @@
         var clicked = e.currentTarget;
 
         switch (clicked.className) {
-        case 'prev': // left arrow
+        case 'prev_slide': // left arrow
             if (this.state.animating) {
                 return;
             }
@@ -730,7 +732,7 @@
             this.previous();
             return false;
             break;
-        case 'next': // right arrow
+        case 'next_slide': // right arrow
             if (this.state.animating) {
                 return;
             }

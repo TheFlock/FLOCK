@@ -165,13 +165,18 @@
 
         var selected = $(this.elements.el).find('a[data-section="' + section_name + '"]');
 
+        this.elements.selected[0].className = '';
+
+        if (selected.length === 0) {
+            return;
+        }
+
         animate = true;
 
         if (isMobile) {
             // $('#mainNav').removeClass('open');
         }
 
-        this.elements.selected[0].className = '';
         this.elements.selected = selected;
         this.elements.selected[0].className = 'selected';
 

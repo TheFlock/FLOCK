@@ -48,6 +48,9 @@
         }
 
         function resize (w, h) {
+            if (this.backplate) {
+                this.backplate.resize();
+            }
         }
 
         function keyHandler (e) {

@@ -38,14 +38,16 @@
             mode: backplateMode
         }
 
-        this.elements.wrapper.className += ' loading';
-        this.elements.wrapper.style.display = 'none';
-
         // set loaded to true by default because most backplates will be preloaded with the section
         this.loaded = loaded === undefined ? true : loaded;
         this.onScreen = true;
 
-        $(this.elements.backplate).addClass('loading').on('load', this._onImageLoaded.bind(this));
+        if (!this.loaded) {
+            this.elements.wrapper.className += ' loading';
+            this.elements.wrapper.style.display = 'none';
+
+            $(this.elements.backplate).addClass('loading').on('load', this._onImageLoaded.bind(this));
+        }
 
     }
 
@@ -89,6 +91,7 @@
             } else {
                 w = FLOCK.settings.window_dimensions.width;
                 h = FLOCK.settings.window_dimensions.height - (FLOCK.settings.header_height + FLOCK.settings.footer_height);
+                backplate_wrapper.style.top = FLOCK.settings.header_height + 'px';
             }
         }
 
