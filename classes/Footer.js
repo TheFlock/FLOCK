@@ -162,15 +162,16 @@
             e.preventDefault();
             //return false;
         });
-        
+
         //shareShelf
-        $('#sharelabel').on('click', this._toggleShare);
+        $('#sharelabel').on('click', this.toggleShare);
 
         //Credits button
         $('#credits-button').on('click', this.toggleCredits);
-        // $('#creditsbox-close').on('click', toggleCredits);
+        if(document.getElementById('creditsbox-close'))$('#creditsbox-close').on('click', toggleCredits);
 
         // $('#shareShelf').css('width', 'auto');
+        $('#shareShelf').css('top', FLOCK.settings.footer_height+'px');
         $('#shareShelfContents').css('width', 'auto');
 
         shareShelf_width = $('#shareShelfContents').width()+10;
@@ -229,7 +230,7 @@
             }});
 
             if (document.getElementById('sharelabel').className.match('active')) {
-                that._toggleShare();
+                that.toggleShare();
             }
         }
 

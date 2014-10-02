@@ -45,6 +45,7 @@
 
     function ready(callbackFn){
         console.log('Shell ready');
+        this.initialized = true;
         // create menu
         FLOCK.app.mainMenu = new FLOCK.classes.Menu({
             menuID: 'menu',
