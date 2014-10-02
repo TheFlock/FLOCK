@@ -23,12 +23,7 @@
     'use strict';
 
     var Navigation = function (sectionContainerID) {
-        this.shell = document.getElementById(sectionContainerID) || document.getElementById("shell");
-        if(!this.shell){
-            console.log('NAVIGATION INIT ERROR! id: '+sectionContainerID+' does not exist');
-            console.log('NAVIGATION INIT ERROR! default id: shell does not exist');
-            return;
-        }
+        this.shell = sectionContainerID || "shell";
         this.verbose = false;
         this.current_section = '';
         this.previous_section = '';
@@ -205,7 +200,7 @@
         if(FLOCK.sections[sectionID] && !FLOCK.sections[sectionID].added){
             FLOCK.sections[sectionID].added = true;
             FLOCK.sections[sectionID].htmlElem = $(FLOCK.utils.SectionLoader.returnSectionOBJ(sectionID).htmlData);
-            $(this.shell).append(FLOCK.sections[sectionID].htmlElem);
+            $("#"+this.shell).append(FLOCK.sections[sectionID].htmlElem);
         }
 
         callbackFn();
