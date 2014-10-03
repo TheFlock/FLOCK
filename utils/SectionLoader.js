@@ -64,6 +64,7 @@
                 }
 
                 section_obj.data.base = FLOCK.settings.base_url || '';
+
                 this.addSection(section_name, section_obj);
             }
         }
@@ -110,7 +111,10 @@
             jsPath = files.jsPath || false,
             addFiles = files.addFiles || [];
 
-        if(sectionExists(id))return;
+        if(sectionExists(id)){
+            if(this.verbose)console.log('SectionLoader | addSection: section id '+id+' already exists');
+            return;
+        }
 
         sectionLoaderState.sections.push({id: id, images: images, data:data.data, templatePath: templatePath, partials:partials ,htmlPath: htmlPath, htmlData: null, cssPath: cssPath, cssData: null, jsPath: jsPath, jsAttached: true, jsData: null, addFiles:addFiles, loaded: false});
         if (id === 'work') {
@@ -120,9 +124,11 @@
 
     function sectionExists(id){
         var numSections = sectionLoaderState.sections.length;
+        // console.log('check exists: '+id);
+        // console.log(sectionLoaderState.sections);
         while (numSections--) {
             if(sectionLoaderState.sections[numSections].id === id){
-                if(this.verbose)console.log('SectionLoader | addSection: section id '+id+' already exists');
+                // if(this.verbose)console.log('SectionLoader | sectionExists: section id '+id+' already exists');
                 return true;
             }
         }
@@ -149,9 +155,10 @@
                     callback = args[i];
                 } else {
                     if(sectionExists(args[i])){
+                        if(this.verbose)console.log('SectionLoader | loadSection: '+args[i]);
                         function_arr.push({scope: this, fn: this.initScrape, vars: args[i]});
                     } else {
-                        console.log("SECTION LOADER ERROR! section: "+args[i]+" does not exist")
+                        console.log("SECTION LOADER ERROR! section: "+args[i]+" does not exist");
                     }
                 }
             };
@@ -344,6 +351,7 @@
 
     function loadCSS (sectionOBJ) {
         var that = this;
+        if(this.verbose)console.log('SectionLoader | loadCSS: '+sectionOBJ.cssPath);
 
         $.get(sectionOBJ.cssPath, function(data){
             that.cssLoaded(sectionOBJ, data);
@@ -457,6 +465,7 @@
         }
 
         while (numImages--) {
+            if(this.verbose)console.log('SectionLoader | load image: '+sectionLoaderState.imagesToLoad[numImages]);
             fileURL = sectionLoaderState.imagesToLoad[numImages];
             newImage = new Image();
             newImage.alt = String(numImages)
