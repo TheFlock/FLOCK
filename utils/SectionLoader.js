@@ -80,7 +80,7 @@
         isMobile = DeviceDetect.isMobile;
 
     function addLoaderUI (loaderObj) {
-        // trace('sectionLoader_addLoaderUI: '+loaderObj);
+        if(this.verbose)console.log('SectionLoader | addLoaderUI: '+loaderObj);
         sectionLoaderState.loader = loaderObj;
     }
 
@@ -98,7 +98,7 @@
     }
 
     function addSection (id, data) {
-        // console.log('addSection: '+id);
+        if(this.verbose)console.log('SectionLoader | addSection: '+id);
         //Check to be sure a section has not already been added with the same name
         var numSections = sectionLoaderState.sections.length,
             files = data.files || {},
@@ -122,7 +122,7 @@
         var numSections = sectionLoaderState.sections.length;
         while (numSections--) {
             if(sectionLoaderState.sections[numSections].id === id){
-                // trace('sectionLoader_addSection: section id already exists');
+                if(this.verbose)console.log('SectionLoader | addSection: section id '+id+' already exists');
                 return true;
             }
         }
@@ -156,7 +156,7 @@
                 }
             };
         } else {
-            // trace('this.loadSection: input not valid');
+            if(this.verbose)console.log('SectionLoader | this.loadSection: input not valid');
         }
 
         function_arr.push({scope: this, fn: this.loadFiles, vars: null});
@@ -178,14 +178,14 @@
 
         //confirm sectionOBJ was found
         if(sectionOBJ === undefined){
-            // trace('this.loadSection: section id '+id+' not found');
+            if(this.verbose)console.log('SectionLoader | this.loadSection: section id '+id+' not found');
             arrayExecuter.stepComplete_instant();
             return;
         }
 
         //check is section is already loaded
         if(sectionOBJ.loaded === true){
-            // trace('this.loadSection: '+id+' is already loaded');
+            if(this.verbose)console.log('SectionLoader | this.loadSection: '+id+' is already loaded');
             arrayExecuter.stepComplete_instant();
             return;
         }
@@ -211,7 +211,7 @@
                 } else if (fileURL.indexOf('.mp4')>0 || fileURL.indexOf('.webm')>0 || fileURL.indexOf('.ogg')>0){
                     sectionLoaderState.videosToLoad.push(fileURL);
                 } else {
-                    // console.log('ajax load: '+fileURL);
+                    if(this.verbose)console.log('SectionLoader | ajax load: '+fileURL);
                     sectionLoaderState.miscToLoad.push(fileURL);
                 }
             }
@@ -229,7 +229,7 @@
                 } else if (fileURL.indexOf('.mp4')>0 || fileURL.indexOf('.webm')>0 || fileURL.indexOf('.ogg')>0){
                     sectionLoaderState.videosToLoad.push(fileURL);
                 } else {
-                    // trace('not a supported fileType: '+fileURL);
+                    if(this.verbose)console.log('SectionLoader | not a supported fileType: '+fileURL);
                 }
             }
         }
@@ -259,7 +259,7 @@
     function loadHTML (sectionOBJ) {
         var that = this;
 
-        // console.log('loadHTML: '+sectionOBJ.htmlPath);
+        if(this.verbose)console.log('SectionLoader | loadHTML: '+sectionOBJ.htmlPath);
 
         //load html and scrape for images
         $.get(sectionOBJ.htmlPath, function(data){
@@ -268,7 +268,7 @@
     }
 
     function htmlLoaded (sectionOBJ, data) {
-        // console.log('sectionLoader_htmlLoaded: ');
+        if(this.verbose)console.log('SectionLoader | htmlLoaded: ');
 
         sectionOBJ.htmlData = data;
 
@@ -352,7 +352,7 @@
     }
 
     function cssLoaded (sectionOBJ, data){
-        // trace('this.cssLoaded: ');
+        if(this.verbose)console.log('SectionLoader | this.cssLoaded: '+sectionOBJ.id);
         sectionOBJ.cssData = String(data);
 
         var sectionID = sectionOBJ.id;
@@ -375,7 +375,7 @@
             var numImages = imgUrls.length;
             while (numImages--) {
                 var fileURL = imgUrls[numImages].replace('../', '');
-                 // trace('sectionLoader_cssLoaded: adding: '+fileURL);
+                if(this.verbose)console.log('SectionLoader | cssLoaded: adding: '+fileURL);
                 if (!this.isDuplicate(fileURL)) {
                     sectionLoaderState.imagesToLoad.push(fileURL);
                 }
@@ -388,7 +388,7 @@
     function loadJS (sectionOBJ){
         var that = this;
 
-        // trace('sectionLoader_loadJS: '+sectionOBJ.jsPath);
+        if(this.verbose)console.log('SectionLoader | loadJS: '+sectionOBJ.jsPath);
 
         if (sectionOBJ.jsPath) {
             that.jsLoaded(sectionOBJ, null);
@@ -397,7 +397,7 @@
     }
 
     function jsLoaded (sectionOBJ, data){
-        // trace('sectionLoader_loadJS: success');
+        if(this.verbose)console.log('SectionLoader | loadJS: success');
         sectionOBJ.jsAttached = true;
 
         arrayExecuter.stepComplete();
@@ -505,10 +505,8 @@
 
         }
 
-        console.log(sectionLoaderState.miscToLoad);
         while(numMisc--){
             var fileURL = sectionLoaderState.miscToLoad[numMisc];
-            console.log('loading misc: '+fileURL);
             var fileIndex = 0+numMisc;
             $.get(fileURL, function(){
                 sectionLoader.miscFileLoaded();
@@ -526,7 +524,7 @@
             sectionLoaderState.imagesToLoad[imageId] = null;
             sectionLoaderState.imagesLoaded++;
 
-            // trace('sectionLoader image Loaded: '+this.alt+' : '+this.src+' : '+sectionLoaderState.imagesLoaded+' of '+sectionLoaderState.imagesToLoad.length);
+            if(this.verbose)console.log('SectionLoader | image Loaded: '+this.alt+' : '+this.src+' : '+sectionLoaderState.imagesLoaded+' of '+sectionLoaderState.imagesToLoad.length);
             sectionLoader.checkComplete();
         }
     }
@@ -587,7 +585,7 @@
         if(vidFinished){
             sectionLoaderState.videoLoadingStatus.currentCount = 0;
             sectionLoaderState.videosLoaded++;
-            trace('sectionLoader video Loaded: '+siteVideo_Player.src+' : '+sectionLoaderState.videosLoaded+' of '+sectionLoaderState.videosToLoad.length);
+            if(this.verbose)console.log('SectionLoader | video Loaded: '+siteVideo_Player.src+' : '+sectionLoaderState.videosLoaded+' of '+sectionLoaderState.videosToLoad.length);
             sectionLoaderState.videosLoading.splice(0, 1);
 
             if(sectionLoaderState.videosLoading.length){
@@ -611,7 +609,7 @@
                 var buffered = videoToCheck.buffered.end(0);
                 if(buffered >= videoToCheck.duration){
                     sectionLoaderState.videosLoaded++;
-                    // trace('sectionLoader video Loaded: '+videoToCheck.src+' : '+sectionLoaderState.videosLoaded+' of '+sectionLoaderState.videosToLoad.length);
+                    if(this.verbose)console.log('SectionLoader | sectionLoader video Loaded: '+videoToCheck.src+' : '+sectionLoaderState.videosLoaded+' of '+sectionLoaderState.videosToLoad.length);
                     sectionLoaderState.videosLoading.splice(arrayLength, 1);
                 }
             }
@@ -636,8 +634,10 @@
     }
 
     function fileError (e) {
-        // trace('sectionLoader_fileError');
-        // trace(e);
+        if(this.verbose){
+            console.log('SectionLoader | fileError');
+            console.log(e);
+        }
     }
 
     function checkComplete(){
@@ -647,7 +647,7 @@
     }
 
     function complete () {
-        // console.log('sectionLoader_complete: ');
+        if(this.verbose)console.log('SectionLoader | complete: ');
 
         var numSectionsLoaded = sectionLoaderState.currentlyLoadingIDs.length;
         while (numSectionsLoaded--) {
@@ -657,7 +657,7 @@
 
             //attachCSS
             if (sectionOBJ.cssPath) {
-                // trace('attachCSS: '+sectionOBJ.cssPath);
+                if(this.verbose)console.log('SectionLoader | attachCSS: '+sectionOBJ.cssPath);
 
                 if (sectionLoader.localizationJSON && sectionLoader.localizationJSON.sections && sectionLoader.localizationJSON.sections[sectionID] && sectionLoader.localizationJSON.sections[sectionID].css) {
                     //write modified CSS directly into HTML header
@@ -703,6 +703,7 @@
     }
 
     var sectionLoader = {
+        verbose: false,
         loadJSON: loadJSON,
         setupSections: setupSections,
         localizationJSON: {},
