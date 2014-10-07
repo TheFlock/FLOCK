@@ -46,14 +46,18 @@
     function ready(callbackFn){
         console.log('Shell ready');
         this.initialized = true;
+
         // create menu
-        FLOCK.app.mainMenu = new FLOCK.classes.Menu({
+        var menuData = {
             menuID: 'menu',
             wrapperID: 'mainHeader',
             paginatorElID: 'mainNav',
             menuStyle: FLOCK.app.dataSrc.sections.main.data.menu.menuStyle,
             menuList: FLOCK.app.dataSrc.sections.main.data.menu.links
-        });
+        };
+        var menuTemplate = document.getElementById('menuTemplate');
+        if(menuTemplate)menuData.template = menuTemplate.innerHTML;
+        FLOCK.app.mainMenu = new FLOCK.classes.Menu(menuData);
 
         FLOCK.app.mainMenu.init(FLOCK.app.navigation.current_section);
 

@@ -9,19 +9,20 @@
         // AMD. Register as an anonymous module.
         define([
                 'jquery',
+				'mustache',
                 'FLOCK/utils/DeviceDetect',
                 'FLOCK/classes/MenuPaginator',
                 'greensock/TweenLite.min',
                 'greensock/TimelineLite.min',
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min'
-            ], function () {
-            return (root.classes.Menu = factory());
+            ], function ($, Mustache) {
+            return (root.classes.Menu = factory($, Mustache));
         });
     } else {
-        root.classes.Menu = factory();
+        root.classes.Menu = factory($, Mustache);
     }
-}(window.FLOCK = window.FLOCK || {}, function () {
+}(window.FLOCK = window.FLOCK || {}, function ($, Mustache) {
 
     'use strict';
 
@@ -31,8 +32,10 @@
     var Menu = function (data) {
         this.menuID = data.menuID || '';
         this.verbose = false;
-        
+
         that = this;
+
+        this.template = (data.template)?data.template:'<a rel="{{{rel}}}" class="{{{className}}}" data-type="{{{dataType}}}" data-section="{{{dataSection}}}" href="{{{href}}}" target="{{{target}}}"style="position: {{{position}}}; font-size: {{{fontSize}}};">{{{innerHTML}}}</a>';
 
         this.elements = {
             el: document.getElementById(data.menuID),
@@ -87,28 +90,37 @@
             if (menuItem.visible == 'false' || menuItem.comingSoon == 'true')
                 continue;
 
-            var btn = document.createElement('a');
+            var btnData = {},
+                popUp = false;
 
-            btn.className = 'mainMenuBtn';
-            btn.setAttribute('data-type', menuItem.type);
+            btnData.className = 'mainMenuBtn';
+
+            btnData.dataType = menuItem.type;
             if (menuItem.type === 'external') {
-                btn.setAttribute('target', '_blank');
+                btnData.target = '_blank';
+            }else if (menuItem.type === "popup") {
+                popUp = true;
+                btnData.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
             }
-            btn.setAttribute('data-section', menuItem.link);
-            btn.setAttribute('href', menuItem.link);
-            btn.style.position = 'relative';
-            btn.style.fontSize = menuItem["font-size"];
 
-            btn.innerHTML = menuItem.label;
+            btnData.dataSection = menuItem.link;
+            btnData.href = menuItem.link;
+
+            btnData.fontSize = menuItem["font-size"];
+            btnData.innerHTML = menuItem.label;
+
             for (var j = 0; j < FLOCK.app.dataSrc.sections.main.html.length; j++) {
                 if (FLOCK.app.dataSrc.sections.main.html[j].ID === menuItem.label) {
-                    btn.innerHTML = FLOCK.app.dataSrc.sections.main.html[j].VAL;
+                    btnData.innerHTML = FLOCK.app.dataSrc.sections.main.html[j].VAL;
                 }
             };
             // btn.innerHTML = $.grep(FLOCK.app.dataSrc.sections.main.html, function(e) { return e.ID == menuItem.label; })[0].VAL;
 
+            var btn = $(Mustache.render(this.template, btnData));
+            if(popUp)btn.click(menu_openPopUp);
+
             var li = document.createElement('li');
-            li.appendChild(btn);
+            li.appendChild(btn.get()[0]);
             this.elements.el.appendChild(li);
         }
     }
@@ -127,32 +139,48 @@
         var firstBtn = true;
 
         for(var i = 0; i < menuList.length; i++){
-            if(menuList[i].visible === false)continue;
+            var menuItem = menuList[i];
+            if (menuItem.visible == 'false' || menuItem.comingSoon == 'true')
+                continue;
+
             if(!firstBtn){
                 // var newDot = document.createElement('li');
                 // newDot.className = "menu_dot";
                 // menuElem.appendChild(newDot);
             } else {firstBtn = false;};
 
-            var newMenuEntry = document.createElement('li');
-            var newMenuLink = document.createElement('a');
-            newMenuLink.innerHTML = menuList[i].label;
-            newMenuLink.setAttribute('data-type', menuList[i].type);
-            if (menuList[i].type === 'external') {
-                newMenuLink.setAttribute('target', '_blank');
-            }
-            newMenuLink.setAttribute('data-section', menuList[i].link);
-            newMenuLink.setAttribute('href', menuList[i].link);
-            newMenuLink.style.fontSize = menuList[i]["font-size"];
-            if(menuList[i].type === "external"){
-                newMenuLink.target = "_blank";
-            } else if(menuList[i].type === "popup") {
-                newMenuLink.rel = menuList[i].link+","+menuList[i]["popupw"]+","+menuList[i]["popuph"];
-                $(newMenuLink).click(menu_openPopUp);
+            var btnData = {},
+                popUp = false;
+
+            btnData.className = 'mainMenuBtn';
+
+            btnData.dataType = menuItem.type;
+            if (menuItem.type === 'external') {
+                btnData.target = '_blank';
+            }else if (menuItem.type === "popup") {
+                alert('is pop up!');
+                popUp = true;
+                btnData.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
             }
 
-            newMenuEntry.appendChild(newMenuLink);
-            this.elements.el.appendChild(newMenuEntry);
+            btnData.dataSection = menuItem.link;
+            btnData.href = menuItem.link;
+            btnData.position = 'relative';
+            btnData.fontSize = menuItem["font-size"];
+            btnData.innerHTML = menuItem.label;
+
+            for (var j = 0; j < FLOCK.app.dataSrc.sections.main.html.length; j++) {
+                if (FLOCK.app.dataSrc.sections.main.html[j].ID === menuItem.label) {
+                    btnData.innerHTML = FLOCK.app.dataSrc.sections.main.html[j].VAL;
+                }
+            };
+
+            var btn = $(Mustache.render(this.template, btnData));
+            if(popUp)btn.click(menu_openPopUp);
+
+            var li = document.createElement('li');
+            li.appendChild(btn.get()[0]);
+            this.elements.el.appendChild(li);
         }
 
         this.menuPaginator = new FLOCK.classes.MenuPaginator({
