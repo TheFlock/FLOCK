@@ -35,7 +35,7 @@
 
         that = this;
 
-        this.template = (data.template)?data.template:'<a rel="{{{rel}}}" class="{{{className}}}" data-type="{{{dataType}}}" data-section="{{{dataSection}}}" href="{{{href}}}" target="{{{target}}}"style="position: {{{position}}}; font-size: {{{fontSize}}};">{{{innerHTML}}}</a>';
+        this.template = (data.template)?data.template:'<a rel="{{{rel}}}" class="{{{className}}}" data-type="{{{type}}}" data-section="{{{link}}}" href="{{{link}}}" target="{{{target}}}" style="position: {{{position}}}; font-size: {{{font-size}}};">{{{label}}}</a>';
 
         this.elements = {
             el: document.getElementById(data.menuID),
@@ -87,36 +87,36 @@
         for (var i = 0; i < menuList.length; i++)
         {
             var menuItem = menuList[i];
-            if (menuItem.visible == 'false' || menuItem.comingSoon == 'true')
+            if (String(menuItem.visible).toLowerCase() == 'false' || menuItem.comingSoon == 'true')
                 continue;
 
             var btnData = {},
                 popUp = false;
 
-            btnData.className = 'mainMenuBtn';
+            menuItem.className = 'mainMenuBtn';
 
-            btnData.dataType = menuItem.type;
+            // btnData.dataType = menuItem.type;
             if (menuItem.type === 'external') {
-                btnData.target = '_blank';
+                menuItem.target = '_blank';
             }else if (menuItem.type === "popup") {
                 popUp = true;
-                btnData.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
+                menuItem.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
             }
 
-            btnData.dataSection = menuItem.link;
-            btnData.href = menuItem.link;
+            // btnData.dataSection = menuItem.link;
+            // btnData.href = menuItem.link;
 
-            btnData.fontSize = menuItem["font-size"];
-            btnData.innerHTML = menuItem.label;
+            // btnData.fontSize = menuItem["font-size"];
 
+            // btnData.label = menuItem.label;
             for (var j = 0; j < FLOCK.app.dataSrc.sections.main.html.length; j++) {
                 if (FLOCK.app.dataSrc.sections.main.html[j].ID === menuItem.label) {
-                    btnData.innerHTML = FLOCK.app.dataSrc.sections.main.html[j].VAL;
+                    menuItem.label = FLOCK.app.dataSrc.sections.main.html[j].VAL;
                 }
             };
             // btn.innerHTML = $.grep(FLOCK.app.dataSrc.sections.main.html, function(e) { return e.ID == menuItem.label; })[0].VAL;
 
-            var btn = $(Mustache.render(this.template, btnData));
+            var btn = $(Mustache.render(this.template, menuItem));
             if(popUp)btn.click(menu_openPopUp);
 
             var li = document.createElement('li');
@@ -140,7 +140,7 @@
 
         for(var i = 0; i < menuList.length; i++){
             var menuItem = menuList[i];
-            if (menuItem.visible == 'false' || menuItem.comingSoon == 'true')
+            if (String(menuItem.visible).toLowerCase() == 'false' || menuItem.comingSoon == 'true')
                 continue;
 
             if(!firstBtn){
@@ -152,30 +152,30 @@
             var btnData = {},
                 popUp = false;
 
-            btnData.className = 'mainMenuBtn';
+            menuItem.className = 'mainMenuBtn';
 
-            btnData.dataType = menuItem.type;
+            // btnData.dataType = menuItem.type;
             if (menuItem.type === 'external') {
-                btnData.target = '_blank';
+                menuItem.target = '_blank';
             }else if (menuItem.type === "popup") {
-                alert('is pop up!');
                 popUp = true;
-                btnData.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
+                menuItem.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
             }
 
-            btnData.dataSection = menuItem.link;
-            btnData.href = menuItem.link;
-            btnData.position = 'relative';
-            btnData.fontSize = menuItem["font-size"];
-            btnData.innerHTML = menuItem.label;
+            // btnData.dataSection = menuItem.link;
+            // btnData.href = menuItem.link;
 
+            // btnData.fontSize = menuItem["font-size"];
+
+            // btnData.label = menuItem.label;
             for (var j = 0; j < FLOCK.app.dataSrc.sections.main.html.length; j++) {
                 if (FLOCK.app.dataSrc.sections.main.html[j].ID === menuItem.label) {
-                    btnData.innerHTML = FLOCK.app.dataSrc.sections.main.html[j].VAL;
+                    menuItem.label = FLOCK.app.dataSrc.sections.main.html[j].VAL;
                 }
             };
+            // btn.innerHTML = $.grep(FLOCK.app.dataSrc.sections.main.html, function(e) { return e.ID == menuItem.label; })[0].VAL;
 
-            var btn = $(Mustache.render(this.template, btnData));
+            var btn = $(Mustache.render(this.template, menuItem));
             if(popUp)btn.click(menu_openPopUp);
 
             var li = document.createElement('li');
@@ -205,6 +205,7 @@
             // $('#mainNav').removeClass('open');
         }
 
+        this.elements.selectedID = section_name;
         this.elements.selected = selected;
         this.elements.selected[0].className = 'selected';
 

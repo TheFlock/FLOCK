@@ -47,6 +47,21 @@
         console.log('Shell ready');
         this.initialized = true;
 
+
+        FLOCK.app.Footer.init(document.getElementById('footer'));
+
+        if (FLOCK.app.navigation.current_section !== 'videos') {
+            FLOCK.app.Footer.show();
+        }
+
+        this.setupMenu();
+        this.resize();
+
+        callbackFn();
+    }
+
+    function setupMenu(){
+
         // create menu
         var menuData = {
             menuID: 'menu',
@@ -60,12 +75,6 @@
         FLOCK.app.mainMenu = new FLOCK.classes.Menu(menuData);
 
         FLOCK.app.mainMenu.init(FLOCK.app.navigation.current_section);
-
-        FLOCK.app.Footer.init(document.getElementById('footer'));
-
-        if (FLOCK.app.navigation.current_section !== 'videos') {
-            FLOCK.app.Footer.show();
-        }
 
         // setup menu clicks
         $('#menu').on('click', 'a', function (e) {
@@ -87,10 +96,6 @@
             // e.preventDefault();
             return false;
         });
-
-        this.resize();
-
-        callbackFn();
     }
 
     function resize(){
@@ -156,6 +161,7 @@
     }
 
     Shell.prototype.init = init;
+    Shell.prototype.setupMenu = setupMenu;
     Shell.prototype.resize = resize;
 
     return Shell;
