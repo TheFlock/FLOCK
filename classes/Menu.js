@@ -9,7 +9,7 @@
         // AMD. Register as an anonymous module.
         define([
                 'jquery',
-				'mustache',
+                'mustache',
                 'FLOCK/utils/DeviceDetect',
                 'FLOCK/classes/MenuPaginator',
                 'greensock/TweenLite.min',
@@ -125,67 +125,117 @@
         }
     }
 
+    // function buildHorizontalMenu (menuList) {
+
+    //     // var menuID = "menu";
+    //     //var menuElem = document.getElementById(menuID);
+    //     // var header = document.getElementById('mainHeader');
+    //     this.elements.wrapper.className = 'horizontal ' + this.elements.wrapper.className;
+
+    //     this.elements.el.className = 'centeredMenu';
+
+    //     this.elements.paginatorEl.className = 'paginatorWrapper';
+
+    //     var firstBtn = true;
+
+    //     for(var i = 0; i < menuList.length; i++){
+    //         var menuItem = menuList[i];
+    //         if (String(menuItem.visible).toLowerCase() == 'false' || menuItem.comingSoon == 'true')
+    //             continue;
+
+    //         if(!firstBtn){
+    //             // var newDot = document.createElement('li');
+    //             // newDot.className = "menu_dot";
+    //             // menuElem.appendChild(newDot);
+    //         } else {firstBtn = false;};
+
+    //         var btnData = {},
+    //             popUp = false;
+
+    //         menuItem.className = 'mainMenuBtn';
+
+    //         // btnData.dataType = menuItem.type;
+    //         if (menuItem.type === 'external') {
+    //             menuItem.target = '_blank';
+    //         }else if (menuItem.type === "popup") {
+    //             popUp = true;
+    //             menuItem.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
+    //         }
+
+    //         // btnData.dataSection = menuItem.link;
+    //         // btnData.href = menuItem.link;
+
+    //         // btnData.fontSize = menuItem["font-size"];
+
+    //         // btnData.label = menuItem.label;
+    //         for (var j = 0; j < FLOCK.app.dataSrc.sections.main.html.length; j++) {
+    //             if (FLOCK.app.dataSrc.sections.main.html[j].ID === menuItem.label) {
+    //                 menuItem.label = FLOCK.app.dataSrc.sections.main.html[j].VAL;
+    //             }
+    //         };
+    //         // btn.innerHTML = $.grep(FLOCK.app.dataSrc.sections.main.html, function(e) { return e.ID == menuItem.label; })[0].VAL;
+
+    //         var btn = $(Mustache.render(this.template, menuItem));
+    //         if(popUp)btn.click(menu_openPopUp);
+
+    //         var li = document.createElement('li');
+    //         li.appendChild(btn.get()[0]);
+    //         this.elements.el.appendChild(li);
+    //     }
+
+    //     this.menuPaginator = new FLOCK.classes.MenuPaginator({
+    //         wrapper: this.elements.wrapper
+    //     });
+    // }
+
     function buildHorizontalMenu (menuList) {
 
         // var menuID = "menu";
-        //var menuElem = document.getElementById(menuID);
+        // var menuElem = document.getElementById(menuID);
         // var header = document.getElementById('mainHeader');
-        this.elements.wrapper.className = 'horizontal ' + this.elements.wrapper.className;
+        this.elements.wrapper.className = 'horizontal paginatorWrapper ' + this.elements.wrapper.className;
 
         this.elements.el.className = 'centeredMenu';
 
-        this.elements.paginatorEl.className = 'paginatorWrapper';
+        this.elements.paginatorEl.className = 'paginatorMasker';
 
         var firstBtn = true;
 
         for(var i = 0; i < menuList.length; i++){
-            var menuItem = menuList[i];
-            if (String(menuItem.visible).toLowerCase() == 'false' || menuItem.comingSoon == 'true')
-                continue;
-
+            if(menuList[i].visible === false)continue;
             if(!firstBtn){
                 // var newDot = document.createElement('li');
                 // newDot.className = "menu_dot";
                 // menuElem.appendChild(newDot);
             } else {firstBtn = false;};
-
-            var btnData = {},
-                popUp = false;
-
-            menuItem.className = 'mainMenuBtn';
-
-            // btnData.dataType = menuItem.type;
-            if (menuItem.type === 'external') {
-                menuItem.target = '_blank';
-            }else if (menuItem.type === "popup") {
-                popUp = true;
-                menuItem.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
+            
+            var newMenuEntry = document.createElement('li');
+            var newMenuLink = document.createElement('a');
+            newMenuLink.innerHTML = menuList[i].label;
+            newMenuLink.setAttribute('data-type', menuList[i].type);
+            if (menuList[i].type === 'external') {
+                newMenuLink.setAttribute('target', '_blank');
             }
-
-            // btnData.dataSection = menuItem.link;
-            // btnData.href = menuItem.link;
-
-            // btnData.fontSize = menuItem["font-size"];
-
-            // btnData.label = menuItem.label;
-            for (var j = 0; j < FLOCK.app.dataSrc.sections.main.html.length; j++) {
-                if (FLOCK.app.dataSrc.sections.main.html[j].ID === menuItem.label) {
-                    menuItem.label = FLOCK.app.dataSrc.sections.main.html[j].VAL;
-                }
-            };
-            // btn.innerHTML = $.grep(FLOCK.app.dataSrc.sections.main.html, function(e) { return e.ID == menuItem.label; })[0].VAL;
-
-            var btn = $(Mustache.render(this.template, menuItem));
-            if(popUp)btn.click(menu_openPopUp);
-
-            var li = document.createElement('li');
-            li.appendChild(btn.get()[0]);
-            this.elements.el.appendChild(li);
+            newMenuLink.setAttribute('data-section', menuList[i].link);
+            newMenuLink.setAttribute('href', menuList[i].link);
+            newMenuLink.style.fontSize = menuList[i]["font-size"];
+            if(menuList[i].type === "external"){
+                newMenuLink.target = "_blank";
+            } else if(menuList[i].type === "popup") {
+                newMenuLink.rel = menuList[i].link+","+menuList[i]["popupw"]+","+menuList[i]["popuph"];
+                $(newMenuLink).click(this.openPopUp);
+            }
+            
+            newMenuEntry.appendChild(newMenuLink);
+            this.elements.el.appendChild(newMenuEntry);
         }
 
-        this.menuPaginator = new FLOCK.classes.MenuPaginator({
-            wrapper: this.elements.wrapper
-        });
+        var that = this;
+        window.setTimeout(function () {
+            that.menuPaginator = new FLOCK.classes.MenuPaginator({
+                wrapper: that.elements.wrapper
+            });
+        }, 50);        
     }
 
     function selectMenuItem (section_name, animate) {

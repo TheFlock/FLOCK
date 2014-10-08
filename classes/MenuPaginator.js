@@ -34,14 +34,14 @@
 
         this.elements.list.children('li').each(function () {
             if (this.style.display !== 'none') {
+                console.log(this, $(this).outerWidth(true));
                 listWidth += $(this).outerWidth(true) + 1;
             }
         });
-        
+
         this.listWidth = listWidth;
 
         this.elements.list[0].style.width = listWidth + 'px';
-        this.elements.wrapper.style.visibility = 'visible';
 
         $(this.elements.wrapper).on('click', '.prev, .next',function (e) {
             e.preventDefault();
