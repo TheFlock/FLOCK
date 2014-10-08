@@ -114,68 +114,12 @@
             }
         }
 
-        //addIcons to Follow Us Menu
-        var shareObj = data["footerShare"];
-
-        if (shareObj) {
-            if(String(shareObj["VISIBLE"]).toLowerCase() == "false"){
-                $("#share").css("display", "none");
-            } else {
-                var shareBtns = [
-                    {
-                        "JSON_ID": "getGlue",
-                        "HTML_ID": "getGlueBtn",
-                    },
-                    {
-                        "JSON_ID": "googlePlus",
-                        "HTML_ID": "gPlusBtn",
-                    },
-                    {
-                        "JSON_ID": "tweet",
-                        "HTML_ID": "tweetBtn",
-                    },
-                    {
-                        "JSON_ID": "facebook_like",
-                        "HTML_ID": "fbLikeBtn",
-                    },
-                    {
-                        "JSON_ID": "facebook_share",
-                        "HTML_ID": "share-facebook",
-                    }
-                ];
-
-                for(var b=0; b<shareBtns.length; b++){
-                    var currBtn = shareBtns[b];
-                    var btnDisp = (shareObj["show_buttons"][currBtn["JSON_ID"]].toLowerCase() == "true")?"inherit":"none";
-                    $("#"+currBtn["HTML_ID"]).css("display", btnDisp);
-                }
-            }
-        }
-
-        //Share on facebook
-        $('#share-facebook').on('click', function(e) {
-
-            window.open('http://www.facebook.com/share.php?u='+encodeURIComponent($(this).attr('href')), '_blank');
-            // $('#sound_button').removeClass('sound-on');
-            // FLOCK.functions.pauseSound();
-
-            e.preventDefault();
-            //return false;
-        });
-
-        //shareShelf
-        $('#sharelabel').on('click', this.toggleShare);
-
         //Credits button
         $('#credits-button').on('click', this.toggleCredits);
         if(document.getElementById('creditsbox-close'))$('#creditsbox-close').on('click', toggleCredits);
 
-        // $('#shareShelf').css('width', 'auto');
-        $('#shareShelf').css('top', FLOCK.settings.footer_height+'px');
-        $('#shareShelfContents').css('width', 'auto');
+        this.initShare(data);
 
-        shareShelf_width = $('#shareShelfContents').width()+10;
-        $('#shareShelfContents').css('width', shareShelf_width+'px');
     }
 
     function showMPAARequirements(){
@@ -240,6 +184,68 @@
         }
     }
 
+    function initShare(){
+
+            //share buttons
+            var shareObj = data["footerShare"];
+
+            if (shareObj) {
+                if(String(shareObj["VISIBLE"]).toLowerCase() == "false"){
+                    $("#share").css("display", "none");
+                } else {
+                    var shareBtns = [
+                        {
+                            "JSON_ID": "getGlue",
+                            "HTML_ID": "getGlueBtn",
+                        },
+                        {
+                            "JSON_ID": "googlePlus",
+                            "HTML_ID": "gPlusBtn",
+                        },
+                        {
+                            "JSON_ID": "tweet",
+                            "HTML_ID": "tweetBtn",
+                        },
+                        {
+                            "JSON_ID": "facebook_like",
+                            "HTML_ID": "fbLikeBtn",
+                        },
+                        {
+                            "JSON_ID": "facebook_share",
+                            "HTML_ID": "share-facebook",
+                        }
+                    ];
+
+                    for(var b=0; b<shareBtns.length; b++){
+                        var currBtn = shareBtns[b];
+                        var btnDisp = (shareObj["show_buttons"][currBtn["JSON_ID"]].toLowerCase() == "true")?"inherit":"none";
+                        $("#"+currBtn["HTML_ID"]).css("display", btnDisp);
+                    }
+                }
+            }
+
+        //Share on facebook
+        $('#share-facebook').on('click', function(e) {
+
+            window.open('http://www.facebook.com/share.php?u='+encodeURIComponent($(this).attr('href')), '_blank');
+            // $('#sound_button').removeClass('sound-on');
+            // FLOCK.functions.pauseSound();
+
+            e.preventDefault();
+            //return false;
+        });
+
+        //shareShelf
+        $('#sharelabel').on('click', this.toggleShare);
+
+        // $('#shareShelf').css('width', 'auto');
+        $('#shareShelf').css('top', FLOCK.settings.footer_height+'px');
+        $('#shareShelfContents').css('width', 'auto');
+
+        shareShelf_width = $('#shareShelfContents').width()+10;
+        $('#shareShelfContents').css('width', shareShelf_width+'px');
+    }
+
     function toggleShare(e){
 
         var shareShelf = $('#shareShelf'),
@@ -299,6 +305,7 @@
     }
 
 
+    Footer.prototype.initShare = initShare;
     Footer.prototype.toggleShare = toggleShare;
     Footer.prototype.toggleCredits = toggleCredits;
 
