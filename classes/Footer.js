@@ -93,32 +93,14 @@
             }
         }
 
-        //addIcons to Follow Us Menu
-        var followUsObj = data["footerFollowUs"];
-
-        if (followUsObj) {
-            var followUsElem = document.getElementById("follow");
-            if(String(followUsObj["VISIBLE"]).toLowerCase() == "false"){
-                followUsElem.style.display = "none";
-            } else {
-                for(var l=0; l<followUsObj.links.length; l++){
-                    if(String(followUsObj.links[l]["VISIBLE"]).toLowerCase() == "true"){
-                        var followUsA = document.createElement("a");
-                        followUsA.className = followUsObj.links[l]["CLASS"] + ' social-icon';
-                        followUsA.target = "_blank";
-                        followUsA.href = followUsObj.links[l]["URL"];
-                        followUsElem.appendChild(followUsA);
-                        // $(followUsA).on('click', FLOCK.functions.externalLink);
-                    }
-                }
-            }
-        }
-
         //Credits button
-        $('#credits-button').on('click', this.toggleCredits);
+        $('#credits-button').on('click', this.toggleCredits.bind(this));
         if(document.getElementById('creditsbox-close'))$('#creditsbox-close').on('click', toggleCredits);
 
+        this.initFollow(data);
         this.initShare(data);
+
+        if(this.init_extend)this.init_extend(data);
 
     }
 
@@ -184,6 +166,30 @@
         }
     }
 
+    function initFollow(){
+
+        //addIcons to Follow Us Menu
+        var followUsObj = data["footerFollowUs"];
+
+        if (followUsObj) {
+            var followUsElem = document.getElementById("follow");
+            if(String(followUsObj["VISIBLE"]).toLowerCase() == "false"){
+                followUsElem.style.display = "none";
+            } else {
+                for(var l=0; l<followUsObj.links.length; l++){
+                    if(String(followUsObj.links[l]["VISIBLE"]).toLowerCase() == "true"){
+                        var followUsA = document.createElement("a");
+                        followUsA.className = followUsObj.links[l]["CLASS"] + ' social-icon';
+                        followUsA.target = "_blank";
+                        followUsA.href = followUsObj.links[l]["URL"];
+                        followUsElem.appendChild(followUsA);
+                        // $(followUsA).on('click', FLOCK.functions.externalLink);
+                    }
+                }
+            }
+        }
+    }
+
     function initShare(){
 
             //share buttons
@@ -236,7 +242,7 @@
         });
 
         //shareShelf
-        $('#sharelabel').on('click', this.toggleShare);
+        $('#sharelabel').on('click', this.toggleShare.bind(this));
 
         // $('#shareShelf').css('width', 'auto');
         $('#shareShelf').css('top', FLOCK.settings.footer_height+'px');
@@ -284,6 +290,51 @@
         }
     }
 
+    function attachSocialScripts(callbackFn){
+        console.log('FOOTER | attachSocialScripts')
+        getGlueScript();
+        twitterScript();
+        googlePlusScript();
+        if(callbackFn)callbackFn();
+    }
+
+    function getGlueScript(){
+        var s=document.createElement("script");
+        s.src="//widgets.getglue.com/checkin.js";
+        var n=document.getElementsByTagName("script")[0];
+        n.parentNode.insertBefore(s,n);
+    }
+
+    function twitterScript(){
+
+        window.twttr = (function (d,s,id) {
+            var t, js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return; js=d.createElement(s); js.id=id;
+            js.src="https://platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs);
+            return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f) } });
+        }(document, "script", "twitter-wjs"));
+
+        twttr.ready(function (twttr) {
+            twttr.events.bind('click', function () {
+                videos_pause();
+            });
+        });
+    }
+
+    function googlePlusScript(){
+        var gPlusOne = document.createElement('g:plusone'),
+            container = document.getElementById('gPlusBtn');
+
+        gPlusOne.setAttribute("size", "medium");
+        gPlusOne.setAttribute("annotation", "none");
+        gPlusOne.setAttribute("href", FLOCK.settings.base_url);
+        container.appendChild(gPlusOne);
+
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    }
+
     function resize (w, h) {
         console.log('resize footer');
     }
@@ -305,9 +356,11 @@
     }
 
 
+    Footer.prototype.initFollow = initFollow;
     Footer.prototype.initShare = initShare;
     Footer.prototype.toggleShare = toggleShare;
     Footer.prototype.toggleCredits = toggleCredits;
+    Footer.prototype.attachSocialScripts = attachSocialScripts;
 
     Footer.prototype.closeMenus = closeMenus;
     Footer.prototype.init = init;
