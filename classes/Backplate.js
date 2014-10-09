@@ -82,25 +82,27 @@
             bw = w,
             bh = h,
             current_ratio = this._getRatio();
-            
+        
         // current_ratio = 478/852;
         if (w === undefined || h === undefined) {
             if (this.elements.resizeContainer) {
+                console.log('this.elements.resizeContainer ', this.elements.resizeContainer.offsetWidth, this.elements.resizeContainer.offsetHeight);
                 w = this.elements.resizeContainer.offsetWidth;
                 h = this.elements.resizeContainer.offsetHeight;
             } else {
+                console.log('FLOCK.settings.window_dimensions.width & height ', FLOCK.settings.window_dimensions.width, FLOCK.settings.window_dimensions.height);
                 w = FLOCK.settings.window_dimensions.width;
                 h = FLOCK.settings.window_dimensions.height - (FLOCK.settings.header_height + FLOCK.settings.footer_height);
                 backplate_wrapper.style.top = FLOCK.settings.header_height + 'px';
             }
         }
 
-        backplate_wrapper.style.width = w + 'px';
-        backplate_wrapper.style.height = h + 'px';
-
-        if (isNaN(current_ratio) || current_ratio === 0) {
+        if (isNaN(current_ratio) || current_ratio === 0 || w === 0 || h === 0) {
             return;
         }
+
+        backplate_wrapper.style.width = w + 'px';
+        backplate_wrapper.style.height = h + 'px';
 
         /**
         * set height and width based on ratio
@@ -108,7 +110,6 @@
         // if tall image
         if (current_ratio > 1) {
 
-            
             if (this.settings.mode === 'contain') {
                 // if wide image
                 if (h / w > current_ratio) {
@@ -207,7 +208,7 @@
             left: leftpos,
             top: toppos
         }
-        
+        console.log('RESIZE BACKPLATE ---- ', bw, bh);
         return size_obj;
 
     }
