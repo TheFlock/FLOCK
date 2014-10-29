@@ -9,7 +9,7 @@
         // AMD. Register as an anonymous module.
         define([
                 'jquery',
-                'FLOCK/utils/inherit',
+                'FLOCK/utils/Inherit',
                 'FLOCK/classes/Backplate', 
                 'FLOCK/utils/videoPlayerME'
             ], function ($) {
