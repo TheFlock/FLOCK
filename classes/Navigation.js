@@ -60,7 +60,10 @@
             return;
         }
 
-        FLOCK.app.mainMenu.selectMenuItem(sectionID);
+        if (FLOCK.app.mainMenu) {
+            FLOCK.app.mainMenu.selectMenuItem(sectionID);
+        }
+
         if (this.current_section != sectionID)this.previous_section = this.current_section;
         this.current_section = sectionID;
 
