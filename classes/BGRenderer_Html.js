@@ -193,19 +193,24 @@
         this.width = w;
         this.height = h;
 
+        var img1width = this.image1 ? this.image1.width : 0,
+            img1height = this.image1 ? this.image1.height : 0,
+            img2width = this.image2 ? this.image2.width : 0,
+            img2height = this.image2 ? this.image2.height : 0;
+
         var img1Dimensions = {
-                w: this.image1.width, 
-                h: this.image1.height
+                w: img1width, 
+                h: img1height
             },
-            bgRatio1 = Math.max(w/img1Dimensions.w, h/img1Dimensions.h),
+            bg1Ratio = Math.max(w/img1Dimensions.w, h/img1Dimensions.h),
             bg1AdjustedWidth = (img1Dimensions.w*bg1Ratio)*(1+this.zoomAmount),
             bg1AdjustedHeight = (img1Dimensions.h*bg1Ratio)*(1+this.zoomAmount),
 
             img2Dimensions = {
-                w: this.image2.width, 
-                h: this.image2.height
+                w: img2width, 
+                h: img2height
             },
-            bgRatio2 = Math.max(w/img2Dimensions.w, h/img2Dimensions.h),
+            bg2Ratio = Math.max(w/img2Dimensions.w, h/img2Dimensions.h),
             bg2AdjustedWidth = (img2Dimensions.w*bg2Ratio)*(1+this.zoomAmount),
             bg2AdjustedHeight = (img2Dimensions.h*bg2Ratio)*(1+this.zoomAmount),
 
@@ -217,8 +222,7 @@
             bg2OffsetLeftMax = ((w-bg2AdjustedWidth)+(paddingW/2))-bgOffsetLeftMin,
 
             bgOffsetTopMin = -paddingH/2,
-            bgOffsetTopMax = ((h-bgAdjustedHeight)+(paddingH/2))-bgOffsetTopMin;
-            bg1OffsetTopMax = ((h-bg1AdjustedHeight)+(paddingH/2))-bgOffsetTopMin;
+            bg1OffsetTopMax = ((h-bg1AdjustedHeight)+(paddingH/2))-bgOffsetTopMin,
             bg2OffsetTopMax = ((h-bg2AdjustedHeight)+(paddingH/2))-bgOffsetTopMin;
 
         if(this.image1Obj){
