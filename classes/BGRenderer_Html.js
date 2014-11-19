@@ -193,28 +193,45 @@
         this.width = w;
         this.height = h;
 
-        var imgDimensions = {w: 1544, h: 1200},
-            bgRatio = Math.max(w/imgDimensions.w, h/imgDimensions.h),
-            bgAdjustedWidth = (imgDimensions.w*bgRatio)*(1+this.zoomAmount),
-            bgAdjustedHeight = (imgDimensions.h*bgRatio)*(1+this.zoomAmount),
+        var img1Dimensions = {
+                w: this.image1.width, 
+                h: this.image1.height
+            },
+            bgRatio1 = Math.max(w/img1Dimensions.w, h/img1Dimensions.h),
+            bg1AdjustedWidth = (img1Dimensions.w*bg1Ratio)*(1+this.zoomAmount),
+            bg1AdjustedHeight = (img1Dimensions.h*bg1Ratio)*(1+this.zoomAmount),
+
+            img2Dimensions = {
+                w: this.image2.width, 
+                h: this.image2.height
+            },
+            bgRatio2 = Math.max(w/img2Dimensions.w, h/img2Dimensions.h),
+            bg2AdjustedWidth = (img2Dimensions.w*bg2Ratio)*(1+this.zoomAmount),
+            bg2AdjustedHeight = (img2Dimensions.h*bg2Ratio)*(1+this.zoomAmount),
+
             paddingW = w*(this.zoomAmount),
             paddingH = h*(this.zoomAmount),
+
             bgOffsetLeftMin = -paddingW/2,
-            bgOffsetLeftMax = ((w-bgAdjustedWidth)+(paddingW/2))-bgOffsetLeftMin,
+            bg1OffsetLeftMax = ((w-bg1AdjustedWidth)+(paddingW/2))-bgOffsetLeftMin,
+            bg2OffsetLeftMax = ((w-bg2AdjustedWidth)+(paddingW/2))-bgOffsetLeftMin,
+
             bgOffsetTopMin = -paddingH/2,
             bgOffsetTopMax = ((h-bgAdjustedHeight)+(paddingH/2))-bgOffsetTopMin;
+            bg1OffsetTopMax = ((h-bg1AdjustedHeight)+(paddingH/2))-bgOffsetTopMin;
+            bg2OffsetTopMax = ((h-bg2AdjustedHeight)+(paddingH/2))-bgOffsetTopMin;
 
         if(this.image1Obj){
-            this.image1.style.top = (bgOffsetTopMin+(bgOffsetTopMax*this.image1Obj.v))+'px';
-            this.image1.style.left = (bgOffsetLeftMin+(bgOffsetLeftMax*this.image1Obj.h))+'px';
-            this.image1.style.width = bgAdjustedWidth+'px';
-            this.image1.style.height = bgAdjustedHeight+'px';
+            this.image1.style.top = (bgOffsetTopMin+(bg1OffsetTopMax*this.image1Obj.v))+'px';
+            this.image1.style.left = (bgOffsetLeftMin+(bg1OffsetLeftMax*this.image1Obj.h))+'px';
+            this.image1.style.width = bg1AdjustedWidth+'px';
+            this.image1.style.height = bg1AdjustedHeight+'px';
         }
         if(this.image2Obj){
-            this.image2.style.top = (bgOffsetTopMin+(bgOffsetTopMax*this.image2Obj.v))+'px';
-            this.image2.style.left = (bgOffsetLeftMin+(bgOffsetLeftMax*this.image2Obj.h))+'px';
-            this.image2.style.width = bgAdjustedWidth+'px';
-            this.image2.style.height = bgAdjustedHeight+'px';
+            this.image2.style.top = (bgOffsetTopMin+(bg2OffsetTopMax*this.image2Obj.v))+'px';
+            this.image2.style.left = (bgOffsetLeftMin+(bg2OffsetLeftMax*this.image2Obj.h))+'px';
+            this.image2.style.width = bg2AdjustedWidth+'px';
+            this.image2.style.height = bg2AdjustedHeight+'px';
         }
     }
 
