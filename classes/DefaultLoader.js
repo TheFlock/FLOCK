@@ -62,5 +62,11 @@
         return loaderBar;
     }
 
+    function resize () {
+
+    }
+
+    DefaultLoader.prototype.resize = resize;
+
     return DefaultLoader;
 }));
