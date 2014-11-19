@@ -322,17 +322,20 @@
     }
 
     function googlePlusScript(){
-        var gPlusOne = document.createElement('g:plusone'),
+        var gPlusOne,
             container = document.getElementById('gPlusBtn');
 
-        gPlusOne.setAttribute("size", "medium");
-        gPlusOne.setAttribute("annotation", "none");
-        gPlusOne.setAttribute("href", FLOCK.settings.base_url);
-        container.appendChild(gPlusOne);
+        if (container) {
+            gPlusOne = document.createElement('g:plusone')
+            gPlusOne.setAttribute("size", "medium");
+            gPlusOne.setAttribute("annotation", "none");
+            gPlusOne.setAttribute("href", FLOCK.settings.base_url);
+            container.appendChild(gPlusOne);
 
-        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-        po.src = 'https://apis.google.com/js/plusone.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        }
     }
 
     function resize (w, h) {
