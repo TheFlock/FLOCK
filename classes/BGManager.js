@@ -99,7 +99,10 @@
             imgID;
 
         // check that section exists and has images
-        if(!sectionObj || !sectionObj.imgIDs || sectionObj.imgIDs.length <= 0)return false;
+        if (!sectionObj || !sectionObj.imgIDs || sectionObj.imgIDs.length <= 0) 
+        {
+            return false;
+        }
 
         imgID = sectionObj.imgIDs[0];
 
