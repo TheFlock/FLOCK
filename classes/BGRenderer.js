@@ -103,8 +103,8 @@
         tl.to(newContainer, 0, { x: this.width + 'px' });
 
         // animate positions
-        tl.to(oldContainer, t*3.5/8, { x: -this.width + 'px', ease: Expo.easeInOut}, t*2/8);
-        tl.to(newContainer, t*3.5/8, { x: 0 + 'px', ease: Expo.easeInOut}, t*2/8);
+        tl.to(oldContainer, t*3.5/8, { x: -this.width + 'px', ease: Expo.easeInOut}, 0);
+        tl.to(newContainer, t*3.5/8, { x: 0 + 'px', ease: Expo.easeInOut}, 0);
 
         tl.play();
 
