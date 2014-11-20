@@ -91,8 +91,9 @@
 
         this.resize();
 
+        var that = this;
         var tl = new TimelineLite({onComplete:function(){
-            // this.changeComplete(callbackFn);
+            that.changeComplete(callbackFn);
         }.bind(this)});
         tl.pause();
 
