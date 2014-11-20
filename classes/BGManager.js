@@ -49,7 +49,7 @@
 
         // create sectionLoader entries for each image
         for (var imageName in this.images){
-            this.images[imageName].img = false;
+            this.images[imageName].img = null;
             FLOCK.utils.SectionLoader.addSection('background_'+imageName, {
                 files: {
                     images: [this.images[imageName].url]
@@ -99,7 +99,7 @@
             imgID;
 
         // check that section exists and has images
-        if(!sectionObj || !sectionObj.imgIDs)return false;
+        if(!sectionObj || !sectionObj.imgIDs || sectionObj.imgIDs.length <= 0)return false;
 
         imgID = sectionObj.imgIDs[0];
 
@@ -110,14 +110,15 @@
     }
 
     function changeBg(sectionId, instant, callbackFn){
-        var bgId = this.getBg(sectionId, false, false);
-        if(!bgId){
-            this.clear();
-            callbackFn();
-            return;
-        }
-        var imgObj = this.images[bgId],
+        var bgId = this.getBg(sectionId, false, false),
+            imgObj = this.images[bgId],
             loadCatch = false;
+        
+        if(bgId === false){
+            imgObj = {
+                img: false
+            }
+        }
 
         if(imgObj == this.currBgObj){
             if(callbackFn)callbackFn();
@@ -125,7 +126,7 @@
         }
         this.currBgObj = imgObj;
 
-        if(imgObj.img && imgObj.loaded){
+        if(imgObj.img === false || (imgObj.img && imgObj.loaded)){
             this.renderer.changeBg(imgObj, instant, callbackFn);
         } else {
             imgObj.img = new Image();

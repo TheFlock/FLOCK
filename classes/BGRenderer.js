@@ -76,8 +76,10 @@
             oldContainerInner = this.inner2;
             this.image1 = imageObj.img;
             this.image1Obj = imageObj;
-            this.image1.style.position = 'absolute';
-            this.inner1.appendChild(this.image1);
+            if (this.image1) {
+                this.image1.style.position = 'absolute';
+                this.inner1.appendChild(this.image1);
+            }
         } else {
             newContainer = this.outer2;
             newContainerInner = this.inner2;
@@ -85,8 +87,10 @@
             oldContainerInner = this.inner1;
             this.image2 = imageObj.img;
             this.image2Obj = imageObj;
-            this.image2.style.position = 'absolute';
-            this.inner2.appendChild(this.image2);
+            if (this.image2) {
+                this.image2.style.position = 'absolute';
+                this.inner2.appendChild(this.image2);
+            }
         }
 
         this.resize();
@@ -178,13 +182,13 @@
             bg1OffsetTopMax = ((h-bg1AdjustedHeight)+(paddingH/2))-bgOffsetTopMin,
             bg2OffsetTopMax = ((h-bg2AdjustedHeight)+(paddingH/2))-bgOffsetTopMin;
 
-        if(this.image1Obj){
+        if(this.image1){
             this.image1.style.top = (bgOffsetTopMin+(bg1OffsetTopMax*this.image1Obj.v))+'px';
             this.image1.style.left = (bgOffsetLeftMin+(bg1OffsetLeftMax*this.image1Obj.h))+'px';
             this.image1.style.width = bg1AdjustedWidth+'px';
             this.image1.style.height = bg1AdjustedHeight+'px';
         }
-        if(this.image2Obj){
+        if(this.image2){
             this.image2.style.top = (bgOffsetTopMin+(bg2OffsetTopMax*this.image2Obj.v))+'px';
             this.image2.style.left = (bgOffsetLeftMin+(bg2OffsetLeftMax*this.image2Obj.h))+'px';
             this.image2.style.width = bg2AdjustedWidth+'px';
