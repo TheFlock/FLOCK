@@ -125,74 +125,7 @@
         }
     }
 
-    // function buildHorizontalMenu (menuList) {
-
-    //     // var menuID = "menu";
-    //     //var menuElem = document.getElementById(menuID);
-    //     // var header = document.getElementById('mainHeader');
-    //     this.elements.wrapper.className = 'horizontal ' + this.elements.wrapper.className;
-
-    //     this.elements.el.className = 'centeredMenu';
-
-    //     this.elements.paginatorEl.className = 'paginatorWrapper';
-
-    //     var firstBtn = true;
-
-    //     for(var i = 0; i < menuList.length; i++){
-    //         var menuItem = menuList[i];
-    //         if (String(menuItem.visible).toLowerCase() == 'false' || menuItem.comingSoon == 'true')
-    //             continue;
-
-    //         if(!firstBtn){
-    //             // var newDot = document.createElement('li');
-    //             // newDot.className = "menu_dot";
-    //             // menuElem.appendChild(newDot);
-    //         } else {firstBtn = false;};
-
-    //         var btnData = {},
-    //             popUp = false;
-
-    //         menuItem.className = 'mainMenuBtn';
-
-    //         // btnData.dataType = menuItem.type;
-    //         if (menuItem.type === 'external') {
-    //             menuItem.target = '_blank';
-    //         }else if (menuItem.type === "popup") {
-    //             popUp = true;
-    //             menuItem.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
-    //         }
-
-    //         // btnData.dataSection = menuItem.link;
-    //         // btnData.href = menuItem.link;
-
-    //         // btnData.fontSize = menuItem["font-size"];
-
-    //         // btnData.label = menuItem.label;
-    //         for (var j = 0; j < FLOCK.app.dataSrc.sections.main.html.length; j++) {
-    //             if (FLOCK.app.dataSrc.sections.main.html[j].ID === menuItem.label) {
-    //                 menuItem.label = FLOCK.app.dataSrc.sections.main.html[j].VAL;
-    //             }
-    //         };
-    //         // btn.innerHTML = $.grep(FLOCK.app.dataSrc.sections.main.html, function(e) { return e.ID == menuItem.label; })[0].VAL;
-
-    //         var btn = $(Mustache.render(this.template, menuItem));
-    //         if(popUp)btn.click(menu_openPopUp);
-
-    //         var li = document.createElement('li');
-    //         li.appendChild(btn.get()[0]);
-    //         this.elements.el.appendChild(li);
-    //     }
-
-    //     this.menuPaginator = new FLOCK.classes.MenuPaginator({
-    //         wrapper: this.elements.wrapper
-    //     });
-    // }
-
     function buildHorizontalMenu (menuList) {
-
-        // var menuID = "menu";
-        // var menuElem = document.getElementById(menuID);
-        // var header = document.getElementById('mainHeader');
         this.elements.wrapper.className = 'horizontal paginatorWrapper ' + this.elements.wrapper.className;
 
         this.elements.el.className = 'centeredMenu';
@@ -275,8 +208,10 @@
                 TweenLite.to(this.elements.wrapper, 0.5, {y: -this.elements.wrapper.offsetHeight + 'px', ease: Power4.easeInOut});
                 break;
             case 'vertical':
+                TweenLite.to(this.elements.wrapper, 0.5, {x: -this.elements.wrapper.offsetWidth + 'px', ease: Power4.easeInOut});
                 break;
             default:
+                console.log('invalid menustyle');
         }
     }
 
@@ -296,8 +231,10 @@
                 TweenLite.to(this.elements.wrapper, 0.5, {y: '0px', ease: Power4.easeInOut});
                 break;
             case 'vertical':
+                TweenLite.to(this.elements.wrapper, 0.5, {x: '0px', ease: Power4.easeInOut});
                 break;
             default:
+                console.log('invalid menustyle');
         }
     }
 
