@@ -179,7 +179,7 @@
                 for(var l=0; l<followUsObj.links.length; l++){
                     if(String(followUsObj.links[l]["VISIBLE"]).toLowerCase() == "true"){
                         var followUsA = document.createElement("a");
-                        followUsA.className = followUsObj.links[l]["CLASS"] + ' social-icon';
+                        followUsA.className = 'icon-' + followUsObj.links[l]["CLASS"] + ' social-icon';
                         followUsA.target = "_blank";
                         followUsA.href = followUsObj.links[l]["URL"];
                         followUsElem.appendChild(followUsA);
