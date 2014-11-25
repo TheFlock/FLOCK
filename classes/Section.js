@@ -38,13 +38,28 @@
             }
         }
 
-        function startup (e) {
+        function startup (callbackFn) {
+            if (callbackFn) {
+                callbackFn();
+            } else {
+                if (this.verbose) console.log('Section startup', 'no callbackFn');
+            }
         }
 
-        function show (e) {
+        function show (callbackFn) {
+            if (callbackFn) {
+                callbackFn();
+            } else {
+                if (this.verbose) console.log('Section show', 'no callbackFn');
+            }
         }
 
-        function shutdown (e) {
+        function shutdown (callbackFn) {
+            if (callbackFn) {
+                callbackFn();
+            } else {
+                if (this.verbose) console.log('Section shutdown', 'no callbackFn');
+            }
         }
 
         function keyHandler (e) {
