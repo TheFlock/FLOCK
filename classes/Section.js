@@ -30,27 +30,21 @@
         }
 
         function init (callback) {
-            // console.log('init ' + myName);
-            // that = this;
-
-            // data = FLOCK.app.dataSrc.sections.Section.data;
-
-            // this.elements = {
-            //     sectionWrapper: document.getElementById(myName.toLowerCase())
-            // }
-
-            // if (callback) {
-            //     callback();
-            // }
-        }
-
-        function isIn () {
         }
 
         function resize (w, h) {
             if (this.backplate) {
                 this.backplate.resize();
             }
+        }
+
+        function startup (e) {
+        }
+
+        function show (e) {
+        }
+
+        function shutdown (e) {
         }
 
         function keyHandler (e) {
@@ -68,11 +62,13 @@
         function mousewheelHandler (e) {
         }
 
-        Section.prototype._isIn = isIn;
-
         Section.prototype.init = init;
         Section.prototype.resize = resize;
         Section.prototype.keyHandler = keyHandler;
+
+        Section.prototype.startup = startup;
+        Section.prototype.show = show;
+        Section.prototype.shutdown = shutdown;
 
         Section.prototype.touchStartHandler = touchStart;
         Section.prototype.touchEndHandler = touchEnd;
