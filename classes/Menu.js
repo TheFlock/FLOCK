@@ -176,11 +176,11 @@
 
         var selected = $(this.elements.el).find('a[data-section="' + section_name + '"]');
 
-        this.elements.selected[0].className = '';
-
         if (selected.length === 0) {
             return;
         }
+
+        this.elements.selected[0].className = '';
 
         animate = true;
 
