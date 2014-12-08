@@ -105,7 +105,9 @@
     }
 
     function showMPAARequirements(){
-        var mpaaRequirementsJSON = data["MPAA_requirements"],
+
+        var data = FLOCK.app.dataSrc.sections.main.data,
+            mpaaRequirementsJSON = data["MPAA_requirements"],
             mpaaRequirementsElement = $("#MPAA_requirements");
 
         if (mpaaRequirementsJSON.VISIBLE === 'false') {
@@ -166,7 +168,7 @@
         }
     }
 
-    function initFollow(){
+    function initFollow(data){
 
         //addIcons to Follow Us Menu
         var followUsObj = data["footerFollowUs"];
@@ -190,7 +192,7 @@
         }
     }
 
-    function initShare(){
+    function initShare(data){
 
             //share buttons
             var shareObj = data["footerShare"];
