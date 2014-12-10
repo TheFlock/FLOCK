@@ -9,17 +9,18 @@
         // AMD. Register as an anonymous module.
         define([
                 'jquery',
+                'mustache',
                 'FLOCK/utils/DeviceDetect',
                 'greensock/TweenLite.min',
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min'
-            ], function () {
-            return (root.classes.Footer = factory());
+            ], function ($) {
+            return (root.classes.Footer = factory($));
         });
     } else {
-        root.classes.Footer = factory();
+        root.classes.Footer = factory($);
     }
-}(window.FLOCK = window.FLOCK || {}, function () {
+}(window.FLOCK = window.FLOCK || {}, function ($) {
 
     'use strict';
 
