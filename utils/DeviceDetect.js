@@ -14,7 +14,7 @@
 }(window.FLOCK = window.FLOCK || {}, function () {
 
     var exports = {},
-        DeviceDetect = 
+        DeviceDetect =
         {
             isMobile: function ()
             {
@@ -24,9 +24,9 @@
                 return p.match(pattern) === null ? false : true;
             },
 
-            searchString: function (data) 
+            searchString: function (data)
             {
-                for (var i=0 ; i < data.length ; i++)   
+                for (var i=0 ; i < data.length ; i++)
                 {
                     var dataString = data[i].string;
                     this.versionSearchString = data[i].subString;
@@ -38,18 +38,19 @@
                 }
             },
 
-            searchVersion: function (dataString) 
+            searchVersion: function (dataString)
             {
                 var index = dataString.indexOf(this.versionSearchString);
                 if (index == -1) return;
                 return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
             },
 
-            dataBrowser: 
+            dataBrowser:
             [
                 { string: navigator.userAgent, subString: "Android",   identity: "Android" },
                 { string: navigator.userAgent, subString: "Chrome",  identity: "Chrome" },
                 { string: navigator.userAgent, subString: "MSIE",    identity: "Explorer" },
+                { string: navigator.userAgent, subString: "Trident",    identity: "Explorer" },
                 { string: navigator.userAgent, subString: "Firefox", identity: "Firefox" },
                 { string: navigator.userAgent, subString: "Opera",   identity: "Opera" },
                 { string: navigator.userAgent, subString: "iPod",   identity: "iPod" },
@@ -68,6 +69,8 @@
     exports.isAndroid = exports.browser === 'Android';
     exports.isMobile = DeviceDetect.isMobile();
     exports.isMac = navigator.appVersion.indexOf("Mac") != -1 ? true : false;
+    exports.isIE = (exports.browser === 'Explorer'>= 0)?true:false;
+    exports.isIETouch = (exports.browser === 'Explorer' && navigator.userAgent.indexOf('Touch') >= 0)?true:false;
     exports.isEarlyIE = (navigator.userAgent.indexOf('MSIE 8.0') >= 0)?true:false;
 
     return exports;
