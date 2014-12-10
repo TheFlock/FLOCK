@@ -3,114 +3,207 @@
 
 ;(function (root, factory) {
     // Browser globals
-    root.classes = root.classes || {};
+    root.app = root.app || {};
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define([
-                'soundmanager/soundmanager2',
+                'howler'
             ], function () {
-            // Also create a global in case some scripts
-            // that are loaded still are looking for
-            // a global even when an AMD loader is in use.
-            return (root.classes.Sound = factory());
+            return (root.app.Sound = factory());
         });
     } else {
-
-        root.classes.Sound = factory();
+        root.app.Sound = factory();
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
 
-        var myName,
-            that,
-            data;
+    'use strict';
 
-        function Sound() {
+    var that;
 
-            if (typeof soundManager !== 'undefined') {
-                soundManager.audioFormats = {
+    var Sound = function (sound) {
+        console.log('Sound');
+        this.sounds = {}
+    }
 
-                    /**
-                    * determines HTML5 support + flash requirements.
-                    * if no support (via flash/HTML5) for "required" format, SM2 will fail to start.
-                    * flash fallback is used for MP3 or MP4 if lacking HTML5 (or preferFlash = true)
-                    * multiple MIME types may be tried looking for positive canPlayType() response.
-                    */
+    function play (soundID, volume, loop) {
+        var sound = this.sounds[soundID],
+            loop = loop || false;
 
-                    'mp3': {
-                        'type': ['audio/mpeg; codecs="mp3"', 'audio/mpeg', 'audio/mp3', 'audio/MPA', 'audio/mpa-robust'],
-                        'required': false
-                    },
-
-                    'mp4': {
-                        'related': ['aac','m4a'], // additional formats under the MP4 container
-                        'type': ['audio/mp4; codecs="mp4a.40.2"', 'audio/aac', 'audio/x-m4a', 'audio/MP4A-LATM', 'audio/mpeg4-generic'],
-                        'required': false
-                    },
-
-                    'ogg': {
-                        'type': ['audio/ogg; codecs=vorbis'],
-                        'required': false
-                    },
-
-                    'wav': {
-                        'type': ['audio/wav; codecs="1"', 'audio/wav', 'audio/wave', 'audio/x-wav'],
-                        'required': false
-                    }
-
-                };
-
-                soundManager.setup({
-                    url: 'swf/',
-                    useHTML5Audio: true,
-                    debugMode: false,
-                    debugFlash: false,
-                    preferFlash: false,
-                    onready: function () {
-                        score = soundManager.createSound({
-                            id: 'score',
-                            url: [FLOCK.settings.base_url + 'audio/this_is_not_the_end.mp3'],
-                            autoLoad: true,
-                            autoPlay: false,
-                            onload: function() {
-                                console.log('LOAD');
-                                // console.log('The sound '+this.id+' loaded!');
-                            }
-                        });
-
-                    }
-                });
-            }
-
-            if (FLOCK.settings.isIpad) {
-                $('#sound_button').removeClass('sound-on');
-            }
-
-            $('#sound_button').on('click', function (e) {
-                e.preventDefault();
-
-                $(this).toggleClass('sound-on');
-                if ($(this).hasClass('sound-on')) {
-                    FLOCK.functions.playSound();
-                } else {
-                    FLOCK.functions.pauseSound();
-                }
+        if (typeof sound === 'undefined') {
+            sound = this.addSound(soundID, {
+                src: soundID,
+                loop: loop
             });
-
-            $('body').on('click', 'a', function (e) {
-                if (this.getAttribute('target') === '_blank') {
-                    $('#sound_button').removeClass('sound-on');
-                    FLOCK.functions.pauseSound();
-                }
-
-                if (this.getAttribute('data-type') === 'overlay') {
-                    FLOCK.functions.showOverlay(this.getAttribute('href'));
-                    return false;
-                }
-            });
-
-
+        } else if (typeof sound === 'string') {
+            sound = this.sounds[sound];
+            if (volume) {
+                sound.volume(volume);
+                sound.prev_volume = volume;
+            }
+            sound.play(soundID);
+            return sound;;
         }
 
-        return new Sound();
+        if (volume) {
+            sound.volume(volume);
+            sound.prev_volume = volume;
+        }
+
+        sound.play();
+        return sound;
+    }
+
+    function pause (soundID) {
+        var sound = this.sounds[soundID];
+        sound.pause();
+    }
+
+    function pauseAll () {
+
+    }
+
+    function fadeInAll () {
+        var sound,
+            targetVolume;
+        for (var sound_name in this.sounds) {
+            if (this.sounds.hasOwnProperty(sound_name)) {
+                sound = this.sounds[sound_name];
+                if (typeof sound === 'string') {
+                    sound = this.sounds[sound];
+                }
+
+                targetVolume = sound.prev_volume || 1;
+                // sound.volume(1);
+                sound.fade(0, targetVolume, 1000, function () {
+                    console.log('fade in complete');
+                });
+            }
+        }
+    }
+
+    function fadeOutAll () {
+        var sound;
+
+        for (var sound_name in this.sounds) {
+            if (this.sounds.hasOwnProperty(sound_name)) {
+                sound = this.sounds[sound_name];
+                if (typeof sound === 'string') {
+                    sound = this.sounds[sound];
+                }
+                // sound.volume(0);
+                sound.prev_volume = sound.volume();
+                sound.fade(sound.volume(), 0, 1000, function () {
+                    console.log('fade out complete');
+                });
+            }
+        }
+    }
+
+    function stop (soundID) {
+        var sound = this.sounds[soundID];
+        sound.stop();
+    }
+
+    function mute (soundID) {
+        var sound = this.sounds[soundID];
+
+        if (typeof sound === 'string') {
+            sound = this.sounds[sound];
+        }
+
+        sound.mute();
+    }
+
+    function unmute (soundID) {
+        var sound = this.sounds[soundID];
+        sound.unmute();
+    }
+
+    function muteAll () {
+        // Howler.mute(); // mute doesn't do anything for some reason
+        Howler.volume(0);
+    }
+
+    function unmuteAll () {
+        // Howler.unmute(); // mute not working
+        Howler.volume(1);
+    }
+
+    function volume (soundID, targetVolume) {
+
+    }
+
+    function addSprite (params) {
+        var sprite_path = params.path,
+            sprite = params.sprite;
+
+        if (this.sounds[sprite_path]) {
+            console.log(sprite_path + ' already exists.');
+            return false;
+        }
+
+        this.addSound(sprite_path, {
+            src: [sprite_path],
+            sprite: sprite
+        });
+
+        // add each named sound in the sprite to sounds and point them to this.sounds[sprite_path]
+        for (var sound_name in sprite) {
+            if (sprite.hasOwnProperty(sound_name)) {
+                this.sounds[sound_name] = sprite_path;
+            }
+        }
+    }
+
+    function addSound (soundID, options) {
+        
+        var sound = new Howl(options);
+
+        // add sprite file to this.sounds
+        this.sounds[soundID] = sound;
+
+        return sound;
+    }
+
+    function events () {
+        console.log(this, arguments);
+    }
+
+    function on (event, soundID, callbackFn) {
+
+        var sound = this.sounds[soundID];
+
+        if (typeof sound === 'undefined') {
+            sound = this.addSound(soundID, {
+                src: soundID
+            });
+        } else if (typeof sound === 'string') {
+            sound = this.sounds[sound];
+        }
+
+        sound.on(event, callbackFn);
+    }
+
+    function off (event, soundID, callbackFn) {
+
+    }
+
+    Sound.prototype.on = on;
+    Sound.prototype.off = off;
+    Sound.prototype.addSound = addSound;
+    Sound.prototype.addSprite = addSprite;
+    Sound.prototype.play = play;
+    Sound.prototype.pause = pause;
+    Sound.prototype.stop = stop;
+    Sound.prototype.mute = mute;
+    Sound.prototype.unmute = unmute;
+    Sound.prototype.muteAll = muteAll;
+    Sound.prototype.unmuteAll = unmuteAll;
+    Sound.prototype.fadeInAll = fadeInAll;
+    Sound.prototype.fadeOutAll = fadeOutAll;
+    Sound.prototype.pauseAll = pauseAll;
+    Sound.prototype.volume = volume;
+
+    return new Sound();
 }));
