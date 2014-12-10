@@ -233,8 +233,8 @@
 
                 if(fileURL.indexOf('.gif') > 0 || fileURL.indexOf('.jpg') > 0 || fileURL.indexOf('.jpeg') > 0 || fileURL.indexOf('.png') > 0){
                     sectionLoaderState.imagesToLoad.push(fileURL);
-                } else if (fileURL.indexOf('.mp4')>0 || fileURL.indexOf('.webm')>0 || fileURL.indexOf('.ogg')>0){
-                    sectionLoaderState.videosToLoad.push(fileURL);
+                // } else if (fileURL.indexOf('.mp4')>0 || fileURL.indexOf('.webm')>0 || fileURL.indexOf('.ogg')>0){
+                //     sectionLoaderState.videosToLoad.push(fileURL);
                 } else {
                     if(this.verbose)console.log('SectionLoader | not a supported fileType: '+fileURL);
                 }
