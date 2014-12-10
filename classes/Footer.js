@@ -37,61 +37,22 @@
     function init (el) {
         data = FLOCK.app.dataSrc.sections.main.data;
 
+        var linkList_template = '{{#links}}{{#VISIBLE}}<li><a class="footer-btn" {{#font-size}}style="font-size:{{font-size}}"{{/font-size}} href="{{URL}}" target="_blank" >{{LABEL}}</a></li>{{/VISIBLE}}{{/links}}';
+        Mustache.parse(linkList_template);
+
         this.elements = {
             el: el
         }
 
-        //build links in credit drawer
-        var linkRows = data["footerLinks"] || [];
-        var updatedLinkRows = [];
-        var linkContainerObj = document.getElementById("credits_drawer_links");
-        var mpaaContainerObj = document.getElementById("mpaa_legal");
-        var r, e;
-        var addSpacerLi = true;
-        var spacerContents = "-";
-        var dividerLi;
-
-        // this loop looks at all links and only adds links if visible is true
-        // also it only adds a row if there are 1 more more visible links in the row
-        for(r=0; r<linkRows.length; r++){
-            var updatedRow = [];
-            for(e=0; e<linkRows[r].length; e++){
-                if(String(linkRows[r][e]["VISIBLE"]).toLowerCase() == "true"){
-                    updatedRow.push(linkRows[r][e]);
-                }
-            }
-            if(updatedRow.length >= 1)updatedLinkRows.push(updatedRow);
-        }
-        // this link will loop through the added links and create the html
-        for(r=0; r<updatedLinkRows.length; r++){
-            for(e=0; e<updatedLinkRows[r].length; e++){
-                var linkLi  = document.createElement("li");
-                linkContainerObj.appendChild(linkLi);
-                var linkA  = document.createElement("a");
-                linkLi.appendChild(linkA);
-
-                linkA.target = "_blank";
-                linkA.href = updatedLinkRows[r][e]["URL"];
-                linkA.innerHTML = updatedLinkRows[r][e]["LABEL"];
-                linkA.style.fontSize = updatedLinkRows[r][e]["font-size"];
-                // $(linkA).on('click', FLOCK.functions.externalLink);
-
-                if(String(updatedLinkRows[r][e]["MPAA_REQUIRED"]).toLowerCase() == "true"){
-                    $(mpaaContainerObj).append($(linkLi).clone());
-                }
-
-                if(addSpacerLi && e+1 < updatedLinkRows[r].length){
-                    var spacerLi = document.createElement("li");
-                    spacerLi.innerHTML = spacerContents;
-                    linkContainerObj.appendChild(spacerLi);
-                }
-            }
-            if(r+1 < updatedLinkRows.length){
-                dividerLi = document.createElement('li');
-                dividerLi.className = 'divider';
-                linkContainerObj.appendChild(dividerLi);
-            }
-        }
+        var linkLists = data['footerLinks'] || [],
+            list_container,
+            list;
+        for (var i = 0; i < linkLists.length; i++) {
+            list = Mustache.render(linkList_template, {links:linkLists[i].links});
+            list_container = document.getElementById(linkLists[i].id);
+            list_container.innerHTML = list;
+            console.log(list, linkLists[i], linkLists[i].id);
+        };
 
         //Credits button
         $('#credits-button').on('click', this.toggleCredits.bind(this));
@@ -99,6 +60,11 @@
 
         this.initFollow(data);
         this.initShare(data);
+
+        $('#soundButton').on('click', function () {
+            this.className = this.className.match('on') ? 'off' : 'on';
+            FLOCK.app.SoundEffects.mute();
+        });
 
         if(this.init_extend)this.init_extend(data);
 
