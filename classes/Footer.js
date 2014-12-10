@@ -14,13 +14,13 @@
                 'greensock/TweenLite.min',
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min'
-            ], function ($) {
-            return (root.classes.Footer = factory($));
+            ], function ($, Mustache) {
+            return (root.classes.Footer = factory($, Mustache));
         });
     } else {
-        root.classes.Footer = factory($);
+        root.classes.Footer = factory($, Mustache);
     }
-}(window.FLOCK = window.FLOCK || {}, function ($) {
+}(window.FLOCK = window.FLOCK || {}, function ($, Mustache) {
 
     'use strict';
 
