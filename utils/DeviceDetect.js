@@ -69,8 +69,8 @@
     exports.isAndroid = exports.browser === 'Android';
     exports.isMobile = DeviceDetect.isMobile();
     exports.isMac = navigator.appVersion.indexOf("Mac") != -1 ? true : false;
-    exports.isIE = (exports.browser === 'Explorer'>= 0 || navigator.userAgent.indexOf('MSIE 8.0') >= 0);
-    exports.isIETouch = (exports.browser === 'Explorer' && navigator.userAgent.indexOf('Touch') >= 0);
+    exports.isIE = (exports.browser === 'Explorer'>= 0)?true:false;
+    exports.isIETouch = (exports.browser === 'Explorer' && navigator.userAgent.indexOf('Touch') >= 0)?true:false;
     exports.isEarlyIE = (navigator.userAgent.indexOf('MSIE 8.0') >= 0)?true:false;
 
     return exports;
