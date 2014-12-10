@@ -50,6 +50,7 @@
                 { string: navigator.userAgent, subString: "Android",   identity: "Android" },
                 { string: navigator.userAgent, subString: "Chrome",  identity: "Chrome" },
                 { string: navigator.userAgent, subString: "MSIE",    identity: "Explorer" },
+                { string: navigator.userAgent, subString: "Trident",    identity: "Explorer" },
                 { string: navigator.userAgent, subString: "Firefox", identity: "Firefox" },
                 { string: navigator.userAgent, subString: "Opera",   identity: "Opera" },
                 { string: navigator.userAgent, subString: "iPod",   identity: "iPod" },
