@@ -148,6 +148,10 @@
             }
         }
 
+        if (FLOCK.app.BGRenderer) {
+            FLOCK.app.BGRenderer.resize(w, h);
+        }
+
         if (FLOCK.sections[FLOCK.app.navigation.current_section]) {
             if (FLOCK.sections[FLOCK.app.navigation.current_section].initialized) {
                 FLOCK.sections[FLOCK.app.navigation.current_section].resize(w, h);
