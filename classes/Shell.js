@@ -99,6 +99,7 @@
     }
 
     function resize(){
+        if(!this.initialized)return;
 
         var w, h;
 
@@ -147,6 +148,8 @@
                 w = 1000;
             }
         }
+
+        FLOCK.settings.sectionWidth = w;
 
         if (FLOCK.app.BGRenderer) {
             FLOCK.app.BGRenderer.resize(w, h);
