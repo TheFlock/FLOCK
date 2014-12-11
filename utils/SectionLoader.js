@@ -281,6 +281,13 @@
 
         var sectionID = sectionOBJ.id;
 
+        function htmlLoaded (sectionOBJ, data) {
+        if(this.verbose)console.log('SectionLoader | htmlLoaded: ');
+        
+        sectionOBJ.htmlData = data;
+
+        var sectionID = sectionOBJ.id;
+
         if(sectionLoader.localizationJSON && sectionLoader.localizationJSON.sections){
             var htmlObjs;
             var numHtmlObjs;
@@ -289,8 +296,8 @@
             var newStr;
             var currSpanStyle;
             var currObj;
-
-            //handle the shared 'html' category
+            
+            //handle the shared 'html' category 
             if(sectionLoader.localizationJSON.sections['shared'] && sectionLoader.localizationJSON.sections['shared']["html"]){
                 htmlObjs = sectionLoader.localizationJSON.sections['shared']["html"];
                 numHtmlObjs = htmlObjs.length;
@@ -304,7 +311,7 @@
                             currSpanStyle = currObj["css"][spanStyleNum];
                             spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
                         }
-                        newStr = (spanStyle == "")?String(currObj["VAL"]):'<span style="'+spanStyle+'" >'+String(currObj["VAL"])+'</span>';
+                        newStr = (spanStyle == "")?String(currObj["VAL"]):'<span class="styleholder" data-style="' + spanStyle + '"></span>'+String(currObj["VAL"]);
                         if(currObj["visible"] && String(currObj["visible"]).toLowerCase() == "false")newStr = "";
                         sectionOBJ.htmlData = sectionOBJ.htmlData.replace(String(currObj["ID"]), newStr);
                     }
@@ -324,13 +331,43 @@
                             currSpanStyle = currObj["css"][spanStyleNum];
                             spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
                         }
-                        newStr = (spanStyle == "")?String(currObj["VAL"]):'<span style="'+spanStyle+'" >'+String(currObj["VAL"])+'</span>';
+                        // create a 'styleholder' span to hold style data from the json
+                        newStr = (spanStyle == "")?String(currObj["VAL"]):'<span class="styleholder" data-style="' + spanStyle + '"></span>'+String(currObj["VAL"]);
                         if(currObj["visible"] && String(currObj["visible"]).toLowerCase() == "false")newStr = "";
                         sectionOBJ.htmlData = sectionOBJ.htmlData.replace(String(currObj["ID"]), newStr);
                     }
                 }
             }
+
+            // make temp element so we can set the style to the actual node using a styleholder span with a data-style attribute rather than creating an extra inner span
+            var tmp = document.createElement('div');
+            tmp.innerHTML = sectionOBJ.htmlData;
+            var markers = tmp.getElementsByClassName('styleholder');
+
+            for (var i = markers.length - 1; i >= 0; i--) {
+                markers[i].parentNode.setAttribute('style', markers[i].getAttribute('data-style'));
+                markers[i].parentNode.removeChild(markers[i]); // remove styleholder span
+            };
+
+            sectionOBJ.htmlData = tmp.innerHTML;
         }
+
+        // preload images from html
+        var img_pattern = /<img [^>]*src="([^"]+)"[^>]*>/g;
+        var results;
+
+        // load backplate from data attribute
+        if ($(sectionOBJ.htmlData).data('backplate')) {
+            sectionLoaderState.imagesToLoad.push($(sectionOBJ.htmlData).data('backplate'));
+        }
+
+        while ((results = img_pattern.exec(sectionOBJ.htmlData)) !== null)
+        {
+            sectionLoaderState.imagesToLoad.push(results[1]);
+        }
+
+        arrayExecuter.stepComplete_instant();
+    }
 
         // preload images from html
         var img_pattern = /<img [^>]*src="([^"]+)"[^>]*>/g;
