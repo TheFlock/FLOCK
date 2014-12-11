@@ -296,18 +296,7 @@
                 numHtmlObjs = htmlObjs.length;
                 while(numHtmlObjs--){
                     currObj = htmlObjs[numHtmlObjs];
-
-                    while(String(sectionOBJ.htmlData).indexOf(currObj["ID"]) > 0){
-                        spanStyle = "";
-                        spanStyleNum = (currObj["css"])?currObj["css"].length:0;
-                        while(spanStyleNum--){
-                            currSpanStyle = currObj["css"][spanStyleNum];
-                            spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
-                        }
-                        newStr = (spanStyle == "")?String(currObj["VAL"]):'<span class="styleholder" data-style="' + spanStyle + '"></span>'+String(currObj["VAL"]);
-                        if(currObj["visible"] && String(currObj["visible"]).toLowerCase() == "false")newStr = "";
-                        sectionOBJ.htmlData = sectionOBJ.htmlData.replace(String(currObj["ID"]), newStr);
-                    }
+                    sectionOBJ.htmlData = getHTMLString(sectionOBJ.htmlData, currObj);
                 }
             }
 
@@ -317,18 +306,7 @@
                 numHtmlObjs = htmlObjs.length;
                 while(numHtmlObjs--){
                     currObj = htmlObjs[numHtmlObjs];
-                    while(String(sectionOBJ.htmlData).indexOf(String(currObj["ID"])) > 0){
-                        spanStyle = "";
-                        spanStyleNum = (currObj["css"])?currObj["css"].length:0;
-                        while(spanStyleNum--){
-                            currSpanStyle = currObj["css"][spanStyleNum];
-                            spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
-                        }
-                        // create a 'styleholder' span to hold style data from the json
-                        newStr = (spanStyle == "")?String(currObj["VAL"]):'<span class="styleholder" data-style="' + spanStyle + '"></span>'+String(currObj["VAL"]);
-                        if(currObj["visible"] && String(currObj["visible"]).toLowerCase() == "false")newStr = "";
-                        sectionOBJ.htmlData = sectionOBJ.htmlData.replace(String(currObj["ID"]), newStr);
-                    }
+                    sectionOBJ.htmlData = getHTMLString(sectionOBJ.htmlData, currObj);
                 }
             }
 
@@ -360,6 +338,31 @@
         }
 
         arrayExecuter.stepComplete_instant();
+    }
+
+    function getHTMLString (html_data, html_obj) {
+        var html_str = String(html_data),
+            spanStyle,
+            spanStyleNum,
+            newStr,
+            currSpanStyle;
+
+        while(html_str.indexOf(String(html_obj["ID"])) > 0){
+            spanStyle = "";
+            spanStyleNum = (html_obj["css"])?html_obj["css"].length:0;
+            while(spanStyleNum--){
+                currSpanStyle = html_obj["css"][spanStyleNum];
+                if (currSpanStyle["VAL"]) {
+                    spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
+                }
+            }
+            // create a 'styleholder' span to hold style data from the json
+            newStr = (spanStyle == "")?String(html_obj["VAL"]):'<span class="styleholder" data-style="' + spanStyle + '"></span>'+String(html_obj["VAL"]);
+            if(html_obj["visible"] && String(html_obj["visible"]).toLowerCase() == "false")newStr = "";
+            html_str = html_str.replace(String(html_obj["ID"]), newStr);
+        }
+
+        return html_str;
     }
 
     function loadCSS (sectionOBJ) {
