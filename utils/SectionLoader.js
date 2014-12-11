@@ -281,13 +281,6 @@
 
         var sectionID = sectionOBJ.id;
 
-        function htmlLoaded (sectionOBJ, data) {
-        if(this.verbose)console.log('SectionLoader | htmlLoaded: ');
-        
-        sectionOBJ.htmlData = data;
-
-        var sectionID = sectionOBJ.id;
-
         if(sectionLoader.localizationJSON && sectionLoader.localizationJSON.sections){
             var htmlObjs;
             var numHtmlObjs;
@@ -309,9 +302,7 @@
                         spanStyleNum = (currObj["css"])?currObj["css"].length:0;
                         while(spanStyleNum--){
                             currSpanStyle = currObj["css"][spanStyleNum];
-                            if (currSpanStyle["VAL"]) {
-                                spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
-                            }
+                            spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
                         }
                         newStr = (spanStyle == "")?String(currObj["VAL"]):'<span class="styleholder" data-style="' + spanStyle + '"></span>'+String(currObj["VAL"]);
                         if(currObj["visible"] && String(currObj["visible"]).toLowerCase() == "false")newStr = "";
@@ -331,9 +322,7 @@
                         spanStyleNum = (currObj["css"])?currObj["css"].length:0;
                         while(spanStyleNum--){
                             currSpanStyle = currObj["css"][spanStyleNum];
-                            if (currSpanStyle["VAL"]) {
-                                spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
-                            }
+                            spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
                         }
                         // create a 'styleholder' span to hold style data from the json
                         newStr = (spanStyle == "")?String(currObj["VAL"]):'<span class="styleholder" data-style="' + spanStyle + '"></span>'+String(currObj["VAL"]);
@@ -355,23 +344,6 @@
 
             sectionOBJ.htmlData = tmp.innerHTML;
         }
-
-        // preload images from html
-        var img_pattern = /<img [^>]*src="([^"]+)"[^>]*>/g;
-        var results;
-
-        // load backplate from data attribute
-        if ($(sectionOBJ.htmlData).data('backplate')) {
-            sectionLoaderState.imagesToLoad.push($(sectionOBJ.htmlData).data('backplate'));
-        }
-
-        while ((results = img_pattern.exec(sectionOBJ.htmlData)) !== null)
-        {
-            sectionLoaderState.imagesToLoad.push(results[1]);
-        }
-
-        arrayExecuter.stepComplete_instant();
-    }
 
         // preload images from html
         var img_pattern = /<img [^>]*src="([^"]+)"[^>]*>/g;
