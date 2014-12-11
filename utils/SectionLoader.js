@@ -309,7 +309,9 @@
                         spanStyleNum = (currObj["css"])?currObj["css"].length:0;
                         while(spanStyleNum--){
                             currSpanStyle = currObj["css"][spanStyleNum];
-                            spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
+                            if (currSpanStyle["VAL"]) {
+                                spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
+                            }
                         }
                         newStr = (spanStyle == "")?String(currObj["VAL"]):'<span class="styleholder" data-style="' + spanStyle + '"></span>'+String(currObj["VAL"]);
                         if(currObj["visible"] && String(currObj["visible"]).toLowerCase() == "false")newStr = "";
@@ -329,7 +331,9 @@
                         spanStyleNum = (currObj["css"])?currObj["css"].length:0;
                         while(spanStyleNum--){
                             currSpanStyle = currObj["css"][spanStyleNum];
-                            spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
+                            if (currSpanStyle["VAL"]) {
+                                spanStyle += currSpanStyle["ID"]+':'+currSpanStyle["VAL"]+';';
+                            }
                         }
                         // create a 'styleholder' span to hold style data from the json
                         newStr = (spanStyle == "")?String(currObj["VAL"]):'<span class="styleholder" data-style="' + spanStyle + '"></span>'+String(currObj["VAL"]);
