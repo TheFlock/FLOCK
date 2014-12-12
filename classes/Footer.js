@@ -125,7 +125,7 @@
             }});
 
             if (document.getElementById('sharelabel').className.match('active')) {
-                that.toggleShare();
+                this.toggleShare();
             }
         }
 
@@ -249,7 +249,7 @@
             TweenLite.to(sharelabel, 0.5, {top:-(shelf_height - FLOCK.settings.footer_height) + 'px', ease:Power4.easeInOut});
 
             if (document.getElementById('credits-button').className.match('active')) {
-                that.toggleCredits();
+                this.toggleCredits();
             }
         }
 
