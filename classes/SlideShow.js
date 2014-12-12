@@ -84,15 +84,20 @@
             _paginator_container = $(this.elements.paginator_container),
             _window = $(window);
 
-        _paginator_container.on('click', 'a', clickHandler.bind(this));
+        if (this.slides.length > 1) {
+            _paginator_container.on('click', 'a', clickHandler.bind(this));
 
-        _wrapper.on('mousedown', mouseDown.bind(this));
-        _wrapper.on('mousemove', mouseMove.bind(this));
-        _window.on('mouseup', mouseUp.bind(this));
+            _wrapper.on('mousedown', mouseDown.bind(this));
+            _wrapper.on('mousemove', mouseMove.bind(this));
+            _window.on('mouseup', mouseUp.bind(this));
 
-        _wrapper.on('touchstart', touchStart.bind(this));
-        _wrapper.on('touchmove', touchMove.bind(this));
-        _wrapper.on('touchend', touchEnd.bind(this));
+            _wrapper.on('touchstart', touchStart.bind(this));
+            _wrapper.on('touchmove', touchMove.bind(this));
+            _wrapper.on('touchend', touchEnd.bind(this));
+        } else {
+            _wrapper.addClass('disabled');
+        }
+
     }
 
     function startDrag (pageX, pageY) {
@@ -289,8 +294,11 @@
                                 .replace('{{backplate.thumb}}', slides[i].thumb);
         };
         this.elements.wrapper.innerHTML = slides_html;
-        this.elements.paginator_container.appendChild(this.elements.prev);
-        this.elements.paginator_container.appendChild(this.elements.next);
+
+        if (slides.length > 1) {
+            this.elements.paginator_container.appendChild(this.elements.prev);
+            this.elements.paginator_container.appendChild(this.elements.next);
+        }
 
         var slideElements = this.elements.wrapper.getElementsByClassName('slide');
         for (var i = 0; i < slideElements.length; i++) {
@@ -324,11 +332,17 @@
 
         var thumbs = [];
         for (var i = 0; i < this.slides.length; i++) {
-            thumbs.push({
-                src: this.slides[i].thumb,
-                index: i
-            });
+            if (this.slides[i].thumb && this.slides[i].thumb !== 'false' && this.slides[i].thumb !== '') {
+                thumbs.push({
+                    src: this.slides[i].thumb,
+                    index: i
+                });
+            }
         };
+
+        if (thumbs.length === 0) {
+            this.paginator = false;
+        }
 
         if (this.paginator !== false) {
             this.paginator = new FLOCK.classes.Paginator({
@@ -472,7 +486,9 @@
             this.animationState.lastSlideX = this.animationState.currSlide.el.offsetWidth;
         }
 
-        this.paginator.update(this.state.current_index + 1, this.slides.length);
+        if (this.paginator) {
+            this.paginator.update(this.state.current_index + 1, this.slides.length);
+        }
 
         window.requestAnimationFrame(animate.bind(this));
     }
