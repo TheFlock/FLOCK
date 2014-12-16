@@ -51,9 +51,14 @@
             this.playerObj.player.style.position = 'absolute';
             this.playerObj.player.style.width = 'auto';
             this.playerObj.player.style.height = 'auto';
+        } else {
+            return false;
         }
 
         var that = this;
+        this.playerObj.onPlaying = function () {
+            FLOCK.app.Shell.resize();
+        }
 
         return this.playerObj.player;
     }
