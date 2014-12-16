@@ -54,9 +54,6 @@
         }
 
         var that = this;
-        this.playerObj.onPlaying = function () {
-            FLOCK.app.Shell.resize();
-        }
 
         return this.playerObj.player;
     }
