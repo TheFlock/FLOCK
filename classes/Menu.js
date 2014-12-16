@@ -62,7 +62,7 @@
         this.selectMenuItem(this.elements.selected.data('section'), false);
 
         this.hide(true);
-        
+
         this.resize();
 
     }
@@ -223,7 +223,7 @@
         }
     }
 
-    function show (show) {
+    function show (instant) {
         if(this.verbose)console.log('Main Menu | '+this.menuID+' | show');
 
         if (this.isHidden === false) {

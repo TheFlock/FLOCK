@@ -12,14 +12,16 @@
                 'FLOCK/utils/DeviceDetect',
                 'greensock/TweenLite.min',
                 'greensock/easing/EasePack.min',
-                'greensock/plugins/CSSPlugin.min'
-            ], function () {
-            return (root.classes.BGManager = factory());
+                'greensock/plugins/CSSPlugin.min',
+                'FLOCK/classes/BG_Image',
+                'FLOCK/classes/BG_Video'
+            ], function ($) {
+            return (root.classes.BGManager = factory($));
         });
     } else {
-        root.classes.BGManager = factory();
+        root.classes.BGManager = factory($);
     }
-}(window.FLOCK = window.FLOCK || {}, function () {
+}(window.FLOCK = window.FLOCK || {}, function ($) {
 
     'use strict';
 
@@ -50,12 +52,13 @@
         // create sectionLoader entries for each image
         for (var imageName in this.images){
             this.images[imageName].img = null;
-            FLOCK.utils.SectionLoader.addSection('background_'+imageName, {
-                files: {
-                    images: [this.images[imageName].url]
-                }
-            });
-
+            if (this.images[imageName].type === 'image') {
+                FLOCK.utils.SectionLoader.addSection('background_'+imageName, {
+                    files: {
+                        images: [this.images[imageName].url]
+                    }
+                });
+            }
         }
 
     }
@@ -115,7 +118,8 @@
     function changeBg(sectionId, instant, callbackFn){
         var bgId = this.getBg(sectionId, false, false),
             imgObj = this.images[bgId],
-            loadCatch = false;
+            loadCatch = false,
+            that = this;
         
         if(bgId === false){
             imgObj = {
@@ -127,21 +131,43 @@
             if(callbackFn)callbackFn();
             return;
         }
+
         this.currBgObj = imgObj;
 
         if(imgObj.img === false || (imgObj.img && imgObj.loaded)){
             this.renderer.changeBg(imgObj, instant, callbackFn);
         } else {
-            imgObj.img = new Image();
-            imgObj.img.alt = "Background";
-            $(imgObj.img).bind('load readystatechange', function(){
-                if(loadCatch)return;
-                loadCatch = true;
-                imgObj.loaded = true;
-                if(this.verbose)console.log("BGManager | image loaded: "+imgObj.url);
-                this.renderer.changeBg(imgObj, instant, callbackFn);
-            }.bind(this));
-            imgObj.img.src = imgObj.url;
+            if (imgObj.type === 'image') {
+
+                imgObj = new FLOCK.classes.BG_Image(this.images[bgId], function () {
+                    if(loadCatch)return;
+                    loadCatch = true;
+                    imgObj.loaded = true;
+                    if(that.verbose)console.log("BGManager | image loaded: "+imgObj.url);
+                    that.renderer.changeBg(imgObj, instant, callbackFn);
+                });
+
+            } else {
+
+                if (FLOCK.utils.DeviceDetect.isMobile || FLOCK.utils.DeviceDetect.isAndroid || FLOCK.utils.DeviceDetect.isIpad || !document.createElement('video').canPlayType) {
+                    this.images[bgId].url = this.images[bgId].fallback;
+                    imgObj = new FLOCK.classes.BG_Image(this.images[bgId], function () {
+                        if(loadCatch)return;
+                        loadCatch = true;
+                        imgObj.loaded = true;
+                        if(that.verbose)console.log("BGManager | image loaded: "+imgObj.url);
+                        that.renderer.changeBg(imgObj, instant, callbackFn);
+                    });
+                } else {
+                    imgObj = new FLOCK.classes.BG_Video(this.images[bgId], function () {
+                        if(loadCatch)return;
+                        loadCatch = true;
+                        this.loaded = true;
+                        if(that.verbose)console.log("BGManager | image loaded: ", this);
+                        that.renderer.changeBg(this, instant, callbackFn);
+                    }, this.renderer.resize);
+                }
+            }
         }
     }
 

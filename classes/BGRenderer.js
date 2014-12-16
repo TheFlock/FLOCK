@@ -13,13 +13,13 @@
                 'greensock/TweenLite.min',
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min'
-            ], function () {
-            return (root.classes.BGRenderer = factory());
+            ], function ($) {
+            return (root.classes.BGRenderer = factory($));
         });
     } else {
-        root.classes.BGRenderer = factory();
+        root.classes.BGRenderer = factory($);
     }
-}(window.FLOCK = window.FLOCK || {}, function () {
+}(window.FLOCK = window.FLOCK || {}, function ($) {
 
     'use strict';
 
@@ -74,25 +74,22 @@
             newContainerInner = this.inner1;
             oldContainer = this.outer2;
             oldContainerInner = this.inner2;
-            this.image1 = imageObj.img;
             this.image1Obj = imageObj;
-            if (this.image1) {
-                this.image1.style.position = 'absolute';
-                this.inner1.appendChild(this.image1);
+            if (imageObj.place) {
+                this.image1 = imageObj.place(this.inner1);
+                this.currentBG = this.image1;
             }
         } else {
             newContainer = this.outer2;
             newContainerInner = this.inner2;
             oldContainer = this.outer1;
             oldContainerInner = this.inner1;
-            this.image2 = imageObj.img;
             this.image2Obj = imageObj;
-            if (this.image2) {
-                this.image2.style.position = 'absolute';
-                this.inner2.appendChild(this.image2);
+            if (imageObj.place) {
+                this.image2 = imageObj.place(this.inner2);
+                this.currentBG = this.image2;
             }
         }
-
         this.resize();
 
         var that = this;
@@ -150,10 +147,10 @@
         this.width = w;
         this.height = h;
 
-        var img1width = this.image1 ? this.image1.width : 0,
-            img1height = this.image1 ? this.image1.height : 0,
-            img2width = this.image2 ? this.image2.width : 0,
-            img2height = this.image2 ? this.image2.height : 0;
+        var img1width = this.image1 ? this.image1.offsetWidth : 0,
+            img1height = this.image1 ? this.image1.offsetHeight : 0,
+            img2width = this.image2 ? this.image2.offsetWidth : 0,
+            img2height = this.image2 ? this.image2.offsetHeight : 0;
 
         var img1Dimensions = {
                 w: img1width, 
@@ -183,16 +180,16 @@
             bg2OffsetTopMax = ((h-bg2AdjustedHeight)+(paddingH/2))-bgOffsetTopMin;
 
         if(this.image1){
-            this.image1.style.top = (bgOffsetTopMin+(bg1OffsetTopMax*this.image1Obj.v))+'px';
-            this.image1.style.left = (bgOffsetLeftMin+(bg1OffsetLeftMax*this.image1Obj.h))+'px';
+            this.image1.style.top = (bgOffsetTopMin+(bg1OffsetTopMax*this.image1Obj.v)).toFixed() + 'px';
+            this.image1.style.left = (bgOffsetLeftMin+(bg1OffsetLeftMax*this.image1Obj.h)).toFixed() + 'px';
             this.image1.style.width = bg1AdjustedWidth+'px';
-            this.image1.style.height = bg1AdjustedHeight+'px';
+            //this.image1.style.height = bg1AdjustedHeight+'px';
         }
         if(this.image2){
-            this.image2.style.top = (bgOffsetTopMin+(bg2OffsetTopMax*this.image2Obj.v))+'px';
-            this.image2.style.left = (bgOffsetLeftMin+(bg2OffsetLeftMax*this.image2Obj.h))+'px';
+            this.image2.style.top = (bgOffsetTopMin+(bg2OffsetTopMax*this.image2Obj.v)).toFixed() + 'px';
+            this.image2.style.left = (bgOffsetLeftMin+(bg2OffsetLeftMax*this.image2Obj.h)).toFixed() + 'px';
             this.image2.style.width = bg2AdjustedWidth+'px';
-            this.image2.style.height = bg2AdjustedHeight+'px';
+            //this.image2.style.height = bg2AdjustedHeight+'px';
         }
     }
 
