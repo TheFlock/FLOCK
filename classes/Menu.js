@@ -61,6 +61,8 @@
 
         this.selectMenuItem(this.elements.selected.data('section'), false);
 
+        this.hide(true);
+        
         this.resize();
 
     }
@@ -194,21 +196,27 @@
 
     }
 
-    function hide () {
+    function hide (instant) {
         if(this.verbose)console.log('Main Menu | '+this.menuID+' | hide');
 
         if (this.isHidden === true) {
             return;
         }
 
+        var duration = 0.5;
+
+        if (instant) {
+            duration = 0;
+        }
+
         this.isHidden = true;
 
         switch (this.menuStyle) {
             case 'horizontal':
-                TweenLite.to(this.elements.wrapper, 0.5, {y: -this.elements.wrapper.offsetHeight + 'px', ease: Power4.easeInOut});
+                TweenLite.to(this.elements.wrapper, duration, {y: -this.elements.wrapper.offsetHeight + 'px', ease: Power4.easeInOut});
                 break;
             case 'vertical':
-                TweenLite.to(this.elements.wrapper, 0.5, {x: -this.elements.wrapper.offsetWidth + 'px', ease: Power4.easeInOut});
+                TweenLite.to(this.elements.wrapper, duration, {x: -this.elements.wrapper.offsetWidth + 'px', ease: Power4.easeInOut});
                 break;
             default:
                 console.log('invalid menustyle');
@@ -222,16 +230,22 @@
             return;
         }
 
+        var duration = 0.5;
+
+        if (instant) {
+            duration = 0;
+        }
+
         this.isHidden = false;
 
         document.getElementById('mainHeader').style.visibility = 'visible';
 
         switch (this.menuStyle) {
             case 'horizontal':
-                TweenLite.to(this.elements.wrapper, 0.5, {y: '0px', ease: Power4.easeInOut});
+                TweenLite.to(this.elements.wrapper, duration, {y: '0px', ease: Power4.easeInOut});
                 break;
             case 'vertical':
-                TweenLite.to(this.elements.wrapper, 0.5, {x: '0px', ease: Power4.easeInOut});
+                TweenLite.to(this.elements.wrapper, duration, {x: '0px', ease: Power4.easeInOut});
                 break;
             default:
                 console.log('invalid menustyle');
