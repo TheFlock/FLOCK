@@ -92,6 +92,11 @@
         }
         this.resize();
 
+        this.transition(newContainer, oldContainer, instant, callbackFn);
+    }
+
+    function transition(newContainer, oldContainer, instant, callbackFn){
+
         var that = this;
         var tl = new TimelineLite({onComplete:function(){
             that.changeComplete(callbackFn);
@@ -108,8 +113,6 @@
         tl.to(newContainer, t*3.5/8, { x: 0 + 'px', ease: Expo.easeInOut}, 0);
 
         tl.play();
-
-        // this.changeComplete(callbackFn);
     }
 
     function changeComplete(callbackFn){
