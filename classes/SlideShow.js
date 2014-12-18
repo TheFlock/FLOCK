@@ -53,17 +53,29 @@
 
         this.elements = {
             wrapper: el,
-            prev: document.createElement('a'),
-            next: document.createElement('a'),
             resizeContainer: data.resizeContainer || false,
             paginator_container: data.paginator_container || el
         };
 
-        this.elements.prev.href = '#';
-        this.elements.next.href = '#';
+        var prev_btn = document.getElementsByClassName('prev_slide');
+        if (prev_btn.length > 0) {
+            this.elements.prev = prev_btn[0];
+        } else {
+            this.elements.prev = document.createElement('a');
+            this.elements.prev.href = '#';
+            this.elements.prev.className = 'prev_slide';
+            this.elements.paginator_container.appendChild(this.elements.prev);
+        }
 
-        this.elements.prev.className = 'prev_slide';
-        this.elements.next.className = 'next_slide';
+        var next_btn = document.getElementsByClassName('next_slide');
+        if (next_btn.length > 0) {
+            this.elements.next = next_btn[0];
+        } else {
+            this.elements.next = document.createElement('a');
+            this.elements.next.href = '#';
+            this.elements.next.className = 'next_slide';
+            this.elements.paginator_container.appendChild(this.elements.next);
+        }
 
         var header_height = data.fullBleed || data.ignoreHeader ? 0 : FLOCK.settings.header_height,
             footer_height = data.fullBleed || data.ignoreFooter ? 0 : FLOCK.settings.footer_height;
@@ -295,9 +307,9 @@
         };
         this.elements.wrapper.innerHTML = slides_html;
 
-        if (slides.length > 1) {
-            this.elements.paginator_container.appendChild(this.elements.prev);
-            this.elements.paginator_container.appendChild(this.elements.next);
+        if (slides.length <= 1) {
+            this.elements.prev.parentNode.removeChild(this.elements.prev);
+            this.elements.next.parentNode.removeChild(this.elements.next);
         }
 
         var slideElements = this.elements.wrapper.getElementsByClassName('slide');
