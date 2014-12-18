@@ -199,11 +199,12 @@
     // adding htmlData to DOM
     function section_add(sectionID, callbackFn){
         if(this.verbose)console.log('Navigation | section_add: '+sectionID);
+        var shell = (FLOCK.sections[sectionID] && FLOCK.sections[sectionID].shell)?FLOCK.sections[sectionID].shell:"#"+this.shell;
 
         if(FLOCK.sections[sectionID] && !FLOCK.sections[sectionID].added){
             FLOCK.sections[sectionID].added = true;
             FLOCK.sections[sectionID].htmlElem = $(FLOCK.utils.SectionLoader.returnSectionOBJ(sectionID).htmlData);
-            $("#"+this.shell).append(FLOCK.sections[sectionID].htmlElem);
+            $(shell).append(FLOCK.sections[sectionID].htmlElem);
         }
 
         callbackFn();
@@ -288,6 +289,7 @@
     		callbackFn();
     		return;
     	}
+        var shell = (FLOCK.sections[sectionID] && FLOCK.sections[sectionID].shell)?FLOCK.sections[sectionID].shell:"#"+this.shell;
 
         if(FLOCK.sections[sectionID]['destroy']){
             FLOCK.sections[sectionID]['destroy']();
@@ -296,7 +298,7 @@
 
         if(FLOCK.sections[sectionID].added){
             FLOCK.sections[sectionID].added = false;
-            $(this.shell).remove(FLOCK.sections[sectionID].htmlElem);
+            $(shell).remove(FLOCK.sections[sectionID].htmlElem);
             FLOCK.sections[sectionID].htmlElem = null;
         }
 

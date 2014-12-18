@@ -8,8 +8,8 @@
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define([
-                'jquery', 
-                'FLOCK/classes/Paginator', 
+                'jquery',
+                'FLOCK/classes/Paginator',
                 'FLOCK/classes/Backplate',
                 'FLOCK/classes/VideoBackplate',
                 'greensock/TweenLite.min',
@@ -344,7 +344,7 @@
 
         var thumbs = [];
         for (var i = 0; i < this.slides.length; i++) {
-            if (this.slides[i].thumb && this.slides[i].thumb !== 'false' && this.slides[i].thumb !== '') {
+            if (this.slides[i].thumb && this.slides[i].thumb !== 'false' && this.slides[i].thumb !== 'undefined' && this.slides[i].thumb !== '') {
                 thumbs.push({
                     src: this.slides[i].thumb,
                     index: i
@@ -365,7 +365,7 @@
             this.paginator.next = this.next.bind(this);
             this.paginator.goToIndex = this.goToIndex.bind(this);
         }
-        
+
 
         if (this.close_fn) {
             this.close = close_fn;
@@ -458,7 +458,7 @@
         slide_obj.el = slide_element;
 
         slide_obj.backplate = new FLOCK.classes.Backplate(slide_element.getElementsByClassName('backplate_wrapper')[0], loaded, this.elements.wrapper, this.settings.mode);
-        
+
         if (slide_obj.backplate.elements.wrapper.className.match('quote')) {
             slide_obj.isQuote = true;
             slide_obj.backplate.settings.mode = 'contain';
@@ -609,7 +609,7 @@
                 window.requestAnimationFrame(animate.bind(this));
             }
         }
-        
+
     }
 
     function goToIndex (i) {

@@ -92,6 +92,11 @@
         }
         this.resize();
 
+        this.transition(newContainer, oldContainer, instant, callbackFn);
+    }
+
+    function transition(newContainer, oldContainer, instant, callbackFn){
+
         var that = this;
         var tl = new TimelineLite({onComplete:function(){
             that.changeComplete(callbackFn);
@@ -108,8 +113,6 @@
         tl.to(newContainer, t*3.5/8, { x: 0 + 'px', ease: Expo.easeInOut}, 0);
 
         tl.play();
-
-        // this.changeComplete(callbackFn);
     }
 
     function changeComplete(callbackFn){
@@ -142,8 +145,8 @@
     function resize(w, h){
 
         if(!this.inner1)return;
-        if(!w)w = FLOCK.settings.sectionWidth;
-        if(!h)h = FLOCK.settings.window_dimensions.height;
+        if(!w)w = this.container.offsetWidth;
+        if(!h)h = this.container.offsetHeight;
         this.width = w;
         this.height = h;
 
@@ -153,7 +156,7 @@
             img2height = this.image2 ? this.image2.offsetHeight : 0;
 
         var img1Dimensions = {
-                w: img1width, 
+                w: img1width,
                 h: img1height
             },
             bg1Ratio = Math.max(w/img1Dimensions.w, h/img1Dimensions.h),
@@ -161,7 +164,7 @@
             bg1AdjustedHeight = (img1Dimensions.h*bg1Ratio),
 
             img2Dimensions = {
-                w: img2width, 
+                w: img2width,
                 h: img2height
             },
             bg2Ratio = Math.max(w/img2Dimensions.w, h/img2Dimensions.h),
