@@ -690,7 +690,7 @@
         }
 
         if (backplate) {
-            backplate.resize();
+            backplate.resize(w,h);
         } else if (video_player) {
         }
 
