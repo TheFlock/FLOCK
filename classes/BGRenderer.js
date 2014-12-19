@@ -191,13 +191,13 @@
                 this.image1.image.style.top = (bgOffsetTopMin+(bg1OffsetTopMax*this.image1.obj.v)).toFixed() + 'px';
                 this.image1.image.style.left = (bgOffsetLeftMin+(bg1OffsetLeftMax*this.image1.obj.h)).toFixed() + 'px';
                 this.image1.image.style.width = bg1AdjustedWidth+'px';
-                //this.image1.style.height = bg1AdjustedHeight+'px';
+                this.image1.image.style.height = bg1AdjustedHeight+'px';
             }
             if(this.image2.image){
                 this.image2.image.style.top = (bgOffsetTopMin+(bg2OffsetTopMax*this.image2.obj.v)).toFixed() + 'px';
                 this.image2.image.style.left = (bgOffsetLeftMin+(bg2OffsetLeftMax*this.image2.obj.h)).toFixed() + 'px';
                 this.image2.image.style.width = bg2AdjustedWidth+'px';
-                //this.image2.style.height = bg2AdjustedHeight+'px';
+                this.image2.image.style.height = bg2AdjustedHeight+'px';
             }
         }
 
