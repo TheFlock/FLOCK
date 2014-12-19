@@ -152,7 +152,7 @@
         FLOCK.settings.sectionWidth = w;
 
         if (FLOCK.app.BGRenderer) {
-            FLOCK.app.BGRenderer.resize(w, h);
+            FLOCK.app.BGRenderer.resize();
         }
 
         if (FLOCK.sections[FLOCK.app.navigation.current_section]) {
