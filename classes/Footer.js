@@ -62,11 +62,6 @@
         this.initFollow(data);
         this.initShare(data);
 
-        $('#soundButton').on('click', function () {
-            this.className = this.className.match('on') ? 'off' : 'on';
-            FLOCK.app.SoundEffects.mute();
-        });
-
         if(this.init_extend)this.init_extend(data);
 
     }
