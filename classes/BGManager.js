@@ -46,7 +46,7 @@
         // randomize the imgIDs array of each section
         while(sectionsLength--){
             var sectionObj = this.sections[sectionsLength];
-            if(sectionObj.imgIDs && String(sectionObj.random).toLowerCase() != 'false')sectionObj.imgIDs = randomizeArray(sectionObj.imgIDs);
+            if(sectionObj.imgIDs && String(sectionObj.randomize).toLowerCase() != 'false')sectionObj.imgIDs = randomizeArray(sectionObj.imgIDs);
         }
 
         // create sectionLoader entries for each image
