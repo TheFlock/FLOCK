@@ -32,7 +32,7 @@
 
         if (typeof sound === 'undefined') {
             sound = this.addSound(soundID, {
-                src: soundID,
+                urls: [soundID],
                 loop: loop
             });
         } else if (typeof sound === 'string') {
@@ -144,7 +144,7 @@
         }
 
         this.addSound(sprite_path, {
-            src: [sprite_path],
+            urls: [sprite_path],
             sprite: sprite
         });
 
@@ -176,7 +176,7 @@
 
         if (typeof sound === 'undefined') {
             sound = this.addSound(soundID, {
-                src: soundID
+                urls: soundID
             });
         } else if (typeof sound === 'string') {
             sound = this.sounds[sound];
