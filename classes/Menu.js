@@ -102,7 +102,7 @@
                 menuItem.target = '_blank';
             }else if (menuItem.type === "popup") {
                 popUp = true;
-                menuItem.rel = menuItem.link+","+menuItem["popupw"]+","+menuItem["popuph"];
+                menuItem.rel = menuItem.link+","+menuItem.dimensions[0]+","+menuItem.dimensions[1];
             }
 
             // btnData.dataSection = menuItem.link;
@@ -119,7 +119,7 @@
             // btn.innerHTML = $.grep(FLOCK.app.dataSrc.sections.main.html, function(e) { return e.ID == menuItem.label; })[0].VAL;
 
             var btn = $(Mustache.render(this.template, menuItem));
-            if(popUp)btn.click(menu_openPopUp);
+            if(popUp)btn.click(this.openPopUp);
 
             var li = document.createElement('li');
             li.appendChild(btn.get()[0]);
@@ -157,7 +157,7 @@
             if(menuList[i].type === "external"){
                 newMenuLink.target = "_blank";
             } else if(menuList[i].type === "popup") {
-                newMenuLink.rel = menuList[i].link+","+menuList[i]["popupw"]+","+menuList[i]["popuph"];
+                newMenuLink.rel = menuList[i].link+","+menuList[i].dimensions[0]+","+menuList[i].dimensions[1];
                 $(newMenuLink).click(this.openPopUp);
             }
             
@@ -225,6 +225,13 @@
         }
     }
 
+    function openPopUp(e){
+        e.preventDefault();
+        var vSplit = String(e.target.rel).split(',');
+        window.open(vSplit[0], "_blank", "width="+vSplit[1]+", height="+vSplit[2]);
+        return false;
+    }
+
     function show (instant) {
         if(this.verbose)console.log('Main Menu | '+this.menuID+' | show');
 
@@ -265,6 +272,7 @@
     }
 
     Menu.prototype.init = init;
+    Menu.prototype.openPopUp = openPopUp;
     Menu.prototype.hide = hide;
     Menu.prototype.show = show;
     Menu.prototype.buildMenu = buildMenu;
