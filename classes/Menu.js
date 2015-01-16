@@ -182,7 +182,9 @@
             return;
         }
 
-        this.elements.selected[0].className = '';
+        if (this.elements.selected[0]) {
+            this.elements.selected[0].className = '';
+        }
 
         animate = true;
 
