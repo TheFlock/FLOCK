@@ -10,20 +10,22 @@
         define([
                 'jquery',
                 'mustache',
+                'text!FLOCK/templates/BioSectionTemplate.mustache',
                 'FLOCK/utils/Inherit',
                 'FLOCK/utils/DeviceDetect',
+                'FLOCK/classes/Navigation',
                 'FLOCK/packages/jquery.tinyscrollbar',
                 'FLOCK/classes/Section',
                 'greensock/TweenLite.min',
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min'
-            ], function ($, Mustache) {
-            return (root.classes.BioSection = factory($, Mustache));
+            ], function ($, Mustache, bioSectionTemplate) {
+            return (root.classes.BioSection = factory($, Mustache, bioSectionTemplate));
         });
     } else {
-        root.classes.BioSection = factory($, Mustache);
+        root.classes.BioSection = factory($, Mustache, bioSectionTemplate);
     }
-}(window.FLOCK = window.FLOCK || {}, function ($, Mustache) {
+}(window.FLOCK = window.FLOCK || {}, function ($, Mustache, bioSectionTemplate) {
 
     var myName = "BioSection",
         that,
@@ -40,7 +42,7 @@
         console.log('init ' + myName);
         that = this;
 
-        data = FLOCK.classes.dataSrc.sections[this.name].data;
+        data = FLOCK.app.dataSrc.sections[this.name].data;
 
         this.elements = {
             sectionWrapper: document.getElementById(this.name)
@@ -84,7 +86,7 @@
     }
 
     function buildBioSection (data) {
-        var bioSection_template = document.getElementById('bioSectionTemplate').innerHTML.replace(/^\s+|\s+$|\s+(?=\s)/g, ""),
+        var bioSection_template = bioSectionTemplate.replace(/^\s+|\s+$|\s+(?=\s)/g, ""),
             template_obj = {},
             bioSection_html;
 
@@ -174,7 +176,7 @@
     }
 
     function startup (callbackFn) {
-        this.curr_bg = FLOCK.classes.BGManager.getBg(FLOCK.classes.navigation.current_section, true, true);
+        this.curr_bg = FLOCK.app.BGManager.getBg(FLOCK.classes.Navigation.current_section, true, true);
         switch (this.curr_bg) {
             case 'background_3':
                 this.viewportHeightRatio = 3;
