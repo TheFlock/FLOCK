@@ -103,13 +103,13 @@
 
         var w, h;
 
-        w = Math.max(FLOCK.settings.min_width, this.elements.window.width()),
-        h = Math.max(FLOCK.settings.min_height, this.elements.window.height());
-
         FLOCK.settings.window_dimensions = {
-            width: w,
-            height: h
+            width: this.elements.window.width(),
+            height: this.elements.window.height()
         }
+
+        w = Math.max(FLOCK.settings.min_width, FLOCK.settings.window_dimensions.width),
+        h = Math.max(FLOCK.settings.min_height, FLOCK.settings.window_dimensions.height);
 
         this.elements.shell[0].style.width = w + 'px';
 
@@ -163,6 +163,12 @@
 
         if (FLOCK.app.mainMenu) {
             FLOCK.settings.menu_width = FLOCK.app.mainMenu.resize();
+        }
+
+        if (FLOCK.settings.window_dimensions.width < FLOCK.settings.min_width || FLOCK.settings.window_dimensions.height < FLOCK.settings.min_height) {
+            this.elements.shell[0].style.position = 'absolute';
+        } else {
+            this.elements.shell[0].style.position = 'fixed';
         }
 
     }
