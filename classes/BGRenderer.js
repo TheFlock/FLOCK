@@ -96,7 +96,6 @@
                 }
             }
             this.resize();
-
             this.transition(newImage, oldImage, instant, callbackFn);
         }
 
@@ -155,10 +154,30 @@
             this.width = w;
             this.height = h;
 
-            var img1width = this.image1.image ? this.image1.image.offsetWidth : 0,
-            img1height = this.image1.image ? this.image1.image.offsetHeight : 0,
-            img2width = this.image2.image ? this.image2.image.offsetWidth : 0,
-            img2height = this.image2.image ? this.image2.image.offsetHeight : 0;
+            var img1width,
+                img1height,
+                img2width,
+                img2height;
+
+            if (this.image1.obj) {
+                if (this.image1.obj.dimensions) {
+                    img1width = this.image1.obj.dimensions.width;
+                    img1height = this.image1.obj.dimensions.height;
+                } else {
+                    img1width = this.image1.image ? this.image1.image.offsetWidth : 0;
+                    img1height = this.image1.image ? this.image1.image.offsetHeight : 0;
+                }
+            }
+
+            if (this.image2.obj) {
+                if (this.image2.obj.dimensions) {
+                    img2width = this.image2.obj.dimensions.width;
+                    img2height = this.image2.obj.dimensions.height;
+                } else {
+                    img2width = this.image2.image ? this.image2.image.offsetWidth : 0;
+                    img2height = this.image2.image ? this.image2.image.offsetHeight : 0;
+                }
+            }
 
             var img1Dimensions = {
                 w: img1width,
