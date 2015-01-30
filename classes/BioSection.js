@@ -19,13 +19,13 @@
                 'greensock/TweenLite.min',
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min'
-            ], function ($, Mustache, bioSectionTemplate) {
-            return (root.classes.BioSection = factory($, Mustache, bioSectionTemplate));
+            ], function ($, Mustache, biosTemplate) {
+            return (root.classes.BioSection = factory($, Mustache, biosTemplate));
         });
     } else {
-        root.classes.BioSection = factory($, Mustache, bioSectionTemplate);
+        root.classes.BioSection = factory($, Mustache, biosTemplate);
     }
-}(window.FLOCK = window.FLOCK || {}, function ($, Mustache, bioSectionTemplate) {
+}(window.FLOCK = window.FLOCK || {}, function ($, Mustache, biosTemplate) {
 
     var myName = "BioSection",
         that,
@@ -36,6 +36,7 @@
         this.name = myName.toLowerCase();
         this.section_scroll = false;
         this.initialized = false;
+        this.biosTemplate = biosTemplate;
     }
 
     function init (callback) {
@@ -48,7 +49,7 @@
             sectionWrapper: document.getElementById(this.name)
         }
 
-        // add slugify helper function to data to be used to add ids to bios in the bioSectionTemplate
+        // add slugify helper function to data to be used to add ids to bios in the biosTemplate
         data.slugify = function () {
             return function (text, render) {
                 return render(text)
@@ -86,7 +87,7 @@
     }
 
     function buildBioSection (data) {
-        var bioSection_template = bioSectionTemplate.replace(/^\s+|\s+$|\s+(?=\s)/g, ""),
+        var bioSection_template = this.biosTemplate.replace(/^\s+|\s+$|\s+(?=\s)/g, ""),
             template_obj = {},
             bioSection_html;
 
