@@ -72,7 +72,7 @@
             mpaaRequirementsJSON = data["MPAA_requirements"],
             mpaaRequirementsElement = $("#MPAA_requirements");
 
-        if (mpaaRequirementsJSON.VISIBLE === 'false') {
+        if (!mpaaRequirementsJSON.VISIBLE || mpaaRequirementsJSON.VISIBLE === 'false') {
             return;
         }
 
