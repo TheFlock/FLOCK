@@ -164,8 +164,6 @@
         this.dragPosition.velocity = this.dragPosition.x - this.dragPosition.lastX;
         this.dragPosition.lastX = this.dragPosition.x;
 
-
-
         positionSlides([
             {
                 slide: currSlide,
@@ -186,6 +184,7 @@
     /**
     * For some reason Firefox has some weird rendering issues with translate3d 
     * where the bottom half of the image won't show up, so use 'left' for now
+    * Seems like a FF bug -- that will be fixed in the next release
     */
     function positionSlides (slides) {
         for (var i = slides.length - 1; i >= 0; i--) {
