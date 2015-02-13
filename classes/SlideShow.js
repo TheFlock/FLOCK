@@ -183,13 +183,18 @@
 
     }
 
+    /**
+    * For some reason Firefox has some weird rendering issues with translate3d 
+    * where the bottom half of the image won't show up, so use 'left' for now
+    */
     function positionSlides (slides) {
         for (var i = slides.length - 1; i >= 0; i--) {
-            if (cantransform3d) {
-                slides[i].slide.el.style[transformPrefixed] = 'translate3d(' + slides[i].targetLeft + 'px,0px,1px)';
-            } else {
-                slides[i].slide.el.style.left = slides[i].targetLeft + 'px';
-            }
+            // if (cantransform3d) {
+            //     slides[i].slide.el.style.backfaceVisibility = 'hidden';
+            //     slides[i].slide.el.style[transformPrefixed] = 'translate3d(' + slides[i].targetLeft.toFixed(4) + 'px,0,0)';
+            // } else {
+                slides[i].slide.el.style.left = slides[i].targetLeft.toFixed(2) + 'px';
+            //}
         };
     }
 
