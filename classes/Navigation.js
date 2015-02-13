@@ -67,7 +67,7 @@
         if (this.current_section != sectionID)this.previous_section = this.current_section;
         this.current_section = sectionID;
 
-        if (!FLOCK.settings.deepLinking === false && window.history && window.history.pushState && this.previous_section != '' ){
+        if (FLOCK.settings.deepLinking !== false && window.history && window.history.pushState && this.previous_section != '' ){
             // pushState breaks fullscreen in chrome, so check if fullscreen first
             if( window.innerHeight != screen.height) {
                 history.pushState('data', '', (this.current_section == 'home' ? FLOCK.settings.base_path : FLOCK.settings.base_path + this.current_section + '.php' ));
