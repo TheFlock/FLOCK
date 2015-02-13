@@ -14,7 +14,7 @@
                 'greensock/easing/EasePack.min',
                 'greensock/plugins/CSSPlugin.min',
                 'FLOCK/classes/BG_Image',
-                'FLOCK/classes/BG_Video'
+                // 'FLOCK/classes/BG_Video' // need to require this in child class so media element isn't required for projects that don't need video
             ], function ($) {
             return (root.classes.BGManager = factory($));
         });
