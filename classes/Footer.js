@@ -52,7 +52,6 @@
             list = Mustache.render(linkList_template, {links:linkLists[i].links});
             list_container = document.getElementById(linkLists[i].id);
             list_container.innerHTML = list;
-            console.log(list, linkLists[i], linkLists[i].id);
         };
 
         //Credits button
