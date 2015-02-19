@@ -759,6 +759,7 @@
             this.dragPosition.x = 0;
             this.dragOffset.x = 0;
             this.animationState.currVelocity = 1;
+            this.slides[this.state.next_index].el.style.left = '4000px'; // the 4000px is a hack to workaround firefox bug that causes slide to flash before animating
             this.slides[this.state.previous_index].el.style.display = 'block';
             this.slides[this.state.previous_index].backplate.elements.wrapper.style.display = 'block';
             this.previous();
@@ -771,6 +772,7 @@
             this.dragPosition.x = 0;
             this.dragOffset.x = 0;
             this.animationState.currVelocity = -1;
+            this.slides[this.state.next_index].el.style.left = '4000px'; // the 4000px is a hack to workaround firefox bug that causes slide to flash before animating
             this.slides[this.state.next_index].el.style.display = 'block';
             this.slides[this.state.next_index].backplate.elements.wrapper.style.display = 'block';
             this.next();
@@ -790,6 +792,7 @@
             this.dragPosition.x = 0;
             this.dragOffset.x = 0;
             this.animationState.currVelocity = 1;
+            this.slides[this.state.next_index].el.style.left = '4000px'; // the 4000px is a hack to workaround firefox bug that causes slide to flash before animating
             this.slides[this.state.previous_index].el.style.display = 'block';
             this.slides[this.state.previous_index].backplate.elements.wrapper.style.display = 'block';
             this.previous();
@@ -801,6 +804,8 @@
             this.dragPosition.x = 0;
             this.dragOffset.x = 0;
             this.animationState.currVelocity = -1;
+
+            this.slides[this.state.next_index].el.style.left = '4000px'; // the 4000px is a hack to workaround firefox bug that causes slide to flash before animating
             this.slides[this.state.next_index].el.style.display = 'block';
             this.slides[this.state.next_index].backplate.elements.wrapper.style.display = 'block';
             this.next();
