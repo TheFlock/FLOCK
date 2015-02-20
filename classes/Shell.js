@@ -39,7 +39,7 @@
         $('#shell').append($(sectionOBJ.htmlData));
 
         window.requestAnimationFrame(function(){
-            ready.call(this, callbackFn);
+            this.ready(callbackFn);
         }.bind(this));
     }
 
@@ -174,6 +174,7 @@
     }
 
     Shell.prototype.init = init;
+    Shell.prototype.ready = ready;
     Shell.prototype.setupMenu = setupMenu;
     Shell.prototype.resize = resize;
 
