@@ -11,38 +11,38 @@
             // Also create a global in case some scripts
             // that are loaded still are looking for
             // a global even when an AMD loader is in use.
-            return (root.utils.ArrayExecuter = factory());
+            return (root.utils.ArrayExecutor = factory());
         });
     } else {
 
-        root.utils.ArrayExecuter = factory();
+        root.utils.ArrayExecutor = factory();
     }
 }(window.FLOCK = window.FLOCK || {}, function () {
 
     /*
     --------------------------------------------------------------------------------------------------------------------
-    arrayExecuter
+    arrayExecutor
     --------------------------------------------------------------------------------------------------------------------
     */
 
-    var ArrayExecuter = function (scope, id) {
+    var ArrayExecutor = function (scope, id) {
         this.task_arr = [];
         this.defaultScope = scope || this;
         this.id = id || '';
         this.verbose = false;
     }
 
-    ArrayExecuter.prototype = {
+    ArrayExecutor.prototype = {
         //Exectutes an array of functions
         //If this is called and another array is currently executing, then
         //the new set of functions will run before finishing the previous set
         execute: function (arr) {
-            if(this.verbose)console.log("ArrayExecuter | "+this.id+" | execute");
+            if(this.verbose)console.log("ArrayExecutor | "+this.id+" | execute");
             this.addNext(arr);
             this.runStep('');
         },
         addNext: function (arr) {
-            if(this.verbose)console.log("ArrayExecuter | "+this.id+" | addNext");
+            if(this.verbose)console.log("ArrayExecutor | "+this.id+" | addNext");
             if (typeof arr === 'function') {
                 // add single function
                 this.task_arr.unshift({fn: arr, vars: null});
@@ -58,12 +58,10 @@
             }
         },
         tackOn: function (arr) {
-            if(this.verbose)console.log("ArrayExecuter | "+this.id+" | tackOn");
+            if(this.verbose)console.log("ArrayExecutor | "+this.id+" | tackOn");
             for (var i=0; i<arr.length; i++) {
                 this.task_arr.push(arr[i]);
             }
-
-            // trace('///// arrayExecuter_tackOn: length: '+task_arr.length+' /////');
 
             this.runStep('');
         },
@@ -79,7 +77,7 @@
             }
         },
         runStep: function (args) {
-            if(this.verbose)console.log("ArrayExecuter | "+this.id+" | runStep");
+            if(this.verbose)console.log("ArrayExecutor | "+this.id+" | runStep");
 
             if (this.task_arr.length == 0)return;
 
@@ -94,31 +92,45 @@
             }
 
             funct.apply(step.scope, step.vars);
+
+            nullObj(step);
         },
         stepComplete: function (args) {
-            if(this.verbose)console.log("ArrayExecuter | "+this.id+" | stepComplete");
-            // var that = this;
+            if(this.verbose)console.log("ArrayExecutor | "+this.id+" | stepComplete");
 
             if (this.task_arr.length > 0) {
                 window.requestAnimationFrame(this.runStep.bind(this));
-                // setTimeout(function(){
-                //     ();
-                // }, 60);
             }
 
         },
         stepComplete_instant: function (args) {
-            if(this.verbose)console.log("ArrayExecuter | "+this.id+" | stepComplete_instant");
+            if(this.verbose)console.log("ArrayExecutor | "+this.id+" | stepComplete_instant");
 
             if (this.task_arr.length > 0) {
                 this.runStep();
             }
         },
-        clearArrayExecuter: function () {
-            if(this.verbose)console.log("ArrayExecuter | "+this.id+" | clearArrayExecuter");
+        clearArrayExecutor: function () {
+            if(this.verbose)console.log("ArrayExecutor | "+this.id+" | clearArrayExecutor");
             this.task_arr = [];
+        },
+        destroy: function () {
+            for (var i = 0; i < this.task_arr.length; i++) {
+                nullObj(this.task_arr[i]);
+            };
+            this.task_arr = [];
+            this.defaultScope = null;
         }
     }
 
-    return ArrayExecuter;
+    function nullObj (obj) {
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                obj[prop] = null;
+            }
+        }
+        obj = null;
+    }
+
+    return ArrayExecutor;
 }));
