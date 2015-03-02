@@ -10,7 +10,7 @@
         define([
                 'jquery',
                 'FLOCK/utils/SectionLoader',
-                'FLOCK/utils/ArrayExecuter',
+                'FLOCK/utils/ArrayExecutor',
                 'FLOCK/classes/Menu'
             ], function () {
             return (root.classes.Navigation = factory());
@@ -29,8 +29,8 @@
         this.previous_section = '';
         this.forceChange = false;
         this.loadlist = [];
-        this.arrayExecuter = new FLOCK.utils.ArrayExecuter(this, "navigation");
-        this.stepComplete = this.arrayExecuter.stepComplete.bind(this.arrayExecuter);
+        this.arrayExecutor = new FLOCK.utils.ArrayExecutor(this, "navigation");
+        this.stepComplete = this.arrayExecutor.stepComplete.bind(this.arrayExecutor);
         this.active = true;
 
         this.changeOrder = [
@@ -76,7 +76,7 @@
 
         this.load_queue(sectionID);
 
-        this.arrayExecuter.execute(this.assembleChangeFunction(completeFn));
+        this.arrayExecutor.execute(this.assembleChangeFunction(completeFn));
 
         this.forceChange = false;
     }
@@ -166,7 +166,7 @@
             {fn: callbackFn, vars: null}
         ];
 
-        this.arrayExecuter.execute(function_arr);
+        this.arrayExecutor.execute(function_arr);
     }
 
     function load_done(){

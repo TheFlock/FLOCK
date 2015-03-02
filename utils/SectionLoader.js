@@ -4,7 +4,7 @@
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jquery', 'FLOCK/utils/DeviceDetect', 'FLOCK/utils/ArrayExecuter'], function ($) {
+        define(['jquery', 'FLOCK/utils/DeviceDetect', 'FLOCK/utils/ArrayExecutor'], function ($) {
             // Add to namespace
             return (root.utils.SectionLoader = factory($));
         });
@@ -13,7 +13,7 @@
     }
 }(window.FLOCK = window.FLOCK || {}, function ($) {
 
-    var arrayExecuter = new FLOCK.utils.ArrayExecuter(),
+    var arrayExecutor = new FLOCK.utils.ArrayExecutor(),
         DeviceDetect = FLOCK.utils.DeviceDetect,
         base_url = '';
 
@@ -172,7 +172,7 @@
             function_arr.push({fn: callback, vars: null});
         }
 
-        arrayExecuter.execute(function_arr);
+        arrayExecutor.execute(function_arr);
     }
 
     function initScrape () {
@@ -186,14 +186,14 @@
         //confirm sectionOBJ was found
         if(sectionOBJ === undefined){
             if(this.verbose)console.log('SectionLoader | this.loadSection: section id '+id+' not found');
-            arrayExecuter.stepComplete_instant();
+            arrayExecutor.stepComplete_instant();
             return;
         }
 
         //check is section is already loaded
         if(sectionOBJ.loaded === true){
             if(this.verbose)console.log('SectionLoader | this.loadSection: '+id+' is already loaded');
-            arrayExecuter.stepComplete_instant();
+            arrayExecutor.stepComplete_instant();
             return;
         }
 
@@ -259,7 +259,7 @@
             function_arr.push({scope: this, fn: this.loadCSS,   vars: [sectionOBJ]});
         }
 
-        arrayExecuter.execute(function_arr);
+        arrayExecutor.execute(function_arr);
 
     }
 
@@ -337,7 +337,7 @@
             sectionLoaderState.imagesToLoad.push(results[1]);
         }
 
-        arrayExecuter.stepComplete_instant();
+        arrayExecutor.stepComplete_instant();
     }
 
     function getHTMLString (html_data, html_obj) {
@@ -406,7 +406,7 @@
             }
         }
 
-        arrayExecuter.stepComplete();
+        arrayExecutor.stepComplete();
     }
 
     function loadJS (sectionOBJ){
@@ -424,7 +424,7 @@
         if(this.verbose)console.log('SectionLoader | loadJS: success');
         sectionOBJ.jsAttached = true;
 
-        arrayExecuter.stepComplete();
+        arrayExecutor.stepComplete();
     }
 
     function isDuplicate (fileURL){
@@ -457,7 +457,7 @@
 
             Mustache.compile(data);
 
-            arrayExecuter.stepComplete_instant();
+            arrayExecutor.stepComplete_instant();
         });
     }
 
@@ -708,9 +708,9 @@
         sectionLoaderState.miscLoaded = 0;
 
         if (sectionLoaderState.loader && !sectionLoaderState.loader.finished) {
-            sectionLoaderState.loader.complete(arrayExecuter.stepComplete_instant.bind(arrayExecuter));
+            sectionLoaderState.loader.complete(arrayExecutor.stepComplete_instant.bind(arrayExecutor));
         } else {
-            arrayExecuter.stepComplete_instant();
+            arrayExecutor.stepComplete_instant();
         }
     }
 
