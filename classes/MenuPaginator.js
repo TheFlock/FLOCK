@@ -26,7 +26,7 @@
 
         this.elements = {
             wrapper: params.wrapper,
-            masker: $(params.wrapper).find('.paginatorWrapper'),
+            masker: $(params.wrapper).find('.paginatorMasker'),
             list: $(params.wrapper).find('ul'),
             prev: $('<p class="prev"></p>').appendTo(params.wrapper), // for some reason, there was a huge delay when I used an anchor tag instead of a p
             next: $('<p class="next"></p>').appendTo(params.wrapper)
@@ -34,7 +34,6 @@
 
         this.elements.list.children('li').each(function () {
             if (this.style.display !== 'none') {
-                console.log(this, $(this).outerWidth(true));
                 listWidth += $(this).outerWidth(true) + 1;
             }
         });
@@ -62,7 +61,7 @@
         this.paginated = false;
         this.currentPage = 1;
         this.numPages = 1;
-        this.resize($(window).width(), $(window).height());
+        this.resize();
     }
 
     MenuPaginator.prototype = {
@@ -104,6 +103,7 @@
                 if (this.currentPage === this.numPages) {
                     this.elements.next[0].className = 'next off';
                     newleft = (this.elements.masker.width() - this.listWidth) + 'px';
+
                     TweenLite.to(this.elements.list, 1, {left:newleft, ease:Power4.easeInOut});
                 } else {
                     change = -(this.elements.masker.width() - this.listWidth) - (this.elements.masker.width()*(this.currentPage - 1));
@@ -149,12 +149,13 @@
         /**
         * called on browser resize
         */
-        resize: function (w, h) {
-            var curpos = -parseInt(this.elements.list[0].style.left) + this.elements.masker.width();
+        resize: function () {
+            var w = this.elements.masker.width(),
+                curpos = -parseInt(this.elements.list[0].style.left) + this.elements.masker.width();
 
             // subtract 100 because of #homeMenu padding
-            if (w - 100 < this.listWidth) {
-                this.numPages = Math.ceil(this.listWidth / (w-100));
+            if (w < this.listWidth) {
+                this.numPages = Math.ceil(this.listWidth / (w));
 
                 if (!isNaN(curpos)) {
                     if (this.listWidth > curpos) {
