@@ -27,7 +27,7 @@
         complete_callback = false;
 
     var preloader = function() {
-        if (!FLOCK.app.main.instaLoad) {
+        if (!FLOCK.settings.instaLoad) {
             sectionLoader.addLoaderUI(this);
         }
         this.finished = true;
