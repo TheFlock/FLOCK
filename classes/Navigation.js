@@ -298,7 +298,7 @@
 
         if(FLOCK.sections[sectionID].added){
             FLOCK.sections[sectionID].added = false;
-            $(shell).remove(FLOCK.sections[sectionID].htmlElem);
+            $(FLOCK.sections[sectionID].htmlElem).remove();
             FLOCK.sections[sectionID].htmlElem = null;
         }
 
