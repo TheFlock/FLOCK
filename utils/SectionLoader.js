@@ -535,9 +535,8 @@
                 }.bind(this), false);
                 return xhr;            
             }.bind(this),
-            type: 'POST',
+            type: 'GET',
             url: fileURL,
-            data: {},
             success: function(){  
                           
                 fileObj.done = true;
