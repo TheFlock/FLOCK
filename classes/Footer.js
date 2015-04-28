@@ -255,7 +255,7 @@
 
     function attachSocialScripts(callbackFn){
         console.log('FOOTER | attachSocialScripts')
-        getGlueScript();
+        // getGlueScript();
         twitterScript();
         googlePlusScript();
         if(callbackFn)callbackFn();
