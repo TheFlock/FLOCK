@@ -93,7 +93,7 @@
         if(!newPerc)newPerc = 1;
 
         //ease it
-        newPerc = perc+(Math.ceil((newPerc-perc)/.2)/100);
+        newPerc = perc+(Math.ceil(10*(newPerc-perc)/.2)/1000);
 
         perc = Math.max(perc, newPerc);
 

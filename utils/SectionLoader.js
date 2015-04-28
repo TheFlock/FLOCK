@@ -77,7 +77,7 @@
     --------------------------------------------------------------------------------------------------------------------
     */
 
-    var sectionLoaderState = {sections:[], currentlyLoadingIDs:[], templatesToLoad: [], imagesToLoad:[], imagesLoaded:0, videosToLoad:[], videosLoaded:0, videosLoading:[], videoLoadingStatus:false, miscToLoad:[], miscLoaded:0, loader:null},
+    var sectionLoaderState = {sections:[], currentlyLoadingIDs:[], templatesToLoad: [], imagesToLoad:[], imagesLoaded:0, miscToLoad:[], miscLoaded:0, loader:null},
         isMobile = DeviceDetect.isMobile;
 
     function addLoaderUI (loaderObj) {
@@ -137,6 +137,11 @@
 
     function loadSection () {
         //Load section content by passing in the ID of the section, or an array of IDs
+        if(this.verbose){
+            console.log('////////////////////////////////////////////');
+            console.log('////////////////////////////////////////////');
+            console.log('////////////////////////////////////////////');
+        }
 
         var function_arr =  [],
             args = Array.prototype.slice.call(arguments),
@@ -210,17 +215,12 @@
         numAddFiles = sectionOBJ.addFiles.length;
 
         while (numAddFiles--){
-            if(!this.isDuplicate(sectionOBJ.addFiles[numAddFiles])){
-                var fileURL = sectionOBJ.addFiles[numAddFiles];
+            var fileURL = sectionOBJ.addFiles[numAddFiles];
 
-                if(fileURL.indexOf('.gif') > 0 || fileURL.indexOf('.jpg') > 0 || fileURL.indexOf('.jpeg') > 0 || fileURL.indexOf('.png') > 0){
-                    sectionLoaderState.imagesToLoad.push(fileURL);
-                // } else if (fileURL.indexOf('.mp4')>0 || fileURL.indexOf('.webm')>0 || fileURL.indexOf('.ogg')>0){
-                //     sectionLoaderState.videosToLoad.push(fileURL);
-                } else {
-                    if(this.verbose)console.log('SectionLoader | ajax load: '+fileURL);
-                    sectionLoaderState.miscToLoad.push(fileURL);
-                }
+            if(fileURL.indexOf('.gif') > 0 || fileURL.indexOf('.jpg') > 0 || fileURL.indexOf('.jpeg') > 0 || fileURL.indexOf('.png') > 0){
+                addImage.call(this, fileURL);               
+            } else {
+                addMisc.call(this, fileURL);
             }
         }
 
@@ -228,16 +228,12 @@
         numImages = sectionOBJ.images.length;
 
         while (numImages--){
-            if(!this.isDuplicate(sectionOBJ.images[numImages])){
-                var fileURL = sectionOBJ.images[numImages];
+            var fileURL = sectionOBJ.images[numImages];
 
-                if(fileURL.indexOf('.gif') > 0 || fileURL.indexOf('.jpg') > 0 || fileURL.indexOf('.jpeg') > 0 || fileURL.indexOf('.png') > 0){
-                    sectionLoaderState.imagesToLoad.push(fileURL);
-                // } else if (fileURL.indexOf('.mp4')>0 || fileURL.indexOf('.webm')>0 || fileURL.indexOf('.ogg')>0){
-                //     sectionLoaderState.videosToLoad.push(fileURL);
-                } else {
-                    if(this.verbose)console.log('SectionLoader | not a supported fileType: '+fileURL);
-                }
+            if(fileURL.indexOf('.gif') > 0 || fileURL.indexOf('.jpg') > 0 || fileURL.indexOf('.jpeg') > 0 || fileURL.indexOf('.png') > 0){
+                addImage.call(this, fileURL);
+            } else {
+                if(this.verbose)console.log('SectionLoader | not a supported fileType: '+fileURL);
             }
         }
 
@@ -329,12 +325,12 @@
 
         // load backplate from data attribute
         if ($(sectionOBJ.htmlData).data('backplate')) {
-            sectionLoaderState.imagesToLoad.push($(sectionOBJ.htmlData).data('backplate'));
+            addImage.call(this, $(sectionOBJ.htmlData).data('backplate'));
         }
 
         while ((results = img_pattern.exec(sectionOBJ.htmlData)) !== null)
         {
-            sectionLoaderState.imagesToLoad.push(results[1]);
+            addImage.call(this, results[1]);
         }
 
         arrayExecuter.stepComplete_instant();
@@ -400,9 +396,7 @@
             while (numImages--) {
                 var fileURL = imgUrls[numImages].replace('../', '');
                 if(this.verbose)console.log('SectionLoader | cssLoaded: adding: '+fileURL);
-                if (!this.isDuplicate(fileURL)) {
-                    sectionLoaderState.imagesToLoad.push(fileURL);
-                }
+                addImage.call(this, fileURL);
             }
         }
 
@@ -430,13 +424,13 @@
     function isDuplicate (fileURL){
         var numImages = sectionLoaderState.imagesToLoad.length;
         while(numImages--){
-            if (sectionLoaderState.imagesToLoad[numImages] === fileURL) {
+            if (sectionLoaderState.imagesToLoad[numImages].url === fileURL) {
                 return true;
             }
         }
-        var numVids = sectionLoaderState.videosToLoad.length;
-        while(numVids--){
-            if(sectionLoaderState.videosToLoad[numVids] === fileURL) {
+        var numMisc = sectionLoaderState.miscToLoad.length;
+        while(numMisc--){
+            if(sectionLoaderState.miscToLoad[numMisc].url === fileURL) {
                 return true;
             }
         }
@@ -464,14 +458,12 @@
     function loadFiles (){
 
         var numImages = sectionLoaderState.imagesToLoad.length,
-            numVids = sectionLoaderState.videosToLoad.length,
             numMisc = sectionLoaderState.miscToLoad.length,
             fileURL,
             newImage,
-            newVid,
             that = this;
 
-        if((numImages+numVids+numMisc) < 1){
+        if((numImages+numMisc) < 1){
             this.complete();
             return;
         }
@@ -481,181 +473,114 @@
         }
 
         while (numImages--) {
-            if(this.verbose)console.log('SectionLoader | load image: '+sectionLoaderState.imagesToLoad[numImages]);
-            fileURL = sectionLoaderState.imagesToLoad[numImages];
-            newImage = new Image();
-            newImage.alt = String(numImages)
-            $(newImage).load(this.imageLoaded).error('error', this.fileError);
-            newImage.src = base_url + fileURL;
-        }
-
-        sectionLoaderState.videoLoadingStatus = {currURL: '', buffered:0, seekable:0, totalLoad: 0, currentCount:0};
-
-        while (numVids--) {
-            fileURL = sectionLoaderState.videosToLoad[numVids];
-            newVid = document.createElement('video');
-
-            //if it's a mobile device use the central player to load the videos, one at a time
-            if(DeviceDetect.isiPhone || DeviceDetect.isiPod){
-                sectionLoaderState.videosLoaded = sectionLoaderState.videosToLoad;
-            } else if (DeviceDetect.isMobile || siteVideo_Settings.isFlash || true) {
-                siteVideo_Player.preload = 'auto';
-                siteVideo_Player.autobuffer = 'true';
-    //          siteVideo_Player.controls = true;
-                siteVideo_Player.autoplay = false;
-
-                sectionLoaderState.videosLoading.push(fileURL);
-
-                if (numVids === 0) {
-                    this.addNextVid_centralPlayer();
-                }
-            } else {
-                $(newVid).attr('preload', 'auto');
-                $(newVid).attr('autobuffer', 'true');
-                $(newVid).attr('controls', 'controls');
-
-                newVid.preload = 'auto';
-                newVid.autobuffer = true;
-                newVid.controls = true;
-                newVid.autoplay = false;
-
-                newVid.src = fileURL;
-
-                sectionLoaderState.videosLoading.push(newVid);
-
-                if (numVids === 0) {
-                    setTimeout(this.checkVidStatus.bind(that), 100);
-                }
-            }
-
+            loadImage.call(this, sectionLoaderState.imagesToLoad[numImages]);
         }
 
         while(numMisc--){
-            var fileURL = sectionLoaderState.miscToLoad[numMisc];
-            var fileIndex = 0+numMisc;
-            $.get(fileURL, function(){
-                sectionLoader.miscFileLoaded();
-            });
+            miscLoadFile.call(this, sectionLoaderState.miscToLoad[numMisc]);
         }
     }
 
-    function imageLoaded (e){
-        var imageId = Number(this.alt);
-
-        if(sectionLoaderState.imagesToLoad[imageId]){
-            //alert(sectionLoaderState.imagesToLoad[imageId] + ' loaded');
-
-            // sectionLoaderState.imagesToLoad.splice(sectionLoaderState.imagesToLoad.indexOf(imageId), 1);
-            sectionLoaderState.imagesToLoad[imageId] = null;
+    function addImage(fileURL){
+        if (!this.isDuplicate(fileURL)) {
+            var index = sectionLoaderState.imagesToLoad.length;
+            sectionLoaderState.imagesToLoad.push({url: fileURL, index: index});
+        }
+    }
+    
+    function loadImage(fileObj){
+        if(this.verbose)console.log('SectionLoader | load image: '+fileObj.url);
+        var fileURL = fileObj.url;
+        
+        fileObj.done = false;
+        fileObj.size = this.getFileSize(fileURL);
+        
+        newImage = new Image();
+        newImage.alt = String(fileObj.index)
+        $(newImage).load(function(){
+            if(this.verbose)console.log('SectionLoader | image Loaded: '+fileObj.url);
+            
+            fileObj.done = true;
             sectionLoaderState.imagesLoaded++;
-
-            if(this.verbose)console.log('SectionLoader | image Loaded: '+this.alt+' : '+this.src+' : '+sectionLoaderState.imagesLoaded+' of '+sectionLoaderState.imagesToLoad.length);
             sectionLoader.checkComplete();
+            
+        }.bind(this)).error('error', this.fileError);
+        newImage.src = base_url + fileURL;
+    }
+    
+    function addMisc(fileURL){
+        if (!this.isDuplicate(fileURL)) {
+            sectionLoaderState.miscToLoad.push({url:fileURL});
         }
     }
+    
+    function miscLoadFile(fileObj){
+        if(this.verbose)console.log('SectionLoader | xhr load: '+fileObj.url);
+        var fileURL = fileObj.url;
 
-    function addNextVid_centralPlayer (){
-        var fileURL = sectionLoaderState.videosLoading[0];
-        siteVideo_Player.setSrc('');
-        siteVideo_Player.setSrc(fileURL);
-        sectionLoaderState.videoLoadingStatus.currURL = fileURL;
-        sectionLoaderState.videoLoadingStatus.buffered = 0;
-        sectionLoaderState.videoLoadingStatus.seekable = 0;
-        setTimeout(function() {sectionLoader.checkVidStatus_centralPlayer();}, 100);
+        fileObj.perc = 0;
+        fileObj.done = false;
+        fileObj.size = this.getFileSize(fileURL);
+        
+        $.ajax({
+            
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.addEventListener("progress", function(evt){
+                    if (evt.lengthComputable) {
+                        fileObj.perc = evt.loaded / evt.total;
+                    } else {
+                        fileObj.perc = 0;
+                    }    
+                }.bind(this), false);
+                return xhr;            
+            }.bind(this),
+            type: 'GET',
+            url: fileURL,
+            success: function(){  
+                          
+                fileObj.done = true;
+                sectionLoaderState.miscLoaded++;
+                sectionLoader.checkComplete();
+                
+            }.bind(this)
+        });
+        
     }
-
-    function checkVidStatus_centralPlayer () {
-        var videoToCheck = siteVideo_Player;
-
-        //make sure it's loading the right file
-        var currURL = sectionLoaderState.videosLoading[0];
-        if(String(siteVideo_Player.src).indexOf(currURL) < 0){
-            this.addNextVid_centralPlayer();
-            return;
-        }
-
-        var vidFinished = false;
-        var buffered = 0;
-        if(videoToCheck.buffered.length){
-            buffered = videoToCheck.buffered.end(0);
-            if(buffered >= videoToCheck.duration){
-                vidFinished = true;
-            }
-        }
-
-        var seekable = 0;
-        if(!vidFinished && videoToCheck.seekable.length){
-            seekable = videoToCheck.seekable.end(0);
-            if(seekable >= videoToCheck.duration){
-                vidFinished = true;
-            }
-        }
-
-        //check if the load status has changed, if not count up, once the limit is met assume it's stuck and move one
-        var totalLoad = this.getPerc();
-        if(!vidFinished && sectionLoaderState.videoLoadingStatus.currURL === currURL && sectionLoaderState.videoLoadingStatus.totalLoad === totalLoad && sectionLoaderState.videoLoadingStatus.seekable === seekable && sectionLoaderState.videoLoadingStatus.buffered === buffered){
-            sectionLoaderState.videoLoadingStatus.currentCount++;
-            if(sectionLoaderState.videoLoadingStatus.currentCount > 50){
-                vidFinished = true;
-            }
-        } else {
-            sectionLoaderState.videoLoadingStatus.currentCount = 0;
-        }
-
-        sectionLoaderState.videoLoadingStatus.currURL = currURL;
-        sectionLoaderState.videoLoadingStatus.totalLoad = totalLoad;
-        sectionLoaderState.videoLoadingStatus.seekable = seekable;
-        sectionLoaderState.videoLoadingStatus.buffered = buffered;
-
-        if(vidFinished){
-            sectionLoaderState.videoLoadingStatus.currentCount = 0;
-            sectionLoaderState.videosLoaded++;
-            if(this.verbose)console.log('SectionLoader | video Loaded: '+siteVideo_Player.src+' : '+sectionLoaderState.videosLoaded+' of '+sectionLoaderState.videosToLoad.length);
-            sectionLoaderState.videosLoading.splice(0, 1);
-
-            if(sectionLoaderState.videosLoading.length){
-                //there are more videos: load the next video
-                this.addNextVid_centralPlayer();
-            } else {
-                //there are no more videos so check if everything is done
-                checkComplete();
-            }
-        } else {
-            // wait 100ms then check if video is done
-            setTimeout(function(){sectionLoader.checkVidStatus_centralPlayer();}, 100);
-        }
+    
+    function setFileSize(url, size){
+        this.filesizes.push({url:url, size:size});
     }
-
-    function checkVidStatus (){
-        var arrayLength = sectionLoaderState.videosLoading.length;
-        while(arrayLength--){
-            var videoToCheck = sectionLoaderState.videosLoading[arrayLength];
-            if(videoToCheck.buffered.length){
-                var buffered = videoToCheck.buffered.end(0);
-                if(buffered >= videoToCheck.duration){
-                    sectionLoaderState.videosLoaded++;
-                    if(this.verbose)console.log('SectionLoader | sectionLoader video Loaded: '+videoToCheck.src+' : '+sectionLoaderState.videosLoaded+' of '+sectionLoaderState.videosToLoad.length);
-                    sectionLoaderState.videosLoading.splice(arrayLength, 1);
-                }
+    
+    function getFileSize(url){
+        for(var f=0; f<this.filesizes.length; f++){
+            if(url == this.filesizes[f].url){
+                return this.filesizes[f].size;
             }
         }
-
-        if (sectionLoaderState.videosLoading.length) {
-            setTimeout(function(){sectionLoader.checkVidStatus();}, 100);
-        }
-
-        sectionLoader.checkComplete();
+        return this.defaultSize;
     }
-
-    function miscFileLoaded(fileId){
-        sectionLoaderState.miscLoaded++;
-
-        sectionLoader.checkComplete();
-    }
-
+    
     function getPerc () {
-        var perc = (sectionLoaderState.imagesLoaded + sectionLoaderState.videosLoaded + sectionLoaderState.miscLoaded)/(sectionLoaderState.imagesToLoad.length + sectionLoaderState.videosToLoad.length + sectionLoaderState.miscToLoad.length);
-        return perc;
+        var loaded = 0;
+        var totalLoad = 0;
+        for(var m=0; m<sectionLoaderState.miscToLoad.length; m++){
+            totalLoad += sectionLoaderState.miscToLoad[m].size;
+            if(sectionLoaderState.miscToLoad[m].done){
+                loaded += sectionLoaderState.miscToLoad[m].size;
+            } else {
+                loaded += sectionLoaderState.miscToLoad[m].size*sectionLoaderState.miscToLoad[m].perc;
+            }
+        }
+        for(var i=0; i<sectionLoaderState.imagesToLoad.length; i++){
+            totalLoad += sectionLoaderState.imagesToLoad[i].size;
+            if(sectionLoaderState.imagesToLoad[i].done){
+                loaded += sectionLoaderState.imagesToLoad[i].size;
+            }
+        }
+        
+        // console.log(loaded+ ' / '+totalLoad);
+        return loaded/totalLoad;
     }
 
     function fileError (e) {
@@ -666,14 +591,19 @@
     }
 
     function checkComplete(){
+        // console.log('checkComplete '+sectionLoaderState.imagesLoaded+' vs. '+sectionLoaderState.imagesToLoad.length+' | '+sectionLoaderState.miscLoaded+' vs. '+sectionLoaderState.miscToLoad.length);
         if(sectionLoaderState.imagesLoaded >= sectionLoaderState.imagesToLoad.length
-        && sectionLoaderState.videosLoaded >= sectionLoaderState.videosToLoad.length
         && sectionLoaderState.miscLoaded >= sectionLoaderState.miscToLoad.length)this.complete();
     }
 
     function complete () {
-        if(this.verbose)console.log('SectionLoader | complete: ');
-
+        if(this.verbose){
+            console.log('SectionLoader | complete: ');
+            console.log('******************************************* ');
+            console.log('******************************************* ');
+            console.log('******************************************* ');
+        }
+        
         var numSectionsLoaded = sectionLoaderState.currentlyLoadingIDs.length;
         while (numSectionsLoaded--) {
             var sectionID = sectionLoaderState.currentlyLoadingIDs[numSectionsLoaded];
@@ -701,9 +631,6 @@
         sectionLoaderState.currentlyLoadingIDs = [];
         sectionLoaderState.imagesToLoad = [];
         sectionLoaderState.imagesLoaded = 0;
-        sectionLoaderState.videosToLoad = [];
-        sectionLoaderState.videosLoaded = 0;
-        sectionLoaderState.videosLoading = [];
         sectionLoaderState.miscToLoad = [];
         sectionLoaderState.miscLoaded = 0;
 
@@ -747,11 +674,10 @@
         jsLoaded: jsLoaded,
         isDuplicate: isDuplicate,
         loadFiles: loadFiles,
-        imageLoaded: imageLoaded,
-        addNextVid_centralPlayer: addNextVid_centralPlayer,
-        checkVidStatus_centralPlayer: checkVidStatus_centralPlayer,
-        checkVidStatus: checkVidStatus,
-        miscFileLoaded: miscFileLoaded,
+        filesizes: [],
+        defaultSize: 100,
+        setFileSize: setFileSize,
+        getFileSize: getFileSize,
         getPerc: getPerc,
         fileError: fileError,
         checkComplete: checkComplete,
