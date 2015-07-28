@@ -839,6 +839,7 @@
     SlideShow.prototype.keyHandler = keyHandler;
     SlideShow.prototype.next = next;
     SlideShow.prototype.previous = previous;
+    SlideShow.prototype.animate = animate;
     SlideShow.prototype.goToId = goToId;
     SlideShow.prototype.goToIndex = goToIndex;
     SlideShow.prototype.resize = resize;
